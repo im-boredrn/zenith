@@ -1,0 +1,10 @@
+{
+  "type": "code",
+  "modid": "zenith",
+  "name": "zenith",
+  "side": "universal",
+  "authors": [ "Kortah" ],
+  "description": "",
+  "version": "1.0.0",
+  "dependencies": { "game": "" }
+}
