@@ -249,14 +249,10 @@ namespace zenith.Core
 
         private float threshold = 10;
 
-        private float kineticCounter;
-        private float thermalCounter;
-        private float frostCounter;
-        private float toxicCounter;
+     
 
-        private int kineticTier;
-        private int thermalTier;
-
+        Dictionary<DomainEnum, int> tiers;
+        Dictionary<DomainEnum, float> counters;
 
         private const int maxTier = 3;
 
