@@ -54,6 +54,27 @@ namespace zenith.Core
                 (entity.World.Api as ICoreServerAPI)?.Logger.Warning($"Zenith behavior attached to {entity.World.Side}");
             }
 
+      
+
+            domains = new Dictionary<DomainEnum, DomainSponge>();
+
+           RegisterDomain(DomainEnum.Kinetic, new DomainSponge()); // Register domain auto assigns event listeners and creates entry
+
+            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 }); // You can change the initial properties here too
+            RegisterDomain(DomainEnum.Frost, new DomainSponge()); //Initialization Essentially saying create the sponges that exist in the world 
+            RegisterDomain(DomainEnum.Toxic, new DomainSponge());
+
+            // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
+            // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
+
+            //            domains = new Dictionary<DomainEnum, DomainSponge>                This is just a shortcut for multiple .Add calls, same idea but much cleaner
+            //{
+            //    { DomainEnum.Kinetic, new DomainSponge() },
+            //    { DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 } },  
+            //    { DomainEnum.Frost, new DomainSponge() },
+            //    { DomainEnum.Toxic, new DomainSponge() }
+            //};
+
             foreach (var domainPair in domains)
             {
                 DomainEnum domain = domainPair.Key;
@@ -68,29 +89,10 @@ namespace zenith.Core
                         GlobalConstants.AllChatGroups,
                         $"{domain} domain tier increased! New tier: {s.Tier}",
                         EnumChatType.Notification);
-             
+
                 };
 
             }
-
-            domains = new Dictionary<DomainEnum, DomainSponge>();
-
-           RegisterDomain(DomainEnum.Kinetic, new DomainSponge()); // Register domain auto assigns event listeners and creates entry
-
-            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 }); // You can change the initial properties here too
-            RegisterDomain(DomainEnum.Frost, new DomainSponge()); //Initialization Essentially saying create the sponges that exist in the world 
-            RegisterDomain(DomainEnum.Toxic, new DomainSponge());
-
-            // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
-            // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
-
-//            domains = new Dictionary<DomainEnum, DomainSponge>                This is just a shortcut for multiple .Add calls, same idea but much cleaner
-//{
-//    { DomainEnum.Kinetic, new DomainSponge() },
-//    { DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 } },  
-//    { DomainEnum.Frost, new DomainSponge() },
-//    { DomainEnum.Toxic, new DomainSponge() }
-//};
         }
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {
