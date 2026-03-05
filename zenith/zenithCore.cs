@@ -36,7 +36,7 @@ public class zenithCore : ModSystem
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
-        api.Event.PlayerJoin += (IServerPlayer player) =>
+        api.Event.PlayerNowPlaying += (IServerPlayer player) =>
         {
             sapi.Event.EnqueueMainThreadTask(() =>
             {

@@ -11,42 +11,36 @@ namespace zenith.Core
 {
     public class DomainSponge // Dont Forget to make Properties Public
     {
-        public float Counter = 0;
+        private float counter = 0;
+        public float Counter { get {return counter; } }
         public int Threshold = 10;
         public int Tier = 0;
         public int MaxTier = 3;
-    //  public int Resistance = 0; out until I find a good way to incorparate
+        private int OldTier;
+        //  public int Resistance = 0; out until I find a good way to incorparate
+
+        public event Action<DomainSponge> OnTierUp;
 
 
         public void ProcessDamage(float damage)
         {
-            Counter += damage;
+            OldTier = Tier;
 
-            if (Counter >= Threshold && Tier < MaxTier)// not <=MaxTier because if the tier is 2 it still fulfils requirements so it can go up one more
+            counter += damage;
+
+            if (counter >= Threshold && Tier < MaxTier)// not <=MaxTier because if the tier is 2 it still fulfils requirements so it can go up one more
             {
                 Tier++;
-                Counter = 0; // Reset
+                counter = 0; // Reset
+
+              if (Tier > OldTier)  OnTierUp?.Invoke(this);
             }
           
         }
 
         public void Resistance(ref float damage)
         {
-            if (Tier == 1)
-            {
-                damage *= (float)0.9;
-            }
-
-            if (Tier == 2)
-            {
-                damage *= (float)0.75;
-            }
-
-            if (Tier == 3)
-            {
-                damage *= (float)0.50;
-            }
-
+                damage *= 1f - (Tier * 0.25f); //scaling
         }
 
         //public void TierReactions()
