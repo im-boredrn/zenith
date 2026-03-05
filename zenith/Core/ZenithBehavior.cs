@@ -35,7 +35,7 @@ namespace zenith.Core
         //Summary: DomainEnum is The Key and sponge is the returned object from said key.
         //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
 
-        private bool DebugMode = false; // For Debug Mode 
+        private bool DebugMode = true; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
@@ -75,28 +75,13 @@ namespace zenith.Core
             //    { DomainEnum.Toxic, new DomainSponge() }
             //};
 
-            foreach (var domainPair in domains)
-            {
-                DomainEnum domain = domainPair.Key;
-                DomainSponge sponge = domainPair.Value;
 
-                sponge.OnTierUp += (s) =>
-                {
-                    Log($"[EVENT] {domain} domain tier increased! New tier: {s.Tier}");
+            foreach ( in domains)
 
-                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
-                    sapi.SendMessage(Player.Player,
-                        GlobalConstants.AllChatGroups,
-                        $"{domain} domain tier increased! New tier: {s.Tier}",
-                        EnumChatType.Notification);
-
-                };
-
-            }
+  
         }
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {
-            GetDamageType(damageSource); // extracts damage type
 
             EnumDamageType type = GetDamageType(damageSource); // catches returned type
           
@@ -194,28 +179,29 @@ namespace zenith.Core
             
         }
 
+        int processCalls = 0;
         public void ProcessDomain(DomainEnum domain, ref float damage) //#Processor
         {
-
-
-            ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI; // Message
+            processCalls++;
+            Log($"[FLOW] ProcessDomain call #{processCalls}");
 
             Log("[FLOW] Calling ProcessDomain");
             
-
             var domainstate = domains[domain]; // auto updates dictionary, can be used to modify every Property e.g Threshold
-
           
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
-
-          
-
+        
             Log("[EXIT] Finished Calling ProcessDomain");
-            
         }
 
         void RegisterDomain(DomainEnum domain, DomainSponge sponge)
         {
+            if (domains.ContainsKey(domain))
+            {
+                Log($"[WARN] Domain {domain} already registered");
+                return;
+            }
+
             domains[domain] = sponge;
 
             sponge.OnTierUp += (s) =>
