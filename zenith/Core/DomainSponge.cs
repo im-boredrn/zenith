@@ -22,6 +22,7 @@ namespace zenith.Core
         public event Action<DomainSponge> OnTierUp;
 
 
+
         public void ProcessDamage(float damage)
         {
             OldTier = Tier;

@@ -25,6 +25,7 @@ namespace zenith.Core
             Thermal,
             Frost,
             Toxic,
+            Hemorrhage,
             None
 
         }
@@ -39,20 +40,46 @@ namespace zenith.Core
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
-            if (entity.HasBehavior<ZenithBehavior>()) return;
 
-            if (entity.World.Side == EnumAppSide.Server)
+            
+            if (entity.HasBehavior<ZenithBehavior>()) return;      
+          
+             if (entity.World.Side == EnumAppSide.Client)
             {
-                (entity.World.Api as ICoreServerAPI)?.Logger.Warning("Zenith behavior attached");
+                Log($"Current Side {entity.World.Side} returning");
+                return;
+            }
+            else if (entity.World.Side == EnumAppSide.Server)
+            {
+                (entity.World.Api as ICoreServerAPI)?.Logger.Warning($"Zenith behavior attached to {entity.World.Side}");
             }
 
+            foreach (var domainPair in domains)
+            {
+                DomainEnum domain = domainPair.Key;
+                DomainSponge sponge = domainPair.Value;
+
+                sponge.OnTierUp += (s) =>
+                {
+                    Log($"[EVENT] {domain} domain tier increased! New tier: {s.Tier}");
+
+                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
+                    sapi.SendMessage(Player.Player,
+                        GlobalConstants.AllChatGroups,
+                        $"{domain} domain tier increased! New tier: {s.Tier}",
+                        EnumChatType.Notification);
+             
+                };
+
+            }
 
             domains = new Dictionary<DomainEnum, DomainSponge>();
 
-            domains.Add(DomainEnum.Kinetic, new DomainSponge()); //
-            domains.Add(DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 }); // You can change the initial properties here too
-            domains.Add(DomainEnum.Frost, new DomainSponge()); //Initialization Essentially saying create the sponges that exist in the world 
-            domains.Add(DomainEnum.Toxic, new DomainSponge()); // .Add is strict, if This already exists it will throw an exception
+           RegisterDomain(DomainEnum.Kinetic, new DomainSponge()); // Register domain auto assigns event listeners and creates entry
+
+            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 }); // You can change the initial properties here too
+            RegisterDomain(DomainEnum.Frost, new DomainSponge()); //Initialization Essentially saying create the sponges that exist in the world 
+            RegisterDomain(DomainEnum.Toxic, new DomainSponge());
 
             // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
             // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
@@ -104,29 +131,51 @@ namespace zenith.Core
                 case EnumDamageType.BluntAttack:
                     {
                         Log("[DATA] Returning Kinetic Domain ");
-
                         return DomainEnum.Kinetic;
-
+                    }
+                case EnumDamageType.Gravity:
+                    {
+                        Log("[DATA] Returning Kinetic Domain ");
+                        return DomainEnum.Kinetic;
+                    }
+                case EnumDamageType.Poison:
+                    {
+                        Log("[DATA] Returning Toxic Domain ");
+                        return DomainEnum.Toxic;
                     }
 
 
                 case EnumDamageType.Fire:
                     {
-                        
-                            Log("[DATA] Returning Thermal Domain ");
-                        
+                        Log("[DATA] Returning Thermal Domain ");                        
                         return DomainEnum.Thermal;
 
+                    }
+                case EnumDamageType.Heat:
+                    {
+                        Log("[DATA] Returning Thermal Domain ");
+                        return DomainEnum.Thermal;
+                    }
+                case EnumDamageType.Acid:
+                    {
+                        Log("[DATA] Returning Toxic Domain ");
+                        return DomainEnum.Toxic;
+                    }
+                case EnumDamageType.SlashingAttack:
+                    {
+                        Log("[DATA] Returning Hemorrhage");
+                        return DomainEnum.Hemorrhage;
+                    }
+                case EnumDamageType.PiercingAttack:
+                    {
+                        Log("[DATA] Returning Hemorrhage");
+                        return DomainEnum.Hemorrhage;
                     }
 
                 default:
                     {
-                        
-                            Log("[DATA] Returning No Domain ");
-                        
-
+                        Log("[DATA] Returning No Domain ");
                         return DomainEnum.None;
-
                     }
             }        
         }   
@@ -139,7 +188,7 @@ namespace zenith.Core
             domainstate.Resistance(ref damage);
             
             
-               Log("[FLOW] Finished Calling ReduceDamage");
+               Log("[EXIT] Finished Calling ReduceDamage");
             
         }
 
@@ -157,17 +206,32 @@ namespace zenith.Core
           
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
 
-            domains[domain].OnTierUp += (sponge) =>
-            {
-                Log($"[EVENT] {domain} domain tier increased! New tier: {sponge.Tier}");
-                sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $" {domain} domain tier increased! New tier: {sponge.Tier}", EnumChatType.Notification);
-            };
+          
 
-            Log("[FLOW] Finished Calling ProcessDomain");
+            Log("[EXIT] Finished Calling ProcessDomain");
             
         }
 
-        
+        void RegisterDomain(DomainEnum domain, DomainSponge sponge)
+        {
+            domains[domain] = sponge;
+
+            sponge.OnTierUp += (s) =>
+            {
+                Log($"[EVENT] {domain} tier increased to {s.Tier}");
+
+                ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
+
+                sapi.SendMessage(
+                    Player.Player,
+                    GlobalConstants.AllChatGroups,
+                    $"{domain} domain tier increased! New tier: {s.Tier}",
+                    EnumChatType.Notification
+                );
+            };
+        }
+
+
         private void Log(string message)
         {
             if (!DebugMode) return;

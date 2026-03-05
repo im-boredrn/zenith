@@ -35,6 +35,7 @@ public class zenithCore : ModSystem
 
     public override void StartServerSide(ICoreServerAPI api)
     {
+        // Always fix warnings before debugging your code. Invisible Entities was not the fault of Zenith
         sapi = api;
         api.Event.PlayerNowPlaying += (IServerPlayer player) =>
         {
@@ -48,7 +49,7 @@ public class zenithCore : ModSystem
             }, "AttachZenithBehavior");
         };
 
-
+    
     }
         
     
