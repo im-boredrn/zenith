@@ -13,6 +13,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 using zenith.Config;
 
 namespace zenith.Core
@@ -74,12 +75,40 @@ namespace zenith.Core
             //    { DomainEnum.Frost, new DomainSponge() },
             //    { DomainEnum.Toxic, new DomainSponge() }
             //};
+            foreach (var domainPair in domains)
+            {
+                DomainEnum domain = domainPair.Key;
+                DomainSponge sponge = domainPair.Value;
 
+                sponge.OnTierUp += (s) =>
+                {
+                    Log($"[EVENT] {domain} domain tier increased! New tier: {s.Tier}");
 
-            foreach ( in domains)
+                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
+                    sapi.SendMessage(Player.Player,
+                        GlobalConstants.AllChatGroups,
+                        $"{domain} domain tier increased! New tier: {s.Tier}",
+                        EnumChatType.Notification);
 
-  
+                };
+            }
+           
+            foreach (var domainState in domains)
+            {
+                DomainEnum domain = domainState.Key; 
+                DomainSponge sponge = domainState.Value;
+                string keyCounter = "zenith." + domain + ".counter";
+                string keyTier = "zenith." + domain + ".tier";
+
+                sponge.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
+                sponge.Counter = entity.WatchedAttributes.GetAsInt(keyCounter);
+            }
+
+          
+
         }
+
+
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {
 
@@ -96,7 +125,7 @@ namespace zenith.Core
             ProcessDomain(domain, ref damage);
 
             
-               Log($"Domain :{domain}\n KineticTier: {domains[domain].Tier} \n Kinetic Counter: {domains[domain].Counter}/{domains[domain].Threshold} \n Damage Taken: {damage}");
+               Log($"Domain :{domain}\n {domain} Tier: {domains[domain].Tier} \n {domain} Counter: {domains[domain].Counter}/{domains[domain].Threshold} \n Damage Taken: {damage}");
             
         }
        
@@ -190,6 +219,8 @@ namespace zenith.Core
             var domainstate = domains[domain]; // auto updates dictionary, can be used to modify every Property e.g Threshold
           
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
+
+         
         
             Log("[EXIT] Finished Calling ProcessDomain");
         }
@@ -201,24 +232,49 @@ namespace zenith.Core
                 Log($"[WARN] Domain {domain} already registered");
                 return;
             }
-
+            
             domains[domain] = sponge;
 
-            sponge.OnTierUp += (s) =>
+            if (!sponge.TierEventRegistered)
             {
-                Log($"[EVENT] {domain} tier increased to {s.Tier}");
+                sponge.OnTierUp += (s) =>
+                {
+                    Log($"[EVENT] {domain} tier increased to {s.Tier}");
 
-                ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
+                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
 
-                sapi.SendMessage(
-                    Player.Player,
-                    GlobalConstants.AllChatGroups,
-                    $"{domain} domain tier increased! New tier: {s.Tier}",
-                    EnumChatType.Notification
-                );
-            };
+                    sapi.SendMessage(
+                        Player.Player,
+                        GlobalConstants.AllChatGroups,
+                        $"{domain} domain tier increased! New tier: {s.Tier}",
+                        EnumChatType.Notification
+                    );
+
+                    SaveDomains();
+                };
+
+                sponge.TierEventRegistered = true; // simple bool inside DomainSponge
+            }
         }
 
+       public void SaveDomains()
+        {
+            foreach (var domainState in domains) 
+            {
+                DomainEnum domain = domainState.Key; //the enum (DomainEnum.Kinetic, Thermal, etc.)
+                DomainSponge sponge = domainState.Value; // the DomainSponge object
+
+                string keyCounter = "zenith." + domain + ".counter";
+                string keyTier = "zenith." + domain + ".tier";
+
+                entity.WatchedAttributes.SetInt(keyTier, sponge.Tier);
+                entity.WatchedAttributes.SetFloat(keyCounter, sponge.Counter);
+
+                entity.WatchedAttributes.MarkPathDirty(keyTier);
+                entity.WatchedAttributes.MarkPathDirty(keyCounter);
+
+            }
+        }
 
         private void Log(string message)
         {
