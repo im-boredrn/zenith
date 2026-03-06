@@ -12,7 +12,7 @@ namespace zenith.Core
     public class DomainSponge // Dont Forget to make Properties Public
     {
         public float Counter = 0;
-        public int Threshold = 10;
+        public int Threshold = 100;
         public int Tier = 0;
         public int MaxTier = 3;
         public int OldTier;
@@ -43,13 +43,22 @@ namespace zenith.Core
 
 
 
-        public void Resistance(ref float damage)
+        public float Resistance(ref float damage)
         {
-                damage *= 1f - (Tier * 0.25f); //scaling
+            float resistance = Tier * 0.25f; // each tier adds resistance value
+            float reducedDamage;
+           Console.WriteLine($"[DEBUG] Damage before resist: {damage}");
+
+            reducedDamage = damage / (1f + resistance);
+            damage = Math.Max(0, reducedDamage); // clamp
+
+            Console.WriteLine($"[DEBUG] Damage After resist: {damage}");
+            return damage;
+
         }
 
 
-       
+
 
         //public void TierReactions()
         //{

@@ -36,7 +36,7 @@ namespace zenith.Core
         //Summary: DomainEnum is The Key and sponge is the returned object from said key.
         //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
 
-        private bool DebugMode = true; // For Debug Mode 
+        private bool DebugMode = false; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
@@ -45,6 +45,9 @@ namespace zenith.Core
             
             if (entity.HasBehavior<ZenithBehavior>()) return;      
           
+
+
+
              if (entity.World.Side == EnumAppSide.Client)
             {
                 Log($"Current Side {entity.World.Side} returning");
@@ -59,11 +62,11 @@ namespace zenith.Core
 
             domains = new Dictionary<DomainEnum, DomainSponge>();
 
-           RegisterDomain(DomainEnum.Kinetic, new DomainSponge()); // Register domain auto assigns event listeners and creates entry
+           RegisterDomain(DomainEnum.Kinetic, new DomainSponge { MaxTier = 15, Threshold = 1}); // Register domain auto assigns event listeners and creates entry
 
-            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 }); // You can change the initial properties here too
-            RegisterDomain(DomainEnum.Frost, new DomainSponge()); //Initialization Essentially saying create the sponges that exist in the world 
-            RegisterDomain(DomainEnum.Toxic, new DomainSponge());
+            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 80, MaxTier = 8 }); // You can change the initial properties here too
+            RegisterDomain(DomainEnum.Frost, new DomainSponge { Threshold = 90, MaxTier = 7}); //Initialization Essentially saying create the sponges that exist in the world 
+            RegisterDomain(DomainEnum.Toxic, new DomainSponge { Threshold = 60, MaxTier = 3 });
 
             // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
             // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
@@ -103,8 +106,16 @@ namespace zenith.Core
                 sponge.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
                 sponge.Counter = entity.WatchedAttributes.GetAsInt(keyCounter);
             }
+            EntityBehaviorHealth healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
+            if (healthBehavior != null)
+            {
 
-          
+                healthBehavior.onDamaged += (damage, source) =>
+                {
+                    return ReduceDamage(damage, source);
+                };
+            }
+
 
         }
 
@@ -121,7 +132,6 @@ namespace zenith.Core
                 Log("[DATA] Returning domain Not found  ");
                 return;
             }
-            ReduceDamage(domain, ref damage);
             ProcessDomain(domain, ref damage);
 
             
@@ -195,16 +205,25 @@ namespace zenith.Core
                     }
             }        
         }   
-        public void ReduceDamage(DomainEnum domain, ref float damage)
+        public float ReduceDamage(float damage, DamageSource dmgSource)
         {
             
                Log("[FLOW] Calling ReduceDamage");
-            
+
+
+            EnumDamageType type = GetDamageType(dmgSource);
+            DomainEnum domain = IdentifyDomain(type);
+
+            if (domain == DomainEnum.None) return damage;
+
             var domainstate = domains[domain];
+
             domainstate.Resistance(ref damage);
-            
-            
-               Log("[EXIT] Finished Calling ReduceDamage");
+
+            Log("[EXIT] Finished Calling ReduceDamage");
+
+            return damage;
+
             
         }
 
