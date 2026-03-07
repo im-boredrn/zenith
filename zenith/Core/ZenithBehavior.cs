@@ -24,7 +24,7 @@ namespace zenith.Core
         {
             Kinetic,
             Thermal,
-            Frost,
+            Cold,
             Toxic,
             Hemorrhage,
             None
@@ -33,16 +33,39 @@ namespace zenith.Core
         //#REF Dictionary Creation
         Dictionary<DomainEnum, DomainSponge> domains;
 
+
+
         //Summary: DomainEnum is The Key and sponge is the returned object from said key.
         //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
 
-        private bool DebugMode = false; // For Debug Mode 
+        static readonly Dictionary<EnumDamageType, DomainEnum> DamageDomainMap =
+    new Dictionary<EnumDamageType, DomainEnum>()
+{
+    { EnumDamageType.BluntAttack, DomainEnum.Kinetic },
+    { EnumDamageType.Gravity, DomainEnum.Kinetic },
+
+    { EnumDamageType.Fire, DomainEnum.Thermal },
+    { EnumDamageType.Heat, DomainEnum.Thermal },
+
+    { EnumDamageType.Acid, DomainEnum.Toxic },
+    { EnumDamageType.Poison, DomainEnum.Toxic },
+
+    { EnumDamageType.SlashingAttack, DomainEnum.Hemorrhage },
+    { EnumDamageType.PiercingAttack, DomainEnum.Hemorrhage },
+
+    {EnumDamageType.Frost, DomainEnum.Cold }
+};
+        
+        private bool DebugMode = true; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
+
+      
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
+            ModConfig config = new ModConfig();
 
-            
+
             if (entity.HasBehavior<ZenithBehavior>()) return;      
           
 
@@ -62,11 +85,11 @@ namespace zenith.Core
 
             domains = new Dictionary<DomainEnum, DomainSponge>();
 
-           RegisterDomain(DomainEnum.Kinetic, new DomainSponge { MaxTier = 15, Threshold = 1}); // Register domain auto assigns event listeners and creates entry
+           RegisterDomain(DomainEnum.Kinetic, new DomainSponge (config)); // Register domain auto assigns event listeners and creates entry
 
-            RegisterDomain(DomainEnum.Thermal, new DomainSponge { Threshold = 80, MaxTier = 8 }); // You can change the initial properties here too
-            RegisterDomain(DomainEnum.Frost, new DomainSponge { Threshold = 90, MaxTier = 7}); //Initialization Essentially saying create the sponges that exist in the world 
-            RegisterDomain(DomainEnum.Toxic, new DomainSponge { Threshold = 60, MaxTier = 3 });
+            RegisterDomain(DomainEnum.Thermal, new DomainSponge(config)); // You can change the initial properties here too
+            RegisterDomain(DomainEnum.Cold, new DomainSponge (config)); //Initialization Essentially saying create the sponges that exist in the world 
+            RegisterDomain(DomainEnum.Toxic, new DomainSponge(config));
 
             // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
             // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
@@ -150,61 +173,17 @@ namespace zenith.Core
         {
             
                 Log("[FLOW] Calling IdentifyDomain");
-            
 
-            switch (type)
+            if(DamageDomainMap.TryGetValue(type, out DomainEnum domain))
             {
-                case EnumDamageType.BluntAttack:
-                    {
-                        Log("[DATA] Returning Kinetic Domain ");
-                        return DomainEnum.Kinetic;
-                    }
-                case EnumDamageType.Gravity:
-                    {
-                        Log("[DATA] Returning Kinetic Domain ");
-                        return DomainEnum.Kinetic;
-                    }
-                case EnumDamageType.Poison:
-                    {
-                        Log("[DATA] Returning Toxic Domain ");
-                        return DomainEnum.Toxic;
-                    }
+                Log($"[DATA] Returning {domain} Domain");
+                return domain;
+            }
 
+            Log("[DATA] Returning No Domain");
+            return DomainEnum.None;
+        }
 
-                case EnumDamageType.Fire:
-                    {
-                        Log("[DATA] Returning Thermal Domain ");                        
-                        return DomainEnum.Thermal;
-
-                    }
-                case EnumDamageType.Heat:
-                    {
-                        Log("[DATA] Returning Thermal Domain ");
-                        return DomainEnum.Thermal;
-                    }
-                case EnumDamageType.Acid:
-                    {
-                        Log("[DATA] Returning Toxic Domain ");
-                        return DomainEnum.Toxic;
-                    }
-                case EnumDamageType.SlashingAttack:
-                    {
-                        Log("[DATA] Returning Hemorrhage");
-                        return DomainEnum.Hemorrhage;
-                    }
-                case EnumDamageType.PiercingAttack:
-                    {
-                        Log("[DATA] Returning Hemorrhage");
-                        return DomainEnum.Hemorrhage;
-                    }
-
-                default:
-                    {
-                        Log("[DATA] Returning No Domain ");
-                        return DomainEnum.None;
-                    }
-            }        
-        }   
         public float ReduceDamage(float damage, DamageSource dmgSource)
         {
             
@@ -218,8 +197,7 @@ namespace zenith.Core
 
             var domainstate = domains[domain];
 
-            domainstate.Resistance(ref damage);
-
+            damage = domainstate.Resistance(damage);
             Log("[EXIT] Finished Calling ReduceDamage");
 
             return damage;

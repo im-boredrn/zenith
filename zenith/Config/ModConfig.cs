@@ -2,6 +2,9 @@ namespace zenith.Config;
 
 public class ModConfig
 {
-    public bool ExampleConfigSetting { get; set; } = true;
     public float DamageReductionPerTier { get; set; } = 0.25f;
+    public int GlobalDomainMaxTier { get; set; } = 4;
+    public int GlobalDomainThreshold { get; set; } = 1;
+
+
 }

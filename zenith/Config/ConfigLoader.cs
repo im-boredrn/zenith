@@ -15,14 +15,24 @@ public class ConfigLoader : ModSystem
             if (Config == null)
             {
                 Config = new ModConfig();
+                
+                
                 Mod.Logger.VerboseDebug("Config file not found, creating a new one...");
+                api.StoreModConfig(Config, ConfigName);
+
             }
-            api.StoreModConfig(Config, ConfigName);
+            else
+            {
+                Mod.Logger.VerboseDebug("Config loaded Successfully.");
+
+            }
         } catch (Exception e) {
             Mod.Logger.Error("Failed to load config, you probably made a typo: {0}", e);
             Config = new ModConfig();
         }
     }
+
+
     
     public override void Dispose()
     {

@@ -6,19 +6,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using zenith.Config;
 
 namespace zenith.Core
 {
     public class DomainSponge // Dont Forget to make Properties Public
     {
+        private ModConfig Config => ConfigLoader.Config; // points to the static config
+        public int Threshold => ZenithSettings.ZGlobalDomainThreshold;
+        public int MaxTier => ZenithSettings.ZGlobalDomainMaxTier;
+        public float DamageReductionPerTier => ZenithSettings.ZDamageReductionPerTier;
+
+
+        private readonly ModConfig config;
         public float Counter = 0;
-        public int Threshold = 100;
         public int Tier = 0;
-        public int MaxTier = 3;
         public int OldTier;
         public bool TierEventRegistered { get; set; } = false;
 
         //  public int Resistance = 0; out until I find a good way to incorparate
+
+        public DomainSponge(ModConfig config)
+        {
+            this.config = config;
+        }
+
+       
 
         public event Action<DomainSponge> OnTierUp;
 
@@ -43,16 +56,16 @@ namespace zenith.Core
 
 
 
-        public float Resistance(ref float damage)
+        public float Resistance( float damage)
         {
-            float resistance = Tier * 0.25f; // each tier adds resistance value
+            float resistance = Tier * DamageReductionPerTier; // each tier adds resistance value
             float reducedDamage;
-           Console.WriteLine($"[DEBUG] Damage before resist: {damage}");
+          // Console.WriteLine($"[DEBUG] Damage before resist: {damage}");
 
             reducedDamage = damage / (1f + resistance);
             damage = Math.Max(0, reducedDamage); // clamp
 
-            Console.WriteLine($"[DEBUG] Damage After resist: {damage}");
+          //  Console.WriteLine($"[DEBUG] Damage After resist: {damage}");
             return damage;
 
         }
