@@ -56,7 +56,7 @@ namespace zenith.Core
     {EnumDamageType.Frost, DomainEnum.Cold }
 };
         
-        private bool DebugMode = true; // For Debug Mode 
+        private bool DebugMode = false; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
 
       
