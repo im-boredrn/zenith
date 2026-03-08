@@ -27,13 +27,15 @@ namespace zenith.Core
             Cold,
             Toxic,
             Hemorrhage,
+            Drown,
             None
 
         }
         //#REF Dictionary Creation
         Dictionary<DomainEnum, DomainSponge> domains;
 
-
+        bool TierEventRegistered = false;
+        bool StageEventRegistered = false;
 
         //Summary: DomainEnum is The Key and sponge is the returned object from said key.
         //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
@@ -53,14 +55,20 @@ namespace zenith.Core
     { EnumDamageType.SlashingAttack, DomainEnum.Hemorrhage },
     { EnumDamageType.PiercingAttack, DomainEnum.Hemorrhage },
 
-    {EnumDamageType.Frost, DomainEnum.Cold }
+    {EnumDamageType.Frost, DomainEnum.Cold },
+
+        {EnumDamageType.Suffocation, DomainEnum.Drown }
 };
         // Eventually Add Regen Domain unlock for Stage 3
         
-        private bool DebugMode = false; // For Debug Mode 
+        private bool DebugMode = true; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
 
-      
+        public int DomainCompletion;
+        public int DomainPoints { get; private set; } = 0; // awarded at stage 3
+        public int Stage { get; private set; } = 1; // current stage
+        public int StageUpRequirement => 3; // number of Domain completions needed to stage up
+
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
@@ -91,6 +99,7 @@ namespace zenith.Core
             RegisterDomain(DomainEnum.Thermal, new DomainSponge(config)); // You can change the initial properties here too
             RegisterDomain(DomainEnum.Cold, new DomainSponge (config)); //Initialization Essentially saying create the sponges that exist in the world 
             RegisterDomain(DomainEnum.Toxic, new DomainSponge(config));
+            RegisterDomain(DomainEnum.Drown, new DomainSponge(config));
 
             // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
             // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
@@ -222,29 +231,86 @@ namespace zenith.Core
             
             domains[domain] = sponge;
 
-            if (!sponge.TierEventRegistered)
+          
+
+            if (!TierEventRegistered)
             {
                 sponge.OnTierUp += (s) =>
                 {
                     Log($"[EVENT] {domain} tier increased to {s.Tier}");
 
-                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
+                    var sapi = entity.World.Api as ICoreServerAPI;
+                    if (sapi == null) return;
+                    var player = Player.Player;
 
                     sapi.SendMessage(
-                        Player.Player,
+                        player,
                         GlobalConstants.AllChatGroups,
                         $"{domain} domain tier increased! New tier: {s.Tier}",
                         EnumChatType.Notification
                     );
 
+                    if (s.Tier == s.MaxTier)
+                    {
+                        CheckStageProgression();
+                    }
+
                     SaveDomains();
                 };
 
-                sponge.TierEventRegistered = true; // simple bool inside DomainSponge
+                TierEventRegistered = true; // simple bool inside DomainSponge
+            }
+            else
+            {
+                Log("[DATA] Tier Event Registered Returning");
+            }
+
+            if (!StageEventRegistered)
+            {
+                OnStageUp += (s2) =>
+                {
+                    Log($"[EVENT] stage increased to {Stage}");
+                    var sapi = entity.World.Api as ICoreServerAPI;
+                    if (sapi == null) return;
+                    var player = Player.Player;
+
+
+                    sapi.SendMessage(player,
+                        GlobalConstants.AllChatGroups,
+                        $"Stage increased!! New Stage: {Stage}",
+                        EnumChatType.Notification
+                        );
+                    SaveDomains();
+                };
+
+                StageEventRegistered = true;
             }
         }
 
-       public void SaveDomains()
+
+        public void CheckStageProgression()
+        {
+            DomainCompletion++;
+            bool stageIncreased = false;
+
+
+            if (DomainCompletion >= StageUpRequirement && Stage < 3)
+            {
+                Stage++;
+                DomainCompletion = 0;
+                stageIncreased = true;
+            }
+
+            if (Stage == 3)
+            {
+                DomainPoints += 20;
+            }
+            if (stageIncreased)
+            { OnStageUp?.Invoke(this); }
+        }
+        public event Action<ZenithBehavior> OnStageUp;
+
+        public void SaveDomains()
         {
             foreach (var domainState in domains) 
             {

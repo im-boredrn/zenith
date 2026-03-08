@@ -10,6 +10,14 @@ using zenith.Config;
 
 namespace zenith.Core
 {
+    //Domains store only:
+
+//    Domain
+//        Tier
+//    Experience
+
+//They should not store stage logic.
+// In other words Domain only knows about domain
     public class DomainSponge // Dont Forget to make Properties Public
     {
         private ModConfig Config => ConfigLoader.Config; // points to the static config
@@ -22,12 +30,8 @@ namespace zenith.Core
         public float Counter = 0;
         public int Tier = 0;
         public int OldTier;
-        public int DomainCompletion;
-        public int DomainPoints { get; private set; } = 0; // awarded at stage 3
-        public int Stage { get; private set; } = 1; // current stage
-        public int StageUpRequirement => 3; // number of Domain completions needed to stage up
-        public bool TierEventRegistered { get; set; } = false;
-
+      
+ 
         //  public int Resistance = 0; out until I find a good way to incorparate
 
         public DomainSponge(ModConfig config)
@@ -38,7 +42,7 @@ namespace zenith.Core
        
 
         public event Action<DomainSponge> OnTierUp;
-        public event Action<DomainSponge> OnStageUp;
+        public event Action<DomainSponge> DomainMaxed;
 
 
         public void ProcessDamage(float damage)
@@ -52,35 +56,17 @@ namespace zenith.Core
                 Tier++;
                 Counter = 0; // Reset
 
-              if (Tier > OldTier && !TierEventRegistered)
+              if (Tier > OldTier ) // Publisher of Event Should Never Care if its registered on the subscriber(ZenithBehavior)
                 {
-                    OnTierUp?.Invoke(this);
-                    TierEventRegistered = true;
+                    OnTierUp?.Invoke(this); // Fires To EVERYONE, Subscriber Decides to Receive
                 }
-                TierEventRegistered = false;
-                if (Tier == MaxTier)
-                    CheckStageProgression();
-              
+
+                if (Tier == MaxTier) DomainMaxed?.Invoke(this);
             }
           
         }
 
-        public void CheckStageProgression()
-        {
-            DomainCompletion++;
-
-            if (DomainCompletion >= StageUpRequirement && Stage < 3 )
-            {
-                Stage++;
-                DomainCompletion = 0;
-            }
-
-            if (Stage == 3)
-            {
-                DomainPoints += 20;
-            }
-            OnStageUp.Invoke(this);
-        }
+      
 
 
         public float Resistance( float damage)
