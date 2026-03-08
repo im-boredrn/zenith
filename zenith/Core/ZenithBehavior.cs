@@ -18,7 +18,7 @@ using zenith.Config;
 
 namespace zenith.Core
 {
-    internal class ZenithBehavior : EntityBehavior
+    public class ZenithBehavior : EntityBehavior
     {
         public enum DomainEnum
         {
@@ -60,26 +60,19 @@ namespace zenith.Core
         {EnumDamageType.Suffocation, DomainEnum.Drown }
 };
         // Eventually Add Regen Domain unlock for Stage 3
-        
-        private bool DebugMode = true; // For Debug Mode 
+
+        public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
 
-        public int DomainCompletion;
-        public int DomainPoints { get; private set; } = 0; // awarded at stage 3
-        public int Stage { get; private set; } = 1; // current stage
-        public int StageUpRequirement => 3; // number of Domain completions needed to stage up
 
-
+        private DomainManager domainManager;
+        private ProgressionManager progressionManager;
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
             ModConfig config = new ModConfig();
 
-
             if (entity.HasBehavior<ZenithBehavior>()) return;      
-          
-
-
-
+         
              if (entity.World.Side == EnumAppSide.Client)
             {
                 Log($"Current Side {entity.World.Side} returning");
@@ -90,35 +83,33 @@ namespace zenith.Core
                 (entity.World.Api as ICoreServerAPI)?.Logger.Warning($"Zenith behavior attached to {entity.World.Side}");
             }
 
-      
+     
+            // Create Progression Manager With Entity
+            ProgressionManager progressionManager = new ProgressionManager(entity);
 
-            domains = new Dictionary<DomainEnum, DomainSponge>();
+            DomainManager domainManager = new DomainManager(entity, config);
 
-           RegisterDomain(DomainEnum.Kinetic, new DomainSponge (config)); // Register domain auto assigns event listeners and creates entry
 
-            RegisterDomain(DomainEnum.Thermal, new DomainSponge(config)); // You can change the initial properties here too
-            RegisterDomain(DomainEnum.Cold, new DomainSponge (config)); //Initialization Essentially saying create the sponges that exist in the world 
-            RegisterDomain(DomainEnum.Toxic, new DomainSponge(config));
-            RegisterDomain(DomainEnum.Drown, new DomainSponge(config));
 
-            // domains[DomainEnum.Thermal] = new DomainSponge { Threshold = 8, MaxTier = 4 }; this is index assignment If This key doesnt exist it will add it if it does it will overwrite it
-            // This is another way to insert an entry . Add is the second one, and it is more strict BUT it protects against duplicate keys so Its preferred
+            // Wire events
+            foreach (var pair in domains)
+            {
+                DomainEnum domain = pair.Key;
+                DomainSponge sponge = pair.Value;
 
-            //            domains = new Dictionary<DomainEnum, DomainSponge>                This is just a shortcut for multiple .Add calls, same idea but much cleaner
-            //{
-            //    { DomainEnum.Kinetic, new DomainSponge() },
-            //    { DomainEnum.Thermal, new DomainSponge { Threshold = 8, MaxTier = 4 } },  
-            //    { DomainEnum.Frost, new DomainSponge() },
-            //    { DomainEnum.Toxic, new DomainSponge() }
-            //};
-          
-            
-             
+                sponge.DomainMaxed += (d) =>
+                {
+                    progressionManager.HandleDomainMaxed(d); // PM updates stage, points, etc.
+                };
 
-                
-            
-           
-            foreach (var domainState in domains)
+                sponge.OnTierUp += (d) =>
+                {
+                    Log($"[EVENT] {domain} tier increased to {d.Tier}");
+                };
+            }
+
+
+            foreach (var domainState in domains) // Loads
             {
                 DomainEnum domain = domainState.Key; 
                 DomainSponge sponge = domainState.Value;
@@ -128,6 +119,8 @@ namespace zenith.Core
                 sponge.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
                 sponge.Counter = entity.WatchedAttributes.GetAsInt(keyCounter);
             }
+
+
             EntityBehaviorHealth healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
             {
@@ -154,9 +147,10 @@ namespace zenith.Core
                 Log("[DATA] Returning domain Not found  ");
                 return;
             }
-            ProcessDomain(domain, ref damage);
+            domainManager.ProcessDomain(domain, ref damage);
 
-            
+            domainManager.DomainMaxed += progressionManager.HandleDomainMaxed;
+
                Log($"Domain :{domain}\n {domain} Tier: {domains[domain].Tier} \n {domain} Counter: {domains[domain].Counter}/{domains[domain].Threshold} \n Damage Taken: {damage}");
             
         }
@@ -205,129 +199,21 @@ namespace zenith.Core
         }
 
         int processCalls = 0;
-        public void ProcessDomain(DomainEnum domain, ref float damage) //#Processor
-        {
-            processCalls++;
-            Log($"[FLOW] ProcessDomain call #{processCalls}");
+       
 
-            Log("[FLOW] Calling ProcessDomain");
-            
-            var domainstate = domains[domain]; // auto updates dictionary, can be used to modify every Property e.g Threshold
-          
-            domainstate.ProcessDamage(damage); // Handles Everything inside itself
-
-         
-        
-            Log("[EXIT] Finished Calling ProcessDomain");
-        }
-
-        void RegisterDomain(DomainEnum domain, DomainSponge sponge)
-        {
-            if (domains.ContainsKey(domain))
-            {
-                Log($"[WARN] Domain {domain} already registered");
-                return;
-            }
-            
-            domains[domain] = sponge;
-
-          
-
-            if (!TierEventRegistered)
-            {
-                sponge.OnTierUp += (s) =>
-                {
-                    Log($"[EVENT] {domain} tier increased to {s.Tier}");
-
-                    var sapi = entity.World.Api as ICoreServerAPI;
-                    if (sapi == null) return;
-                    var player = Player.Player;
-
-                    sapi.SendMessage(
-                        player,
-                        GlobalConstants.AllChatGroups,
-                        $"{domain} domain tier increased! New tier: {s.Tier}",
-                        EnumChatType.Notification
-                    );
-
-                    if (s.Tier == s.MaxTier)
-                    {
-                        CheckStageProgression();
-                    }
-
-                    SaveDomains();
-                };
-
-                TierEventRegistered = true; // simple bool inside DomainSponge
-            }
-            else
-            {
-                Log("[DATA] Tier Event Registered Returning");
-            }
-
-            if (!StageEventRegistered)
-            {
-                OnStageUp += (s2) =>
-                {
-                    Log($"[EVENT] stage increased to {Stage}");
-                    var sapi = entity.World.Api as ICoreServerAPI;
-                    if (sapi == null) return;
-                    var player = Player.Player;
+       
 
 
-                    sapi.SendMessage(player,
-                        GlobalConstants.AllChatGroups,
-                        $"Stage increased!! New Stage: {Stage}",
-                        EnumChatType.Notification
-                        );
-                    SaveDomains();
-                };
-
-                StageEventRegistered = true;
-            }
-        }
 
 
-        public void CheckStageProgression()
-        {
-            DomainCompletion++;
-            bool stageIncreased = false;
+        /// <summary>
+        /// Persists the current state of the domain to ensure that all relevant data is saved. );
+        /// </summary>
+        /// <remarks>Call this method after updating domain data to guarantee that changes are
+        /// properly stored. Ensure that all necessary information is prepared before invoking this
+        /// method.</remarks>
 
-
-            if (DomainCompletion >= StageUpRequirement && Stage < 3)
-            {
-                Stage++;
-                DomainCompletion = 0;
-                stageIncreased = true;
-            }
-
-            if (Stage == 3)
-            {
-                DomainPoints += 20;
-            }
-            if (stageIncreased)
-            { OnStageUp?.Invoke(this); }
-        }
-        public event Action<ZenithBehavior> OnStageUp;
-
-        public void SaveDomains()
-        {
-            foreach (var domainState in domains) 
-            {
-                DomainEnum domain = domainState.Key; //the enum (DomainEnum.Kinetic, Thermal, etc.)
-                DomainSponge sponge = domainState.Value; // the DomainSponge object
-
-                string keyCounter = "zenith." + domain + ".counter";
-                string keyTier = "zenith." + domain + ".tier";
-
-                entity.WatchedAttributes.SetInt(keyTier, sponge.Tier);
-                entity.WatchedAttributes.SetFloat(keyCounter, sponge.Counter);
-
-                entity.WatchedAttributes.MarkPathDirty(keyTier);
-                entity.WatchedAttributes.MarkPathDirty(keyCounter);
-
-            }
-        }
+      
 
         private void Log(string message)
         {
