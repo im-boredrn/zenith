@@ -20,7 +20,7 @@ namespace zenith.Core
     // Evolution Points 
     public class ProgressionManager
     {
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+        private bool DebugMode => ZenithSettings.ZDebugMode;
         // OnDomain Maxed Domain Points++
         // If DomainPoints == 3
         // Stage ++ 
@@ -29,13 +29,13 @@ namespace zenith.Core
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
-        Dictionary<DomainEnum, DomainSponge> domains;
         private readonly Entity entity;
 
 
-        private EntityPlayer Player => (EntityPlayer)entity;
+        private EntityPlayer Player => entity as EntityPlayer;
         public ProgressionManager(Entity entity)
         {
+            this.entity = entity;
         }
 
    

@@ -49,12 +49,12 @@ namespace zenith.Core
         /// <param name="config">The configuration settings to apply to this DomainSponge instance.</param>
         /// <param name="entity">The entity associated with this DomainSponge, used for saving and loading state.</param>
 
-        private EntityPlayer Player => (EntityPlayer)entity;
-
+        private EntityPlayer Player => entity as EntityPlayer;
         public DomainSponge(ModConfig config, Entity entity, DomainEnum domain)
         {
             this.config = config;
             this.Domain = domain;
+            this.entity = entity;
         }
 
        

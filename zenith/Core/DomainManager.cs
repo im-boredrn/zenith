@@ -16,14 +16,19 @@ namespace zenith.Core
     {
         public bool DebugMode => ZenithSettings.ZDebugMode;
 
-        bool TierEventRegistered = false;
+
+        private EntityPlayer Player => entity as EntityPlayer;
 
         private readonly Entity entity;
-        private EntityPlayer Player => (EntityPlayer)entity;
+
+
+        //#REF Dictionary Creation
         public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
 
         public DomainManager(Entity entity, ModConfig config)
         {
+            this.entity = entity;
+
             domains = new Dictionary<DomainEnum, DomainSponge>();
 
             // Register all domains
@@ -32,18 +37,21 @@ namespace zenith.Core
                 if (domain == DomainEnum.None) continue;
 
                 var sponge = new DomainSponge(config, entity, domain);
-                domains[domain] = sponge;
+                RegisterDomain(domain, sponge);
 
                 sponge.DomainMaxed += (d) => DomainMaxed?.Invoke(d);
                 sponge.OnTierUp += (d) => TierUp?.Invoke(d);
             }
+
+
         }
         public void ProcessDomain(DomainEnum domain, ref float damage) //#Processor
         {
 
             Log("[FLOW] Calling ProcessDomain");
 
-            var domainstate = domains[domain]; // auto updates dictionary, can be used to modify every Property e.g Threshold
+            if (!domains.TryGetValue(domain, out var domainstate)) 
+                return;            
 
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
 
@@ -78,8 +86,7 @@ namespace zenith.Core
 
 
 
-            if (!TierEventRegistered)
-            {
+            
                 sponge.OnTierUp += (s) =>
                 {
                     Log($"[EVENT] {domain} tier increased to {s.Tier}");
@@ -97,28 +104,19 @@ namespace zenith.Core
                         EnumChatType.Notification
                     );
 
-
-
-
                     SaveDomains();
                 };
 
-                TierEventRegistered = true; // simple bool inside DomainSponge
-            }
-            else
-            {
-                Log("[DATA] Tier Event Registered Returning");
-            }
+            
+            
+            
+            
 
 
 
         }
 
-        public void ProcessDamage(DomainEnum domain, float damage)
-        {
-            if (domains.TryGetValue(domain, out var sponge))
-                sponge.ProcessDamage(damage);
-        }
+     
 
         public void SaveDomains()
         {

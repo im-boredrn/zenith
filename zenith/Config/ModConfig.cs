@@ -15,6 +15,6 @@ public class ModConfig
     public int GlobalDomainMaxTier { get; set; } = 4;
     public int GlobalDomainThreshold { get; set; } = 100;
     public int StageUpRequirement { get; set; } = 3;
-    public bool DebugMode { get; set; } = false;
+    public bool GlobalDebugMode { get; set; } = false;
 
 }

@@ -20,6 +20,6 @@ namespace zenith.Config
         public static int ZGlobalDomainMaxTier => Config?.GlobalDomainMaxTier ?? 4;
         public static int ZGlobalDomainThreshold => Config?.GlobalDomainThreshold ?? 100;
         public static int ZStageUpRequirement => Config?.StageUpRequirement ?? 3;
-        public static bool ZDebugMode => Config?.DebugMode ?? false;
+        public static bool ZDebugMode => Config?.GlobalDebugMode ?? false;
     }
 }

@@ -31,15 +31,12 @@ namespace zenith.Core
             None
 
         }
-        //#REF Dictionary Creation
-        Dictionary<DomainEnum, DomainSponge> domains;
-
-        bool TierEventRegistered = false;
-        bool StageEventRegistered = false;
 
         //Summary: DomainEnum is The Key and sponge is the returned object from said key.
         //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
 
+
+        //#REF Map Created
         static readonly Dictionary<EnumDamageType, DomainEnum> DamageDomainMap =
     new Dictionary<EnumDamageType, DomainEnum>()
 {
@@ -62,15 +59,13 @@ namespace zenith.Core
         // Eventually Add Regen Domain unlock for Stage 3
 
         public bool DebugMode => ZenithSettings.ZDebugMode;
-        private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
+        private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
 
 
         private DomainManager domainManager;
         private ProgressionManager progressionManager;
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
-        {
-            ModConfig config = new ModConfig();
-
+        {     
             if (entity.HasBehavior<ZenithBehavior>()) return;      
          
              if (entity.World.Side == EnumAppSide.Client)
@@ -83,43 +78,27 @@ namespace zenith.Core
                 (entity.World.Api as ICoreServerAPI)?.Logger.Warning($"Zenith behavior attached to {entity.World.Side}");
             }
 
-     
+
+
+            ModConfig config = new ModConfig();
+
             // Create Progression Manager With Entity
-            ProgressionManager progressionManager = new ProgressionManager(entity);
+            progressionManager = new ProgressionManager(entity); // assign the field
 
-            DomainManager domainManager = new DomainManager(entity, config);
+            domainManager = new DomainManager(entity, config); // assign the field
 
 
+            domainManager.LoadDomains();
 
             // Wire events
-            foreach (var pair in domains)
+            domainManager.DomainMaxed += progressionManager.HandleDomainMaxed;
+            domainManager.TierUp += (d) =>
             {
-                DomainEnum domain = pair.Key;
-                DomainSponge sponge = pair.Value;
+                DomainEnum domain = d.Domain;
 
-                sponge.DomainMaxed += (d) =>
-                {
-                    progressionManager.HandleDomainMaxed(d); // PM updates stage, points, etc.
-                };
+                Log($"[EVENT] {domain} tier increased to {d.Tier}");
 
-                sponge.OnTierUp += (d) =>
-                {
-                    Log($"[EVENT] {domain} tier increased to {d.Tier}");
-                };
-            }
-
-
-            foreach (var domainState in domains) // Loads
-            {
-                DomainEnum domain = domainState.Key; 
-                DomainSponge sponge = domainState.Value;
-                string keyCounter = "zenith." + domain + ".counter";
-                string keyTier = "zenith." + domain + ".tier";
-
-                sponge.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
-                sponge.Counter = entity.WatchedAttributes.GetAsInt(keyCounter);
-            }
-
+            };
 
             EntityBehaviorHealth healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
@@ -149,9 +128,9 @@ namespace zenith.Core
             }
             domainManager.ProcessDomain(domain, ref damage);
 
-            domainManager.DomainMaxed += progressionManager.HandleDomainMaxed;
+            var domainState = domainManager.domains[domain];
 
-               Log($"Domain :{domain}\n {domain} Tier: {domains[domain].Tier} \n {domain} Counter: {domains[domain].Counter}/{domains[domain].Threshold} \n Damage Taken: {damage}");
+            Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage}");
             
         }
        
@@ -160,7 +139,6 @@ namespace zenith.Core
             return source.Type;
         }
 
-        private const string BluntDomain = "bluntdamage";
     
         public DomainEnum IdentifyDomain(EnumDamageType type) // #Translator
         {
@@ -188,7 +166,7 @@ namespace zenith.Core
 
             if (domain == DomainEnum.None) return damage;
 
-            var domainstate = domains[domain];
+            var domainstate = domainManager.domains[domain];
 
             damage = domainstate.Resistance(damage);
             Log("[EXIT] Finished Calling ReduceDamage");
@@ -198,22 +176,7 @@ namespace zenith.Core
             
         }
 
-        int processCalls = 0;
        
-
-       
-
-
-
-
-        /// <summary>
-        /// Persists the current state of the domain to ensure that all relevant data is saved. );
-        /// </summary>
-        /// <remarks>Call this method after updating domain data to guarantee that changes are
-        /// properly stored. Ensure that all necessary information is prepared before invoking this
-        /// method.</remarks>
-
-      
 
         private void Log(string message)
         {
