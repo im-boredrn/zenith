@@ -55,6 +55,7 @@ namespace zenith.Core
 
     {EnumDamageType.Frost, DomainEnum.Cold }
 };
+        // Eventually Add Regen Domain unlock for Stage 3
         
         private bool DebugMode = false; // For Debug Mode 
         private EntityPlayer Player => (EntityPlayer)entity; // assignment operator is saying assign the value on the left to the value on the right.
@@ -101,23 +102,12 @@ namespace zenith.Core
             //    { DomainEnum.Frost, new DomainSponge() },
             //    { DomainEnum.Toxic, new DomainSponge() }
             //};
-            foreach (var domainPair in domains)
-            {
-                DomainEnum domain = domainPair.Key;
-                DomainSponge sponge = domainPair.Value;
+          
+            
+             
 
-                sponge.OnTierUp += (s) =>
-                {
-                    Log($"[EVENT] {domain} domain tier increased! New tier: {s.Tier}");
-
-                    ICoreServerAPI sapi = entity.World.Api as ICoreServerAPI;
-                    sapi.SendMessage(Player.Player,
-                        GlobalConstants.AllChatGroups,
-                        $"{domain} domain tier increased! New tier: {s.Tier}",
-                        EnumChatType.Notification);
-
-                };
-            }
+                
+            
            
             foreach (var domainState in domains)
             {
