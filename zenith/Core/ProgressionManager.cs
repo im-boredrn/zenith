@@ -21,11 +21,8 @@ namespace zenith.Core
     public class ProgressionManager
     {
         private bool DebugMode => ZenithSettings.ZDebugMode;
-        // OnDomain Maxed Domain Points++
-        // If DomainPoints == 3
-        // Stage ++ 
         private int DomainPoints = 0;
-        private int Stage;
+        private int Stage = 1;
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
@@ -103,7 +100,6 @@ namespace zenith.Core
             }
         }
 
-        // TODO FIX STAGE UP MESSAGE, Next session run game and examine logs 
         public float GetStageMultiplier()
         {
             if (Stage == 1)

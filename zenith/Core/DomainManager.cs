@@ -15,7 +15,7 @@ namespace zenith.Core
     internal class DomainManager
     {
         public bool DebugMode => ZenithSettings.ZDebugMode;
-
+        public bool ContributedToEvolution { get; private set; } = false;
 
         private EntityPlayer Player => entity as EntityPlayer;
 

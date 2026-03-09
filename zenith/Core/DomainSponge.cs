@@ -24,6 +24,7 @@ namespace zenith.Core
     public class DomainSponge // Dont Forget to make Properties Public
     {
         private ModConfig Config => ConfigLoader.Config; // points to the static config
+        public bool ContributedToEvolution { get; private set; } = false;
         public int Threshold => ZenithSettings.ZGlobalDomainThreshold;
         public int MaxTier => ZenithSettings.ZGlobalDomainMaxTier;
         public float DamageReductionPerTier => ZenithSettings.ZDamageReductionPerTier;
@@ -90,7 +91,11 @@ namespace zenith.Core
 
                 }
 
-                if (Tier == MaxTier) DomainMaxed?.Invoke(this);
+                if (Tier == MaxTier && !ContributedToEvolution)
+                {
+                    ContributedToEvolution = true;
+                    DomainMaxed?.Invoke(this);
+                }
             }
           
         }
