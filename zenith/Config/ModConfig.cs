@@ -17,4 +17,8 @@ public class ModConfig
     public int StageUpRequirement { get; set; } = 3;
     public bool GlobalDebugMode { get; set; } = false;
 
+    public float StageResistanceMultiplier1 { get; set; } = 1.0f;
+    public float StageResistanceMultiplier2 { get; set; } = 1.2f;
+    public float StageResistanceMultiplier3 { get; set; } = 1.4f;
+
 }

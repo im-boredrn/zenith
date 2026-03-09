@@ -118,6 +118,8 @@ namespace zenith.Core
             /// <returns>The resulting damage value after resistance is applied. The value is clamped to a minimum of zero.</returns>
         public float Resistance( float damage)
         {
+
+
             float resistance = Tier * DamageReductionPerTier; // each tier adds resistance value
             float reducedDamage;
           // Console.WriteLine($"[DEBUG] Damage before resist: {damage}");
@@ -128,6 +130,11 @@ namespace zenith.Core
           //  Console.WriteLine($"[DEBUG] Damage After resist: {damage}");
             return damage;
 
+        }
+
+        public float GetResistanceValue()
+        {
+            return Tier * DamageReductionPerTier;
         }
 
         /// <summary>

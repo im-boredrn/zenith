@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using zenith.Core;
 
 namespace zenith.Config
 {
@@ -20,6 +21,13 @@ namespace zenith.Config
         public static int ZGlobalDomainMaxTier => Config?.GlobalDomainMaxTier ?? 4;
         public static int ZGlobalDomainThreshold => Config?.GlobalDomainThreshold ?? 100;
         public static int ZStageUpRequirement => Config?.StageUpRequirement ?? 3;
+        public static float ZStageResistanceMultiplier1 => Config?.StageResistanceMultiplier1 ?? 1.0f;
+        public static float ZStageResistanceMultiplier2 => Config?.StageResistanceMultiplier2 ?? 1.2f;
+        public static float ZStageResistanceMultiplier3 => Config?.StageResistanceMultiplier3 ?? 1.4f;
         public static bool ZDebugMode => Config?.GlobalDebugMode ?? false;
+
+
+        
+        
     }
 }

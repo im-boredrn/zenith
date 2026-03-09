@@ -24,7 +24,7 @@ namespace zenith.Core
         // OnDomain Maxed Domain Points++
         // If DomainPoints == 3
         // Stage ++ 
-        private int DomainPoints;
+        private int DomainPoints = 0;
         private int Stage;
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
@@ -46,13 +46,30 @@ namespace zenith.Core
         /// <remarks>This method should be called when the domain is fully saturated. It updates the
         /// domain points and checks whether the stage progression criteria are met. Ensure that the domain state is
         /// valid before invoking this method.</remarks>
-        /// <param name="obj">The DomainSponge instance representing the current domain state that triggered the event. Must not be null.</param>
+        /// <param name="sponge">The DomainSponge instance representing the current domain state that triggered the event. Must not be null.</param>
         public void HandleDomainMaxed(DomainSponge sponge)
         {
+            Log("[FLOW] HandleDomainMaxed Called");
+            var sapi = entity.World.Api as ICoreServerAPI;
+            if (sapi == null)
+            {
+                Log("[DATA] Sapi is Null returning...");
+                return;
+
+            }
+            var player = Player.Player;
+
+
+            sapi.SendMessage(player,
+                GlobalConstants.AllChatGroups,
+                $"Domain Maxed!",
+                EnumChatType.Notification
+                );
 
             if (Stage < 3)
             {
                 DomainPoints++;
+                Log($"[DATA] DomainPoints : {DomainPoints}");
             }
             else
             {
@@ -80,12 +97,23 @@ namespace zenith.Core
                 Stage++;
                 DomainPoints = 0;
                 stageIncreased = true;
+
+                if (stageIncreased) OnStageUpSave();
+
             }
+        }
 
-          
+        // TODO FIX STAGE UP MESSAGE, Next session run game and examine logs 
+        public float GetStageMultiplier()
+        {
+            if (Stage == 1)
+            {
+                return ZenithSettings.ZStageResistanceMultiplier1;
+            }
+            else if (Stage == 2) return ZenithSettings.ZStageResistanceMultiplier2;
+            else if (Stage == 3) return ZenithSettings.ZStageResistanceMultiplier3;
 
-            if (stageIncreased) OnStageUpSave();
-
+            return 1;
         }
 
         /// <summary>

@@ -168,7 +168,12 @@ namespace zenith.Core
 
             var domainstate = domainManager.domains[domain];
 
-            damage = domainstate.Resistance(damage);
+            float domainResistance = domainstate.GetResistanceValue();
+            float stageMultiplier = progressionManager.GetStageMultiplier();
+            float finalResistance = domainResistance * stageMultiplier;
+
+            damage = damage / (1f + finalResistance);
+            
             Log("[EXIT] Finished Calling ReduceDamage");
 
             return damage;
