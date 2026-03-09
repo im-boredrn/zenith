@@ -36,11 +36,11 @@ namespace zenith.Core
             {
                 if (domain == DomainEnum.None) continue;
 
+
                 var sponge = new DomainSponge(config, entity, domain);
                 RegisterDomain(domain, sponge);
 
                 sponge.DomainMaxed += (d) => DomainMaxed?.Invoke(d);
-                sponge.OnTierUp += (d) => TierUp?.Invoke(d);
             }
 
 
@@ -55,7 +55,7 @@ namespace zenith.Core
 
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
 
-
+            
 
             Log("[EXIT] Finished Calling ProcessDomain");
         }
@@ -65,7 +65,7 @@ namespace zenith.Core
             {
                 string keyCounter = $"zenith.{kv.Key}.counter";
                 string keyTier = $"zenith.{kv.Key}.tier";
-                kv.Value.Counter = entity.WatchedAttributes.GetAsInt(keyCounter);
+                kv.Value.Counter = entity.WatchedAttributes.GetFloat(keyCounter);
                 kv.Value.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
             }
         }
@@ -76,10 +76,9 @@ namespace zenith.Core
 
         void RegisterDomain(DomainEnum domain, DomainSponge sponge)
         {
-            if (domains.ContainsKey(domain))
+            if (!domains.TryAdd(domain, sponge))
             {
                 Log($"[WARN] Domain {domain} already registered");
-                return;
             }
 
             domains[domain] = sponge;
