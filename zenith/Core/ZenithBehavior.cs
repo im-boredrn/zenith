@@ -60,6 +60,7 @@ namespace zenith.Core
 
         public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
+        private ZenithSystems systems;
 
 
         private DomainManager domainManager;
@@ -87,11 +88,14 @@ namespace zenith.Core
 
             domainManager = new DomainManager(entity, config); // assign the field
 
+            systems = new ZenithSystems(entity, config);
+
 
             domainManager.LoadDomains();
 
             // Wire events
             domainManager.DomainMaxed += progressionManager.HandleDomainMaxed;
+            
             domainManager.TierUp += (d) =>
             {
                 DomainEnum domain = d.Domain;
@@ -127,10 +131,9 @@ namespace zenith.Core
                 return;
             }
             domainManager.ProcessDomain(domain, ref damage);
-
             var domainState = domainManager.domains[domain];
 
-            Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage}");
+            Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage} ");
             
         }
        

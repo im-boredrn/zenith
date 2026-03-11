@@ -27,15 +27,27 @@ namespace zenith.Core
         private int EvolutionPoints;
 
         private readonly Entity entity;
-
-
+        private Dictionary<DomainEnum, IAbilitiesManager> abilities;
         private EntityPlayer Player => entity as EntityPlayer;
         public ProgressionManager(Entity entity)
         {
             this.entity = entity;
+
+
+            abilities = new Dictionary<DomainEnum, IAbilitiesManager>()
+    {
+        { DomainEnum.Kinetic, new KineticAbilities() },
+        { DomainEnum.Thermal, new ThermalAbilities() },
+        { DomainEnum.Cold, new ColdAbilities() },
+        {DomainEnum.Toxic, new ToxicAbilities() },
+         {DomainEnum.Hemorrhage, new HemorrhageAbilities() }
+    };
+
+
+            OnStageUp += ApplyPassives
         }
 
-   
+
         /// <summary>
         /// Handles the event when the domain reaches its maximum capacity by incrementing domain points and evaluating
         /// stage progression.
@@ -95,11 +107,15 @@ namespace zenith.Core
                 DomainPoints = 0;
                 stageIncreased = true;
 
-                if (stageIncreased) OnStageUpSave();
+                if (stageIncreased) 
+                {
+                    OnStageUp?.Invoke(this);
+                    OnStageUpSave();
+                }
 
             }
         }
-
+        public event Action<ProgressionManager> OnStageUp;
         public float GetStageMultiplier()
         {
             if (Stage == 1)
@@ -111,6 +127,22 @@ namespace zenith.Core
 
             return 1;
         }
+
+        public void ApplyPassives(DomainEnum domain,EntityProperties entityProperties, ProgressionManager progressionManager)
+        {
+            if (Stage != 2)
+            {
+                Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return; 
+            }
+
+            if (abilities.TryGetValue(domain, out var ability))
+
+            ability.Apply(entityProperties);
+            Log($"[DATA] {ability} applied!");
+        }
+
+         
 
         /// <summary>
         /// Handles the event when the player's stage increases by notifying the player and saving their progression.

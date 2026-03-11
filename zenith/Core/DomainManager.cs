@@ -12,7 +12,7 @@ using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core
 {
-    internal class DomainManager
+    public class DomainManager
     {
         public bool DebugMode => ZenithSettings.ZDebugMode;
         public bool ContributedToEvolution { get; private set; } = false;

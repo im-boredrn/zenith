@@ -5,6 +5,6 @@
   "side": "universal",
   "authors": [ "Kortah" ],
   "description": "",
-  "version": "1.2.0",
-  "dependencies": { "game": "" }
+  "version": "1.2.1",
+  "dependencies": { "game": "1.21.0" }
 }
