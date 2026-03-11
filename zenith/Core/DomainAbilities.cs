@@ -14,36 +14,37 @@ namespace zenith.Core
     internal class KineticAbilities : IAbilitiesManager
     {
 
-        public void Apply( EntityProperties entityProperties)
+        public void Apply( EntityPlayer entityPlayer) 
         {
-            entityProperties.KnockbackResistance *= 22f;
+            entityPlayer.Properties.KnockbackResistance *= 2f;
+            entityPlayer.Properties.FallDamageMultiplier *= 0.5f;
         }
     }
 
     internal class ThermalAbilities : IAbilitiesManager
     {
-        public void Apply(EntityProperties entityProperties)
+        public void Apply(EntityPlayer entityPlayer)
         {
 
         }
     }
     internal class ToxicAbilities : IAbilitiesManager
     {
-        public void Apply(EntityProperties entityProperties)
+        public void Apply(EntityPlayer entityPlayer)
         {
 
         }
     }
     internal class ColdAbilities : IAbilitiesManager
     {
-        public void Apply(EntityProperties entityProperties)
+        public void Apply(EntityPlayer entityPlayer)
         {
 
         }
     }
     internal class HemorrhageAbilities : IAbilitiesManager
     {
-        public void Apply(EntityProperties entityProperties)
+        public void Apply(EntityPlayer entityPlayer)
         {
 
         }

@@ -10,6 +10,6 @@ namespace zenith.Core
 {
     public interface IAbilitiesManager
     {
-        public void Apply(EntityProperties entityProperties);
+        public void Apply(EntityPlayer entityPlayer);
     }
 }

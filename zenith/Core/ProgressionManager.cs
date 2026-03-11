@@ -44,7 +44,6 @@ namespace zenith.Core
     };
 
 
-            OnStageUp += ApplyPassives
         }
 
 
@@ -109,7 +108,7 @@ namespace zenith.Core
 
                 if (stageIncreased) 
                 {
-                    OnStageUp?.Invoke(this);
+                    ApplyPassivesForAllDomains();
                     OnStageUpSave();
                 }
 
@@ -128,7 +127,7 @@ namespace zenith.Core
             return 1;
         }
 
-        public void ApplyPassives(DomainEnum domain,EntityProperties entityProperties, ProgressionManager progressionManager)
+        public void ApplyPassives(DomainEnum domain)
         {
             if (Stage != 2)
             {
@@ -138,7 +137,7 @@ namespace zenith.Core
 
             if (abilities.TryGetValue(domain, out var ability))
 
-            ability.Apply(entityProperties);
+            ability.Apply(Player);
             Log($"[DATA] {ability} applied!");
         }
 
@@ -192,7 +191,13 @@ namespace zenith.Core
                 entity.WatchedAttributes.MarkPathDirty(keyEPoints);
             
         }
-
+        private void ApplyPassivesForAllDomains()
+        {
+            foreach (var domain in abilities.Keys)
+            {
+                ApplyPassives(domain);
+            }
+        }
 
 
         /// <summary>

@@ -72,7 +72,7 @@ namespace zenith.Core
 
 
         public event Action<DomainSponge> DomainMaxed;
-        public event Action<DomainSponge> TierUp;
+        public event Action<DomainSponge> TierUp; // DONT TOUCH
 
         void RegisterDomain(DomainEnum domain, DomainSponge sponge)
         {
