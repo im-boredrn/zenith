@@ -62,9 +62,6 @@ namespace zenith.Core
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
         private ZenithSystems systems;
 
-
-        private DomainManager domainManager;
-        private ProgressionManager progressionManager;
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {     
             if (entity.HasBehavior<ZenithBehavior>()) return;      
@@ -80,29 +77,8 @@ namespace zenith.Core
             }
 
 
-
-            ModConfig config = new ModConfig();
-
-            // Create Progression Manager With Entity
-            progressionManager = new ProgressionManager(entity); // assign the field
-
-            domainManager = new DomainManager(entity, config); // assign the field
-
-            systems = new ZenithSystems(entity, config);
-
-
-            domainManager.LoadDomains();
-
-            // Wire events
-            domainManager.DomainMaxed += progressionManager.HandleDomainMaxed;
-            
-            domainManager.TierUp += (d) =>
-            {
-                DomainEnum domain = d.Domain;
-
-                Log($"[EVENT] {domain} tier increased to {d.Tier}");
-
-            };
+            systems = new ZenithSystems(entity, new ModConfig());
+            systems.DomainManager.LoadDomains();           
 
             EntityBehaviorHealth healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
@@ -130,8 +106,8 @@ namespace zenith.Core
                 Log("[DATA] Returning domain Not found  ");
                 return;
             }
-            domainManager.ProcessDomain(domain, ref damage);
-            var domainState = domainManager.domains[domain];
+            systems.DomainManager.ProcessDomain(domain, ref damage);
+            var domainState = systems.DomainManager.domains[domain];
 
             Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage} ");
             
@@ -169,10 +145,10 @@ namespace zenith.Core
 
             if (domain == DomainEnum.None) return damage;
 
-            var domainstate = domainManager.domains[domain];
+            var domainstate = systems.DomainManager.domains[domain];
 
             float domainResistance = domainstate.GetResistanceValue();
-            float stageMultiplier = progressionManager.GetStageMultiplier();
+            float stageMultiplier = systems.ProgressionManager.GetStageMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage = damage / (1f + finalResistance);

@@ -25,6 +25,7 @@ namespace zenith.Config
         public static float ZStageResistanceMultiplier2 => Config?.StageResistanceMultiplier2 ?? 1.2f;
         public static float ZStageResistanceMultiplier3 => Config?.StageResistanceMultiplier3 ?? 1.4f;
         public static bool ZDebugMode => Config?.GlobalDebugMode ?? false;
+        public static float ZRegenAmount => Config?.RegenAmount ?? 0.25f;
 
 
         

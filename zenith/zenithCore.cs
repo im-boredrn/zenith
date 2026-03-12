@@ -1,11 +1,16 @@
-﻿using zenith.Config;
+﻿using Cairo;
 using HarmonyLib;
+using System;
+using System.Numerics;
 using Vintagestory.API.Client;
-using Vintagestory.API.Server;
-using Vintagestory.API.Config;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
+using Vintagestory.API.Server;
+using Vintagestory.GameContent;
+using zenith.Config;
 using zenith.Core;
+using zenith.Core.Abilities;
 
 namespace zenith;
 public class zenithCore : ModSystem
@@ -17,7 +22,7 @@ public class zenithCore : ModSystem
     public static ICoreAPI Api { get; private set; }
     public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
-
+    private long tickListenerId;
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
@@ -49,10 +54,22 @@ public class zenithCore : ModSystem
             }, "AttachZenithBehavior");
         };
 
-    
+        tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
     }
-        
-    
+
+    private void OnServerTick(float dt)
+    {
+
+            foreach (IServerPlayer player in sapi?.World.AllOnlinePlayers ?? Array.Empty<IServerPlayer>())
+            {
+                var entity = player?.Entity as EntityPlayer;
+                if (entity == null || entity.World == null) continue; // skip if null       
+
+
+           // TODO Find a way to implement this without creating a new object here systems.TickPassives();
+        }
+
+    }
 
     public override void Dispose()
     {

@@ -9,6 +9,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Abilities;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core
@@ -20,6 +21,8 @@ namespace zenith.Core
     // Evolution Points 
     public class ProgressionManager
     {
+
+        
         private bool DebugMode => ZenithSettings.ZDebugMode;
         private int DomainPoints = 0;
         private int Stage = 1;
@@ -27,19 +30,23 @@ namespace zenith.Core
         private int EvolutionPoints;
 
         private readonly Entity entity;
-        private Dictionary<DomainEnum, IAbilitiesManager> abilities;
+        private Dictionary<DomainEnum, IAttackAbilities> attackAbilities;
+        private Dictionary<DomainEnum, IPassives> Passives;
         private EntityPlayer Player => entity as EntityPlayer;
+
+        // Constructor
         public ProgressionManager(Entity entity)
         {
             this.entity = entity;
 
 
-            abilities = new Dictionary<DomainEnum, IAbilitiesManager>()
+   
+
+            Passives = new Dictionary<DomainEnum, IPassives>()
     {
         { DomainEnum.Kinetic, new KineticAbilities() },
         { DomainEnum.Thermal, new ThermalAbilities() },
         { DomainEnum.Cold, new ColdAbilities() },
-        {DomainEnum.Toxic, new ToxicAbilities() },
          {DomainEnum.Hemorrhage, new HemorrhageAbilities() }
     };
 
@@ -135,7 +142,7 @@ namespace zenith.Core
                 return; 
             }
 
-            if (abilities.TryGetValue(domain, out var ability))
+            if (Passives.TryGetValue(domain, out var ability))
 
             ability.Apply(Player);
             Log($"[DATA] {ability} applied!");
@@ -193,7 +200,7 @@ namespace zenith.Core
         }
         private void ApplyPassivesForAllDomains()
         {
-            foreach (var domain in abilities.Keys)
+            foreach (var domain in Passives.Keys)
             {
                 ApplyPassives(domain);
             }
