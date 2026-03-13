@@ -15,6 +15,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Abilities;
 
 namespace zenith.Core
 {
@@ -60,7 +61,7 @@ namespace zenith.Core
 
         public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
-        private ZenithSystems systems;
+        public ZenithSystems systems;
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {     
@@ -93,6 +94,10 @@ namespace zenith.Core
 
         }
 
+        public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
+        {
+            systems.ProgressionManager.ApplyAttackAbilitiesForAllDomains(source, targetEntity);
+        }
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {

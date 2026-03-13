@@ -10,6 +10,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core
@@ -30,27 +31,11 @@ namespace zenith.Core
         private int EvolutionPoints;
 
         private readonly Entity entity;
-        private Dictionary<DomainEnum, IAttackAbilities> attackAbilities;
-        private Dictionary<DomainEnum, IPassives> Passives;
         private EntityPlayer Player => entity as EntityPlayer;
-
         // Constructor
-        public ProgressionManager(Entity entity)
+        public ProgressionManager(Entity entity )
         {
             this.entity = entity;
-
-
-   
-
-            Passives = new Dictionary<DomainEnum, IPassives>()
-    {
-        { DomainEnum.Kinetic, new KineticAbilities() },
-        { DomainEnum.Thermal, new ThermalAbilities() },
-        { DomainEnum.Cold, new ColdAbilities() },
-         {DomainEnum.Hemorrhage, new HemorrhageAbilities() }
-    };
-
-
         }
 
 
@@ -136,19 +121,59 @@ namespace zenith.Core
 
         public void ApplyPassives(DomainEnum domain)
         {
-            if (Stage != 2)
+
+            if (!CanUseAbilities())
             {
                 Log($"[DATA] Current Stage is : {Stage} | Returning...");
                 return; 
             }
 
-            if (Passives.TryGetValue(domain, out var ability))
 
-            ability.Apply(Player);
-            Log($"[DATA] {ability} applied!");
+
+            var passive = abilityFactory.CreatePassives(domain);
+            if(passive != null)
+            passive.Apply(Player);
+
+            Log($"[DATA] {domain} passive applied!"); ;
         }
 
-         
+        public void TickPassives()
+        {
+            if (!CanUseAbilities())
+            {
+                Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return;
+            }
+            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
+            {
+                var passive = abilityFactory.CreatePassives(domain);
+                passive?.Tick(Player);
+            }
+        }
+
+
+        public void HandleAttack(DomainEnum domain, DamageSource source, EntityAgent target)
+        {
+            if (!CanUseAbilities()) 
+            {
+                Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return;
+            }
+
+            var attack = abilityFactory.CreateAttack(domain);
+
+            if(attack != null)
+            attack.OnAttack(source, target);
+        }
+
+        private AbilityFactory abilityFactory;
+
+        public void SetFactory(AbilityFactory factory)
+        {
+            this.abilityFactory = factory;
+        }
+
+
 
         /// <summary>
         /// Handles the event when the player's stage increases by notifying the player and saving their progression.
@@ -200,12 +225,34 @@ namespace zenith.Core
         }
         private void ApplyPassivesForAllDomains()
         {
-            foreach (var domain in Passives.Keys)
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
             {
+                if (domain == DomainEnum.None) continue;
                 ApplyPassives(domain);
             }
         }
 
+        public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
+        {
+            
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
+            {
+                if (domain == DomainEnum.None) continue;
+
+
+                HandleAttack(domain, source, targetEntity );
+            }
+        }
+        private bool CanUseAbilities()
+        {
+            if (Stage < 2)
+            {
+                Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Logs a warning message to the world logger if debug mode is enabled.

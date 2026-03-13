@@ -11,11 +11,17 @@ namespace zenith.Core.Abilities
   
     internal class ThermalAttack : IAttackAbilities
     {
-        ProgressionManager ProgressionManager;  
-        public void OnAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
+        ProgressionManager progressionManager;  
+
+        public ThermalAttack(ProgressionManager progressionManager)
+        {
+            this.progressionManager = progressionManager;
+        }
+
+        public void OnAttack(DamageSource source, EntityAgent targetEntity)
         {
             float baseChance = 0.2f; // 20% chance on stage 1
-            float stageMult = ProgressionManager.GetStageMultiplier();
+            float stageMult = progressionManager.GetStageMultiplier();
 
             float finalChance = Math.Min(1f, baseChance * stageMult); // max 100%
             if (targetEntity.World.Rand.NextDouble() < finalChance)
@@ -24,4 +30,38 @@ namespace zenith.Core.Abilities
             }
          }
     }
+
+    internal class HemorrhageAttack : IAttackAbilities
+    {
+        public void OnAttack(DamageSource source, EntityAgent targetEntity )
+        {
+
+        }
+    }
+
+    internal class KineticAttack : IAttackAbilities
+    {
+        public void OnAttack(DamageSource source, EntityAgent targetEntity)
+        {
+
+        }
+    }
+
+    internal class ColdAttack : IAttackAbilities
+    {
+        public void OnAttack(DamageSource source, EntityAgent targetEntity)
+        { }
+    }
+    internal class ToxicAttack : IAttackAbilities
+    {
+        public void OnAttack(DamageSource source, EntityAgent targetEntity)
+        { }
+    }
+
+    internal class DrownAttack : IAttackAbilities
+    {
+        public void OnAttack(DamageSource source, EntityAgent targetEntity)
+        { }
+    }
+
 }

@@ -60,16 +60,20 @@ public class zenithCore : ModSystem
     private void OnServerTick(float dt)
     {
 
-            foreach (IServerPlayer player in sapi?.World.AllOnlinePlayers ?? Array.Empty<IServerPlayer>())
+        foreach (var player in sapi.World.AllOnlinePlayers)
+        {
+            var entityPlayer = player.Entity as EntityPlayer;
+            if (entityPlayer == null) continue;
+
+            var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
+            if (zenithBehavior?.systems != null)
             {
-                var entity = player?.Entity as EntityPlayer;
-                if (entity == null || entity.World == null) continue; // skip if null       
-
-
-           // TODO Find a way to implement this without creating a new object here systems.TickPassives();
+                zenithBehavior.systems.ProgressionManager.TickPassives();
+            }
         }
-
     }
+
+    
 
     public override void Dispose()
     {
@@ -79,5 +83,10 @@ public class zenithCore : ModSystem
         ModId = null;
         Api = null;
         base.Dispose();
+
+        if (tickListenerId > 0)
+        {
+            sapi.Event.UnregisterGameTickListener(tickListenerId);
+        }
     }
 }

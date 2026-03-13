@@ -14,12 +14,12 @@ namespace zenith.Core.Abilities
         void Tick(EntityPlayer entityPlayer);  // called every server tick
     }
 
-    internal interface IAttackAbilities
+    public interface IAttackAbilities
     {
-        void OnAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled);
+        void OnAttack(DamageSource source, EntityAgent targetEntity );
     }
 
-    internal interface IActiveAbilites
+    public interface IActiveAbilites
     {
         void Activate();
     }

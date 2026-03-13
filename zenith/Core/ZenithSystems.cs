@@ -7,6 +7,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core
@@ -19,6 +20,7 @@ namespace zenith.Core
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
         public Dictionary<DomainEnum, IPassives> Passives;
+        public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
@@ -26,17 +28,27 @@ namespace zenith.Core
             {
             this.entity = entity;
 
+            ProgressionManager = new ProgressionManager(entity);
+
+            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager);
+
+            ProgressionManager.SetFactory(abilityFactory);
+
+           
+
+            Passives = Enum.GetValues<DomainEnum>()
+    .Cast<DomainEnum>()
+    .Where(d => d != DomainEnum.None) // skip None
+    .ToDictionary(d => d, d => abilityFactory.CreatePassives(d));
+
+            Attack = Enum.GetValues(typeof(DomainEnum))
+                .Cast<DomainEnum>()
+                .Where(d => d != DomainEnum.None)
+                .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
+            
+
 
             DomainManager = new DomainManager(entity, modConfig);
-                ProgressionManager = new ProgressionManager(entity);
-
-            Passives = new Dictionary<DomainEnum, IPassives>()
-    {
-        { DomainEnum.Kinetic, new KineticAbilities() },
-        { DomainEnum.Thermal, new ThermalAbilities() },
-        { DomainEnum.Cold, new ColdAbilities() },
-         {DomainEnum.Hemorrhage, new HemorrhageAbilities() }
-    };
 
             WireEvents();
             }
@@ -52,12 +64,13 @@ namespace zenith.Core
             };
         }
 
-        public void TickPassives()
+
+        public void OnServerTick(float dt)
         {
-            foreach (var passive in Passives.Values)
-            {
-                passive.Tick(Player); // called every server tick
-            }
+            var player = entity as EntityPlayer;
+            if (player == null) return;
+
+            ProgressionManager.TickPassives();
         }
         private void Log(string message)
         {

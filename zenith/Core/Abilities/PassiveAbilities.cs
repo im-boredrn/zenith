@@ -13,13 +13,13 @@ namespace zenith.Core.Abilities
 {
   
 
-    internal class KineticAbilities : IPassives
+    internal class KineticPassive : IPassives
     {
 
         public void Apply( EntityPlayer entityPlayer) 
         {
             entityPlayer.Properties.KnockbackResistance *= 2f;
-            entityPlayer.Properties.FallDamageMultiplier *= 0.0f;
+            entityPlayer.Properties.FallDamage = false;
         }
 
       public  void Tick(EntityPlayer entityPlayer)
@@ -27,18 +27,28 @@ namespace zenith.Core.Abilities
         }
     }
 
-    internal class ThermalAbilities : IPassives
+    internal class ThermalPassive : IPassives
     {
         public void Apply(EntityPlayer entityPlayer)
         {
-           
+            
         }
         public void Tick(EntityPlayer entityPlayer)
         {
         }
     }
+
+    internal class ToxicPassive : IPassives
+    {
+        public void Apply(EntityPlayer entityPlayer)
+        { }
+
+        public void Tick(EntityPlayer entityPlayer)
+        { }
+
+    }
    
-    internal class ColdAbilities : IPassives
+    internal class ColdPassive : IPassives
     {
         public void Apply(EntityPlayer entityPlayer)
         {
@@ -48,7 +58,7 @@ namespace zenith.Core.Abilities
         {
         }
     }
-    internal class HemorrhageAbilities : IPassives
+    internal class HemorrhagePassive : IPassives
     {
         public void Apply(EntityPlayer entityPlayer)
         {
@@ -69,5 +79,16 @@ namespace zenith.Core.Abilities
         }
     }
 
-   
+    internal class DrownPassive : IPassives
+    {
+        public void Apply(EntityPlayer entityPlayer)
+        { }
+
+        public void Tick(EntityPlayer entityPlayer)
+        { }
+    }
+
+
+
+
 }

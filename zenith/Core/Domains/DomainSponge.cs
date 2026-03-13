@@ -11,7 +11,7 @@ using Vintagestory.API.Server;
 using zenith.Config;
 using static zenith.Core.ZenithBehavior;
 
-namespace zenith.Core
+namespace zenith.Core.Domains
 {
     //Domains store only:
 
