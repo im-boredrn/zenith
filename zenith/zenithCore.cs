@@ -42,7 +42,7 @@ public class zenithCore : ModSystem
 
     public override void StartServerSide(ICoreServerAPI api)
     {
-        // Always fix warnings before debugging your code. Invisible Entities was not the fault of Zenith
+        // Always fix VintageStory Console Warnings before debugging your code. Invisible Entities was not the fault of Zenith
         sapi = api;
         api.Event.PlayerNowPlaying += (IServerPlayer player) =>
         {
@@ -56,13 +56,47 @@ public class zenithCore : ModSystem
             }, "AttachZenithBehavior");
         };
 
-        tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
+        // tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
     }
 
     public override void StartClientSide(ICoreClientAPI api)
     {
-        ZenithGui = new ZenithGui()
+        
+        api.Event.PlayerJoin += (IClientPlayer player) =>
+        {
+            api.Event.EnqueueMainThreadTask(() =>
+            {
+                if (!player.Entity.HasBehavior<ZenithBehavior>())
+                {
+                    // Pass capi here so GUI can be initialized
+                    player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
+                    api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
+                }
+            }, "AttachZenithBehavior");
+
+        };
+
+        // Register hotkey once, at client start
+        api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("opendomain", comb =>
+        {
+            var player = api.World.Player?.Entity as EntityPlayer;
+            if (player == null) return false;
+
+            var behavior = player.GetBehavior<ZenithBehavior>();
+            if (behavior?.systems?.ZenithGui != null)
+            {
+                behavior.systems.ZenithGui.Toggle();
+                return true;
+            }
+
+            return false;
+        });
     }
+
+
+    
+    
 
     private void OnServerTick(float dt)
     {

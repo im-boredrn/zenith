@@ -53,18 +53,17 @@ namespace zenith.GUI
 
             ElementBounds buttonBounds2 = buttonBounds.FlatCopy().FixedUnder(buttonBounds, 5);
 
-            // Composer builds the UI
+            // Composer builds the UI TODO Add DropDown
             SingleComposer = capi.Gui
-                .CreateCompo("ExampleDialog", dialogBounds) // Then Chain Elements
+                .CreateCompo("OrganismTracker", dialogBounds) // Then Chain Elements
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
-                .AddDialogTitleBar("Domain Control Panel", OnGuiClosed) // makes it Draggable
-                .AddDynamicText($"Stage : {Stage}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext")
-                .AddButton("Update Stats", OnClickUpdateStats, buttonBounds)
+                .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
+                .AddDynamicText($"Stage : {Stage}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext") // This should Stay since its an overall
                 .Compose(); // Finalize
         }
 
 
-       public void UpdateStats() // TODO MAKE THIS CALLED ONSTAGEUP AND TIERUP
+       public void UpdateStats() 
         {
             var Stage = progressionManager.Stage;
             var DomainPoints = progressionManager.DomainPoints;
@@ -79,11 +78,7 @@ namespace zenith.GUI
         }
 
 
-        bool OnClickUpdateStats()
-        {
-            UpdateStats();
-            return true;
-        }
+      
 
         public override void OnGuiOpened()
         {

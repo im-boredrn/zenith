@@ -39,6 +39,12 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
 
+            // GUI
+            if (capi != null)
+            {
+                ZenithGui = new ZenithGui(capi, ProgressionManager);
+
+            }
 
             Passives = Enum.GetValues<DomainEnum>()
     .Cast<DomainEnum>()
@@ -53,9 +59,7 @@ namespace zenith.Core
 
             DomainManager = new DomainManager(entity, modConfig);
 
-            // GUI
-            if (capi != null)
-                ZenithGui = new ZenithGui(capi, ProgressionManager);
+            
 
 
             WireEvents();
@@ -64,6 +68,10 @@ namespace zenith.Core
             void WireEvents()
             {
             DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed;
+            DomainManager.DomainMaxed += (d) =>
+            {
+                ZenithGui?.UpdateStats();
+            };
             DomainManager.TierUp += (d) =>
             {
                 DomainEnum domain = d.Domain;

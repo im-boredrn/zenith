@@ -63,34 +63,37 @@ namespace zenith.Core
         public ZenithSystems systems;
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
-        {     
-            if (entity.HasBehavior<ZenithBehavior>()) return;      
-         
-             if (entity.World.Side == EnumAppSide.Client)
+        {
+            if (entity.World.Side == EnumAppSide.Server) // If server Side
             {
-                Log($"Current Side {entity.World.Side} returning");
-                return;
-            }
-            else if (entity.World.Side == EnumAppSide.Server)
-            {
-                (entity.World.Api as ICoreServerAPI)?.Logger.Warning($"Zenith behavior attached to {entity.World.Side}");
-            }
+                var sapi = entity.World.Api as ICoreServerAPI;
+                sapi?.Logger.Warning("Zenith behavior attached to SERVER");
 
+                // Server-only systems
+                systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
+                systems.DomainManager.LoadDomains();
 
-            systems = new ZenithSystems(entity, new ModConfig());
-            systems.DomainManager.LoadDomains();           
-
-            EntityBehaviorHealth healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
-            if (healthBehavior != null)
-            {
-
-                healthBehavior.onDamaged += (damage, source) =>
+                // Hook health behavior
+                var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
+                if (healthBehavior != null)
                 {
-                    return ReduceDamage(damage, source);
-                };
+                    healthBehavior.onDamaged += (damage, source) =>
+                    {
+                        return ReduceDamage(damage, source);
+                    };
+                }
+
+                // Register server tick listener
+                sapi.Event.RegisterGameTickListener(dt => systems.OnServerTick(dt), 1000);
             }
+            else if (entity.World.Side == EnumAppSide.Client)
+            {
+                var capi = entity.World.Api as ICoreClientAPI;
+                capi?.Logger.Notification("Zenith behavior attached to CLIENT");
 
-
+                // Client-only systems (GUI)
+                systems = new ZenithSystems(entity, new ModConfig(), capi);
+            }
         }
 
         public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
