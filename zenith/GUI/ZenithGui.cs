@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
@@ -33,6 +34,16 @@ namespace zenith.GUI
             var Stage = progressionManager.Stage;
             var DomainPoints = progressionManager.DomainPoints;
 
+            // Compute stage name based on the Stage int
+            string stageName = Stage switch
+            {
+                1 => "Adapting Organism",
+                2 => "Hyper-Adaptive Organism",
+                3 => "Paragon of Seraphs",
+                _ => "Unknown"
+            };
+
+
             ElementBounds dialogBounds =
      ElementBounds.Fixed(0, 0, 600, 600)
      .WithAlignment(EnumDialogArea.CenterMiddle);
@@ -53,12 +64,12 @@ namespace zenith.GUI
 
             ElementBounds buttonBounds2 = buttonBounds.FlatCopy().FixedUnder(buttonBounds, 5);
 
-            // Composer builds the UI TODO Add DropDown
+            // Composer builds the UI TODO Add DropDown | Fix Stage Cutoff Issue
             SingleComposer = capi.Gui
                 .CreateCompo("OrganismTracker", dialogBounds) // Then Chain Elements
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
-                .AddDynamicText($"Stage : {Stage}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext") // This should Stay since its an overall
+                .AddDynamicText($"Stage : {Stage}({stageName})\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext") // This should Stay since its an overall
                 .Compose(); // Finalize
         }
 
@@ -67,12 +78,19 @@ namespace zenith.GUI
         {
             var Stage = progressionManager.Stage;
             var DomainPoints = progressionManager.DomainPoints;
+            string stageName = Stage switch
+            {
+                1 => "Adapting Organism",
+                2 => "Hyper-Adaptive Organism",
+                3 => "Paragon of Seraphs",
+                _ => "Unknown"
+            };
 
             capi.Logger.Warning("UpdateStats Called!");
             if (SingleComposer != null)
             {
                 SingleComposer.GetDynamicText("statstext")
-                    .SetNewText($"Stage : {Stage}\nDomainPoints: {DomainPoints}");
+                    .SetNewText($"Stage : {Stage}({stageName})\nDomainPoints: {DomainPoints}");
             }
 
         }
