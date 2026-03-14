@@ -11,6 +11,7 @@ using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core;
 using zenith.Core.Abilities;
+using zenith.GUI;
 
 namespace zenith;
 public class zenithCore : ModSystem
@@ -20,6 +21,7 @@ public class zenithCore : ModSystem
     public static ILogger Logger { get; private set; }
     public static string ModId { get; private set; }
     public static ICoreAPI Api { get; private set; }
+    public ZenithGui ZenithGui;
     public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
     private long tickListenerId;
@@ -55,6 +57,11 @@ public class zenithCore : ModSystem
         };
 
         tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
+    }
+
+    public override void StartClientSide(ICoreClientAPI api)
+    {
+        ZenithGui = new ZenithGui()
     }
 
     private void OnServerTick(float dt)

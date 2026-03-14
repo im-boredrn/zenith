@@ -25,8 +25,8 @@ namespace zenith.Core
 
         
         private bool DebugMode => ZenithSettings.ZDebugMode;
-        private int DomainPoints = 0;
-        private int Stage = 1;
+        public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
+        public int Stage { get; private set; }
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
@@ -223,6 +223,21 @@ namespace zenith.Core
                 entity.WatchedAttributes.MarkPathDirty(keyEPoints);
             
         }
+
+        public void LoadProgression()
+        {
+            string keyStage = "zenith." + entity.GetName() + ".Stage";
+            string keyDPoints = "zenith." + entity.GetName() + ".DomainPoints";
+            string keyEPoints = "zenith." + entity.GetName() + ".EvolutionPoints";
+
+            // Defaults if nothing was saved yet
+            Stage = entity.WatchedAttributes.GetInt(keyStage, 1);
+            DomainPoints = entity.WatchedAttributes.GetInt(keyDPoints, 0);
+            EvolutionPoints = entity.WatchedAttributes.GetInt(keyEPoints, 0);
+
+            Log($"[LOAD] Stage: {Stage}, DomainPoints: {DomainPoints}, EvolutionPoints: {EvolutionPoints}");
+        }
+
         private void ApplyPassivesForAllDomains()
         {
             foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())

@@ -57,7 +57,6 @@ namespace zenith.Core
 
         {EnumDamageType.Suffocation, DomainEnum.Drown }
 };
-        // Eventually Add Regen Domain unlock for Stage 3
 
         public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.

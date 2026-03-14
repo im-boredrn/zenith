@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Domains;
+using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core
@@ -19,22 +21,24 @@ namespace zenith.Core
 
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
+        public ZenithGui ZenithGui { get; }
+
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
-        public ZenithSystems(Entity entity, ModConfig modConfig)
+        public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
             this.entity = entity;
 
+            // Core managers
             ProgressionManager = new ProgressionManager(entity);
-
             AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager);
-
             ProgressionManager.SetFactory(abilityFactory);
+            ProgressionManager.LoadProgression();
 
-           
+
 
             Passives = Enum.GetValues<DomainEnum>()
     .Cast<DomainEnum>()
@@ -45,10 +49,14 @@ namespace zenith.Core
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
-            
-
+           
 
             DomainManager = new DomainManager(entity, modConfig);
+
+            // GUI
+            if (capi != null)
+                ZenithGui = new ZenithGui(capi, ProgressionManager);
+
 
             WireEvents();
             }
@@ -59,8 +67,13 @@ namespace zenith.Core
             DomainManager.TierUp += (d) =>
             {
                 DomainEnum domain = d.Domain;
-
+                ZenithGui?.UpdateStats();
                 Log($"[EVENT] {domain} tier increased to {d.Tier}");
+            };
+
+            ProgressionManager.OnStageUp += (pm) =>
+            {
+                ZenithGui?.UpdateStats();
             };
         }
 

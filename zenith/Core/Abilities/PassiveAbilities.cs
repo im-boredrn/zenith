@@ -66,9 +66,18 @@ namespace zenith.Core.Abilities
         }
         public void Tick(EntityPlayer entityPlayer)
         {
+            
             var healthBehavior = entityPlayer.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior == null) return;
 
+
+            float halfHealth = healthBehavior.MaxHealth / 2f;
+
+            // Only continue if health is below or equal to half
+            if (healthBehavior.Health > halfHealth )
+            {
+                return;
+            }
 
 
             float regenAmount = ZenithSettings.ZRegenAmount;
