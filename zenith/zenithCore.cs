@@ -24,7 +24,7 @@ public class zenithCore : ModSystem
     public ZenithGui ZenithGui;
     public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
-    private long tickListenerId;
+    private readonly long tickListenerId;
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);

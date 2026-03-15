@@ -8,6 +8,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using zenith.Config;
+using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.Core.Domains
@@ -40,9 +41,9 @@ namespace zenith.Core.Domains
                 var sponge = new DomainSponge(config, entity, domain);
                 RegisterDomain(domain, sponge);
 
-                sponge.DomainMaxed += (d) => DomainMaxed?.Invoke(d);
             }
 
+          
 
         }
         public void ProcessDomain(DomainEnum domain, ref float damage) //#Processor
@@ -83,14 +84,12 @@ namespace zenith.Core.Domains
 
             domains[domain] = sponge;
 
-
-
             
                 sponge.OnTierUp += (s) =>
                 {
                     Log($"[EVENT] {domain} tier increased to {s.Tier}");
-                    
-                    var sapi = entity.World.Api as ICoreServerAPI;
+
+                     var sapi = entity.World.Api as ICoreServerAPI;
                     if (sapi == null) return;
 
                     
@@ -104,15 +103,25 @@ namespace zenith.Core.Domains
                     );
 
                     SaveDomains();
+                    TierUp?.Invoke(s);
                 };
 
-            
-            
-            
-            
+            sponge.DomainMaxed += (s) =>
+            {
+                var sapi = entity.World.Api as ICoreServerAPI;
+                if (sapi == null) return;
+                var player = Player.Player;
 
 
+                sapi.SendMessage(player,
+                    GlobalConstants.AllChatGroups,
+                    $"Domain Maxed!",
+                    EnumChatType.Notification
+                    );
 
+                DomainMaxed?.Invoke(s);
+                SaveDomains();
+            };
         }
 
      
@@ -138,6 +147,15 @@ namespace zenith.Core.Domains
                 sponge.Tier = 0;
             }
         }
+
+        public string[] GetDomainNames()
+        {
+            return domains.Keys.Select(d => d.ToString()).ToArray();
+        }
+
+        //domains.Keys // Get the Keys
+        //.Select(d => d.ToString()) // Convert Each Enum to string
+        //.ToArray(); // Convert to array
 
         private void Log(string message)
         {

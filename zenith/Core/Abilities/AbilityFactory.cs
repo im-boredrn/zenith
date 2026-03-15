@@ -27,7 +27,7 @@ namespace zenith.Core.Abilities
                 DomainEnum.Thermal => new ThermalPassive(),
                 DomainEnum.Cold => new ColdPassive(),
                 DomainEnum.Toxic => new ToxicPassive(),
-                DomainEnum.Hemorrhage => new HemorrhagePassive(),
+                DomainEnum.Bleed => new HemorrhagePassive(progressionManager),
                 DomainEnum.Drown => new DrownPassive(),
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };
@@ -46,7 +46,7 @@ namespace zenith.Core.Abilities
                 DomainEnum.Thermal => new ThermalAttack(progressionManager),
                 DomainEnum.Cold => new ColdAttack(),
                 DomainEnum.Toxic => new ToxicAttack(), // Could Add Poison if it exists
-                DomainEnum.Hemorrhage => new HemorrhageAttack(),
+                DomainEnum.Bleed => new HemorrhageAttack(),
                 DomainEnum.Drown => new DrownAttack(),
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };

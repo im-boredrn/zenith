@@ -60,6 +60,14 @@ namespace zenith.Core.Abilities
     }
     internal class HemorrhagePassive : IPassives
     {
+
+        ProgressionManager progressionManager;
+
+        public HemorrhagePassive(ProgressionManager progressionManager)
+        {
+            this.progressionManager = progressionManager;
+        }
+
         public void Apply(EntityPlayer entityPlayer)
         {
           
@@ -79,12 +87,13 @@ namespace zenith.Core.Abilities
                 return;
             }
 
+         
 
-            float regenAmount = ZenithSettings.ZRegenAmount;
+            float regenAmount = ZenithSettings.ZRegenAmount * progressionManager.GetStageMultiplier() ;
 
             healthBehavior.Health = Math.Min(healthBehavior.MaxHealth, healthBehavior.Health + regenAmount);
             healthBehavior.MarkDirty();
-            entityPlayer.World.Logger.Warning($"[DEBUG] RegenAmount: {ZenithSettings.ZRegenAmount}");
+            entityPlayer.World.Logger.Warning($"[DEBUG] RegenAmount: {regenAmount}");
         }
     }
 

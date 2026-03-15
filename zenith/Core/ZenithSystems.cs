@@ -22,6 +22,7 @@ namespace zenith.Core
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
         public ZenithGui ZenithGui { get; }
+        public DomainDetailsGUI DomainDetailsGUI { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
@@ -37,13 +38,13 @@ namespace zenith.Core
             AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager);
             ProgressionManager.SetFactory(abilityFactory);
             ProgressionManager.LoadProgression();
-
-
+            DomainManager = new DomainManager(entity, modConfig);
+            DomainManager.LoadDomains();
+           
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager);
-
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager);
             }
 
             Passives = Enum.GetValues<DomainEnum>()
@@ -57,7 +58,6 @@ namespace zenith.Core
                 .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
            
 
-            DomainManager = new DomainManager(entity, modConfig);
 
             
 

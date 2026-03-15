@@ -57,14 +57,7 @@ namespace zenith.Core
                 return;
 
             }
-            var player = Player.Player;
-
-
-            sapi.SendMessage(player,
-                GlobalConstants.AllChatGroups,
-                $"Domain Maxed!",
-                EnumChatType.Notification
-                );
+           
 
             if (Stage < 3)
             {
@@ -97,7 +90,7 @@ namespace zenith.Core
                 Stage++;
                 DomainPoints = 0;
                 stageIncreased = true;
-
+                OnStageUp?.Invoke(this);
                 if (stageIncreased) 
                 {
                     ApplyPassivesForAllDomains();
@@ -267,6 +260,17 @@ namespace zenith.Core
             }
 
             return true;
+        }
+        public string GetStageName(int stage)
+        {
+
+            return stage switch
+            {
+                1 => "Adapting Organism",
+                2 => "Hyper-Adaptive Organism",
+                3 => "Paragon of Seraphs",
+                _ => "Unknown"
+            };
         }
 
         /// <summary>

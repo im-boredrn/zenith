@@ -36,9 +36,10 @@ namespace zenith.Core.Domains
         private readonly Entity entity;
 
         public float Counter = 0;
-        public int Tier = 0;
+        public int Tier;
         public int OldTier;
-        private int MemoryLevel;
+        public bool IsMaxed = false;
+      //  private int MemoryLevel;
 
 
 
@@ -95,6 +96,7 @@ namespace zenith.Core.Domains
                 {
                     ContributedToEvolution = true;
                     DomainMaxed?.Invoke(this);
+                    IsMaxed = true;
                 }
             }
           

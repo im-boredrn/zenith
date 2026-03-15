@@ -27,7 +27,7 @@ namespace zenith.Core
             Thermal,
             Cold,
             Toxic,
-            Hemorrhage,
+            Bleed,
             Drown,
             None
 
@@ -50,8 +50,8 @@ namespace zenith.Core
     { EnumDamageType.Acid, DomainEnum.Toxic },
     { EnumDamageType.Poison, DomainEnum.Toxic },
 
-    { EnumDamageType.SlashingAttack, DomainEnum.Hemorrhage },
-    { EnumDamageType.PiercingAttack, DomainEnum.Hemorrhage },
+    { EnumDamageType.SlashingAttack, DomainEnum.Bleed },
+    { EnumDamageType.PiercingAttack, DomainEnum.Bleed },
 
     {EnumDamageType.Frost, DomainEnum.Cold },
 
@@ -72,7 +72,6 @@ namespace zenith.Core
                 // Server-only systems
                 systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
                 systems.DomainManager.LoadDomains();
-
                 // Hook health behavior
                 var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
                 if (healthBehavior != null)
