@@ -29,6 +29,7 @@ namespace zenith.Core
         private bool DebugMode => ZenithSettings.ZDebugMode;
         public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
         public int Stage { get; private set; }
+        public string StageName { get; private set; }
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
@@ -69,11 +70,13 @@ namespace zenith.Core
             if (Stage < 3)
             {
                 DomainPoints++;
+                SaveProgression();
                 Log($"[DATA] DomainPoints : {DomainPoints}");
             }
             else
             {
                 EvolutionPoints += 20;
+                SaveProgression();
             }
 
             CheckStageProgression();
@@ -212,6 +215,7 @@ namespace zenith.Core
             watchedZenith.SetInt("Stage", Stage);
             watchedZenith.SetInt("DomainPoints", DomainPoints);
             watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
+            watchedZenith.SetString("StageName", GetStageName(Stage));
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
@@ -225,13 +229,15 @@ namespace zenith.Core
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
+            var zenithTree = entity.WatchedAttributes.GetTreeAttribute("zenith");
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
             EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
-            
+             StageName = watchedZenith.GetString("StageName", GetStageName(Stage));
 
 
-            Log($"[LOAD] Stage: {Stage}, DomainPoints: {DomainPoints}, EvolutionPoints: {EvolutionPoints}");
+
+            Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
         }
 
         private void ApplyPassivesForAllDomains()
@@ -266,7 +272,7 @@ namespace zenith.Core
         }
         public string GetStageName(int stage)
         {
-
+            Stage = stage;
             return stage switch
             {
                 1 => "Adapting Organism",

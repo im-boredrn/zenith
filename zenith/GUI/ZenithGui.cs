@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core;
 using zenith.Core.Domains;
@@ -40,8 +41,9 @@ namespace zenith.GUI
         // 5. Close()
         public void SetupDialog()
         {
-            var Stage = progressionManager.Stage;
-            var DomainPoints = progressionManager.DomainPoints;
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
+            var Stage = zenith?.GetInt("Stage", 1) ?? 1;
+            var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
             string[] domainNames = domainManager.GetDomainNames();
 
@@ -180,9 +182,14 @@ namespace zenith.GUI
         public override void OnGuiClosed()
         {
             this.TryClose();
-            
+            progressionManager.OnProgressionChanged -= UpdateStats;
             DomainDetailsGUI? .TryClose(); 
             capi.Logger.Notification("Dialog closed");
+        }
+        private void Log(string message)
+        {
+            if (!DebugMode) return;
+            entity.World.Logger.Warning(message);
         }
 
     }
