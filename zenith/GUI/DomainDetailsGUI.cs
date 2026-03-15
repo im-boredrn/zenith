@@ -56,7 +56,7 @@ namespace zenith.GUI
         {
             if (!IsOpened())
             {
-                capi.Logger.Warning("[DomainGUI] DomainGUI isnt opened Returning");
+                Log("[DomainGUI] DomainGUI isnt opened Returning");
                     return;
             }
             var sponge = domainManager.domains[domain];
@@ -68,15 +68,15 @@ namespace zenith.GUI
             bool Status = domainTree?.GetBool("Maxed") ?? false;
             string newText = $"Tier: {Tier}\n Maxed: {Status}";
 
-            capi.Logger.Warning($"[CLIENT CHECK] Tier directly from entity: {Tier}");
-            capi.Logger.Warning($"[FLOW] UpdateDomainStatsCalled! Current Tier : {Tier} | Current Status: {Status}");
+            Log($"[CLIENT CHECK] Tier directly from entity: {Tier}");
+           Log($"[FLOW] UpdateDomainStatsCalled! Current Tier : {Tier} | Current Status: {Status}");
 
             if ( SingleComposer != null)
             {
                 SingleComposer.GetDynamicText("tiertext")
                     .SetNewText(newText,false,true,false);
             }
-            capi.Logger.Warning($"[DomainGUI] UpdateDomainStatsFinished! Current Tier : {Tier} | Current Status: {Status}");
+           Log($"[DomainGUI] UpdateDomainStatsFinished! Current Tier : {Tier} | Current Status: {Status}");
 
 
         }
@@ -104,6 +104,11 @@ namespace zenith.GUI
             base.OnGuiClosed(); // I just realized the syntax base most likely means its usual behavior before override im so fucking tired
             this.TryClose();
             this.Dispose(); 
+        }
+        private void Log(string message)
+        {
+            if (!DebugMode) return;
+            entity.World.Logger.Warning(message);
         }
     }
 }

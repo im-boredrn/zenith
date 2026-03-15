@@ -8,3 +8,4 @@ v1.3.0
 
 v1.3.1 
 - Added GUI for Tracking Organism State
+- Reworked Regen Limits On Stage 3

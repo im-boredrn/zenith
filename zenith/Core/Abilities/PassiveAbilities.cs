@@ -92,7 +92,6 @@ namespace zenith.Core.Abilities
             float regenAmount = ZenithSettings.ZRegenAmount * progressionManager.GetStageMultiplier() ;
             healthBehavior.Health = Math.Min(healthBehavior.MaxHealth, healthBehavior.Health + regenAmount);
             healthBehavior.MarkDirty();
-            entityPlayer.World.Logger.Warning($"[DEBUG] RegenAmount: {regenAmount}");
         }
     }
 
