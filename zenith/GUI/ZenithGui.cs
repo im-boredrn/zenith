@@ -17,6 +17,7 @@ namespace zenith.GUI
 {
     public class ZenithGui : GuiDialog
     {
+        public bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
 
@@ -42,13 +43,13 @@ namespace zenith.GUI
         public void SetupDialog()
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
-            var Stage = zenith?.GetInt("Stage", 1) ?? 1;
+            var Stage = zenith?.GetInt("Stage", 1);
+            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
             string[] domainNames = domainManager.GetDomainNames();
 
             // Compute stage name based on the Stage int
-            string stageName = progressionManager.GetStageName(Stage);
 
             int buttonWidth = 120;
             int buttonHeight = 30;
@@ -96,7 +97,7 @@ namespace zenith.GUI
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
 
-                .AddDynamicText($"Stage : {stageName}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext"); // This should Stay since its an overall
+                .AddDynamicText($"Stage : {StageName}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext"); // This should Stay since its an overall
 
             int i = 0;
             foreach (var kvp in domainManager.domains)
@@ -134,17 +135,22 @@ namespace zenith.GUI
         {
             if (SingleComposer == null) return;
 
-            capi.Logger.Warning("[GUI] UpdateStats called");
-            var stageName = progressionManager.GetStageName(progressionManager.Stage);
-            string newText = $"Stage : {stageName}\nDomainPoints: {progressionManager.DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
-            capi.Logger.Warning($"[GUI] Stage seen by GUI: {progressionManager.Stage}");
-            capi.Logger.Warning($"[GUI] DomainPoints seen by GUI: {progressionManager.DomainPoints}");
-            capi.Logger.Warning($"[GUI] Before: Current stageName {stageName}");
+            Log("[GUI] UpdateStats called");
+
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
+            var Stage = zenith?.GetInt("Stage", 1);
+            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
+            var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
+            string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
+
+            Log($"[GUI] Stage seen by GUI: {Stage}");
+            Log($"[GUI] DomainPoints seen by GUI: {DomainPoints}");
+            Log($"[GUI] Before: Current stageName {StageName}");
             SingleComposer.GetDynamicText("statstext")?
                           .SetNewText(newText,false,true,false);
-            capi.Logger.Warning($"[GUI] After: Current stageName {stageName}");
-            capi.Logger.Warning($"[GUI] Stage seen by GUI: {progressionManager.Stage}");
-            capi.Logger.Warning($"[GUI] DomainPoints seen by GUI: {progressionManager.DomainPoints}");
+            Log($"[GUI] After: Current stageName {StageName}");
+            Log($"[GUI] Stage seen by GUI: {Stage}");
+            Log($"[GUI] DomainPoints seen by GUI: {DomainPoints}");
         }
 
         bool OnDomainButton(DomainEnum domain)
@@ -159,7 +165,7 @@ namespace zenith.GUI
 
             DomainDetailsGUI = new DomainDetailsGUI(capi, domainManager, domain);
             DomainDetailsGUI.TryOpen();
-            capi.Logger.Warning("Domain button clicked: " + domain);
+            Log("Domain button clicked: " + domain);
 
             return true;
 
@@ -169,10 +175,10 @@ namespace zenith.GUI
     
         public override void OnGuiOpened()
         {
-            capi.Logger.Notification("Dialog opened");
+            Log("Dialog opened");
 
             SingleComposer.Dispose();
-            capi.Logger.Notification("Disposing...");
+            Log("Disposing...");
             SetupDialog();   // rebuild UI from fresh data
             UpdateStats(); // Pull latest stage/domain values
             
@@ -184,12 +190,12 @@ namespace zenith.GUI
             this.TryClose();
             progressionManager.OnProgressionChanged -= UpdateStats;
             DomainDetailsGUI? .TryClose(); 
-            capi.Logger.Notification("Dialog closed");
+           Log("Dialog closed");
         }
         private void Log(string message)
         {
             if (!DebugMode) return;
-            entity.World.Logger.Warning(message);
+            capi.World.Logger.Warning(message);
         }
 
     }
