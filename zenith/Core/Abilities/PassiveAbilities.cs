@@ -69,28 +69,27 @@ namespace zenith.Core.Abilities
         }
 
         public void Apply(EntityPlayer entityPlayer)
-        {
-          
-        }
+        { }
         public void Tick(EntityPlayer entityPlayer)
         {
-            
+
             var healthBehavior = entityPlayer.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior == null) return;
-
+            var zenith = entityPlayer.WatchedAttributes.GetTreeAttribute("zenith");
+            var Stage = zenith?.GetInt("Stage", 1);
 
             float halfHealth = healthBehavior.MaxHealth / 2f;
 
             // Only continue if health is below or equal to half
-            if (healthBehavior.Health > halfHealth )
+            if (healthBehavior.Health > halfHealth  && Stage < 3)
             {
                 return;
             }
 
-         
 
+
+            // Apply regen
             float regenAmount = ZenithSettings.ZRegenAmount * progressionManager.GetStageMultiplier() ;
-
             healthBehavior.Health = Math.Min(healthBehavior.MaxHealth, healthBehavior.Health + regenAmount);
             healthBehavior.MarkDirty();
             entityPlayer.World.Logger.Warning($"[DEBUG] RegenAmount: {regenAmount}");

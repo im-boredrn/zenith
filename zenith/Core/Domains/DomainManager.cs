@@ -27,6 +27,7 @@ namespace zenith.Core.Domains
         //#REF Dictionary Creation
         public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
 
+        //#REF TreeAttribute Usage
         public TreeAttribute watchedZenith;
 
         public DomainManager(Entity entity, ModConfig config)
