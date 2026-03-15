@@ -57,7 +57,7 @@ namespace zenith.Core
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
 
-            bool isClient = capi != null;
+         //   bool isClient = capi != null;
 
             
                 WireEvents();
@@ -84,7 +84,7 @@ namespace zenith.Core
             {
                 DomainEnum domain = d.Domain;
                 ZenithGui?.UpdateStats();
-                Log($"[EVENT] {domain} tier increased to {d.Tier}");// Double Fire Here
+                Log($"[EVENT] {domain} tier increased to {d.Tier}");
             };
 
             ProgressionManager.OnStageUp += (pm) =>

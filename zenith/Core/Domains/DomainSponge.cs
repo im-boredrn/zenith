@@ -63,6 +63,7 @@ namespace zenith.Core.Domains
 
         public event Action<DomainSponge> OnTierUp;
         public event Action<DomainSponge> DomainMaxed;
+        public event Action<DomainSponge> OnDomainChanged;
 
 
 
@@ -89,6 +90,7 @@ namespace zenith.Core.Domains
               if (Tier > OldTier ) // Publisher of Event Should Never Care if its registered on the subscriber(ZenithBehavior)
                 {
                     OnTierUp?.Invoke(this); // Fires To EVERYONE, Subscriber Decides to Receive
+                    OnDomainChanged?.Invoke(this);
 
                 }
 
@@ -97,7 +99,8 @@ namespace zenith.Core.Domains
                     ContributedToEvolution = true;
                     IsMaxed = true;
                     DomainMaxed?.Invoke(this);
-                   
+                    OnDomainChanged?.Invoke(this);
+
                 }
             }
           
@@ -143,6 +146,13 @@ namespace zenith.Core.Domains
         public float GetResistanceValue()
         {
             return Tier * DamageReductionPerTier;
+        }
+
+        public void NotifyChanged()
+        {
+            OnDomainChanged?.Invoke(this);
+            // Also mark zenith dirty so GUI updates can trigger
+            entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
         /// <summary>

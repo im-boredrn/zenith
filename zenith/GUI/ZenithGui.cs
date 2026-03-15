@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using zenith.Config;
 using zenith.Core;
 using zenith.Core.Domains;
 using static HarmonyLib.Code;
@@ -26,6 +27,7 @@ namespace zenith.GUI
         {
             this.progressionManager = progressionManager;
             this.domainManager = domainManager;
+            progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
         }
 
@@ -55,10 +57,8 @@ namespace zenith.GUI
 
             // Start X so the row is centered
             int startX = (600 - totalWidth) / 2; // 600 = dialog width
-            int y = 550; // near bottom (600 dialog height - 50 px)
             int buttonsPerRow = 2;
 
-            int dialogWidth = 600;
             int dialogHeight = 600; 
 
             int startY = dialogHeight - 50; // 50 px from bottom for first row
@@ -130,39 +130,29 @@ namespace zenith.GUI
 
        public void UpdateStats() 
         {
-            var Stage = progressionManager.Stage;
-            var DomainPoints = progressionManager.DomainPoints;
-            string stageName = Stage switch
-            {
-                1 => "Adapting Organism",
-                2 => "Hyper-Adaptive Organism",
-                3 => "Paragon of Seraphs",
-                _ => "Unknown"
-            };
+            if (SingleComposer == null) return;
 
-            capi.Logger.Warning("UpdateStats Called!");
-            if (SingleComposer != null)
-            {
-                SingleComposer.GetDynamicText("statstext")
-                    .SetNewText($"Stage : {stageName}\nDomainPoints: {progressionManager.DomainPoints}");
-            }
-
-            SingleComposer.ReCompose();
-
+            // Put a logger here eventually
+            var stageName = progressionManager.GetStageName(progressionManager.Stage);
+            string newText = $"Stage : {stageName}\nDomainPoints: {progressionManager.DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
+            SingleComposer.GetDynamicText("statstext")?
+                          .SetNewText(newText,false,true,false);
+            
         }
 
         bool OnDomainButton(DomainEnum domain)
         {
 
 
-
-            if (DomainDetailsGUI != null && DomainDetailsGUI.IsOpened())
-                DomainDetailsGUI.SingleComposer.Dispose();
+            if (DomainDetailsGUI != null)
+            {
+                DomainDetailsGUI.TryClose();
+                DomainDetailsGUI.Dispose();
+            }
 
             DomainDetailsGUI = new DomainDetailsGUI(capi, domainManager, domain);
-           
             DomainDetailsGUI.TryOpen();
-            DomainDetailsGUI.UpdateDomainStats();
+            capi.Logger.Warning("Domain button clicked: " + domain);
 
             return true;
 
@@ -184,6 +174,8 @@ namespace zenith.GUI
 
         public override void OnGuiClosed()
         {
+            this.TryClose();
+            DomainDetailsGUI.TryClose(); 
             capi.Logger.Notification("Dialog closed");
         }
 

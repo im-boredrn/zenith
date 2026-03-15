@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using Vintagestory.API.Datastructures;
 using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
@@ -15,15 +16,26 @@ namespace zenith.GUI
         DomainManager domainManager;
 
         public override string ToggleKeyCombinationCode => null;
-
+        Action<DomainSponge> tierUpHandler;
+        Action<DomainSponge> maxHandler;
+        Action<DomainSponge> changeHandler;
         public DomainDetailsGUI(ICoreClientAPI capi, DomainManager dm, DomainEnum domain) : base(capi)
         {
             domainManager = dm;
             this.domain = domain;
+            var sponge = domainManager.domains[domain];
+            tierUpHandler = (s) => UpdateDomainStats();
+            maxHandler = (s) => UpdateDomainStats();
+            changeHandler = (s) => UpdateDomainStats();
 
+            sponge.OnTierUp += tierUpHandler;
+            sponge.DomainMaxed += maxHandler;
+            sponge.OnDomainChanged += changeHandler;
+
+            
             SetupDialog();
-            domainManager.domains[domain].OnTierUp += (s) => UpdateDomainStats();
-            domainManager.domains[domain].DomainMaxed += (s) => UpdateDomainStats();
+
+           
         }
 
         public void SetupDialog()
@@ -47,19 +59,17 @@ namespace zenith.GUI
                 capi.Logger.Warning("[FLOW] DomainGUI isnt opened Returning");
                     return;
             }
-            
-            var sponge = domainManager.domains[domain]; 
+            var sponge = domainManager.domains[domain];
             int Tier = sponge.Tier;
             bool Status = sponge.IsMaxed;
+            string newText = $"Tier: {Tier}\n Maxed: {Status}";
 
-             
             capi.Logger.Warning($"[FLOW] UpdateDomainStatsCalled! Current Tier : {Tier} | Current Status: {Status}");
 
             if ( SingleComposer != null)
             {
                 SingleComposer.GetDynamicText("tiertext")
-                    .SetNewText($"Tier: {Tier}\n Maxed: {Status}");
-                SingleComposer.ReCompose();
+                    .SetNewText(newText,false,true,false);
             }
 
 
@@ -68,13 +78,26 @@ namespace zenith.GUI
 
         public override void OnGuiOpened()
         {
-            if (IsOpened())
-            {
-                SingleComposer.Dispose();
-                SingleComposer.ReCompose();
-            }
-            SetupDialog();
+           
+            var sponge = domainManager.domains[domain];
+
+            sponge.OnTierUp += tierUpHandler;
+            sponge.DomainMaxed += maxHandler;
+            sponge.OnDomainChanged += changeHandler;
             UpdateDomainStats();
+        }
+
+        public override void OnGuiClosed()
+        {
+            var sponge = domainManager.domains[domain];
+
+            sponge.OnTierUp -= tierUpHandler;
+            sponge.DomainMaxed -= maxHandler;
+            sponge.OnDomainChanged -= changeHandler;
+
+            base.OnGuiClosed(); // I just realized the syntax base most likely means its usual behavior before override im so fucking tired
+            this.TryClose();
+            this.Dispose(); 
         }
     }
 }

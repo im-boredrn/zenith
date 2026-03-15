@@ -27,7 +27,7 @@ namespace zenith.Core.Domains
         //#REF Dictionary Creation
         public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
 
-        private TreeAttribute watchedZenith;
+        public TreeAttribute watchedZenith;
 
         public DomainManager(Entity entity, ModConfig config)
         {
@@ -66,29 +66,7 @@ namespace zenith.Core.Domains
 
             Log("[EXIT] Finished Calling ProcessDomain");
         }
-        public void LoadDomains()
-        {
-
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
-
-            foreach (var kv in domains)
-            {
-                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
-
-
-                kv.Value.Counter = domainTree.GetFloat("Counter", 0);
-                kv.Value.Tier = domainTree.GetInt("Tier", 0);
-                kv.Value.IsMaxed = domainTree.GetBool("Maxed", false);
-                //string keyCounter = $"zenith.{kv.Key}.counter";
-                //string keyTier = $"zenith.{kv.Key}.tier";
-                //string keyMaxed = $"zenith.{kv.Key}.maxed";
-                //kv.Value.Counter = entity.WatchedAttributes.GetFloat(keyCounter);
-                //kv.Value.Tier = entity.WatchedAttributes.GetAsInt(keyTier, 0);
-                //kv.Value.IsMaxed = entity.WatchedAttributes.GetAsBool(keyMaxed, false);
-            }
-
-        }
+      
 
 
         public event Action<DomainSponge> DomainMaxed;
@@ -150,7 +128,6 @@ namespace zenith.Core.Domains
 
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
-
             foreach (var kv in domains)
             {
                 var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
@@ -160,19 +137,30 @@ namespace zenith.Core.Domains
                 watchedZenith[kv.Key.ToString()] = domainTree;
 
 
-                //string keyCounter = $"zenith.{kv.Key}.counter";
-                //string keyTier = $"zenith.{kv.Key}.tier";
-                //string keyMaxed = $"zenith.{kv.Key}.maxed";
-                //entity.WatchedAttributes.SetFloat(keyCounter, kv.Value.Counter);
-                //entity.WatchedAttributes.SetInt(keyTier, kv.Value.Tier);
-                //entity.WatchedAttributes.SetBool(keyMaxed, kv.Value.IsMaxed);
-                //entity.WatchedAttributes.MarkPathDirty(keyCounter);
-                //entity.WatchedAttributes.MarkPathDirty(keyTier);
-                //entity.WatchedAttributes.MarkPathDirty(keyMaxed);
+                
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
-        
+
+        public void LoadDomains()
+        {
+
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
+
+            foreach (var kv in domains)
+            {
+                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
+
+
+                kv.Value.Counter = domainTree.GetFloat("Counter", 0);
+                kv.Value.Tier = domainTree.GetInt("Tier", 0);
+                kv.Value.IsMaxed = domainTree.GetBool("Maxed", false);
+              
+            }
+
+        }
+
         public void ResetDomains()
         {
             foreach (var sponge in domains.Values)
@@ -190,6 +178,9 @@ namespace zenith.Core.Domains
         //domains.Keys // Get the Keys
         //.Select(d => d.ToString()) // Convert Each Enum to string
         //.ToArray(); // Convert to array
+
+
+
 
         private void Log(string message)
         {
