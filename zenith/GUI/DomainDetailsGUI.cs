@@ -56,14 +56,19 @@ namespace zenith.GUI
         {
             if (!IsOpened())
             {
-                capi.Logger.Warning("[FLOW] DomainGUI isnt opened Returning");
+                capi.Logger.Warning("[DomainGUI] DomainGUI isnt opened Returning");
                     return;
             }
             var sponge = domainManager.domains[domain];
-            int Tier = sponge.Tier;
-            bool Status = sponge.IsMaxed;
+            var zenithTree = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
+
+            var domainTree = zenithTree?.GetTreeAttribute(domain.ToString());
+
+            int Tier = domainTree?.GetInt("Tier") ?? -1;
+            bool Status = domainTree?.GetBool("Maxed") ?? false;
             string newText = $"Tier: {Tier}\n Maxed: {Status}";
 
+            capi.Logger.Warning($"[CLIENT CHECK] Tier directly from entity: {Tier}");
             capi.Logger.Warning($"[FLOW] UpdateDomainStatsCalled! Current Tier : {Tier} | Current Status: {Status}");
 
             if ( SingleComposer != null)
@@ -71,6 +76,7 @@ namespace zenith.GUI
                 SingleComposer.GetDynamicText("tiertext")
                     .SetNewText(newText,false,true,false);
             }
+            capi.Logger.Warning($"[DomainGUI] UpdateDomainStatsFinished! Current Tier : {Tier} | Current Status: {Status}");
 
 
         }

@@ -132,12 +132,17 @@ namespace zenith.GUI
         {
             if (SingleComposer == null) return;
 
-            // Put a logger here eventually
+            capi.Logger.Warning("[GUI] UpdateStats called");
             var stageName = progressionManager.GetStageName(progressionManager.Stage);
             string newText = $"Stage : {stageName}\nDomainPoints: {progressionManager.DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
+            capi.Logger.Warning($"[GUI] Stage seen by GUI: {progressionManager.Stage}");
+            capi.Logger.Warning($"[GUI] DomainPoints seen by GUI: {progressionManager.DomainPoints}");
+            capi.Logger.Warning($"[GUI] Before: Current stageName {stageName}");
             SingleComposer.GetDynamicText("statstext")?
                           .SetNewText(newText,false,true,false);
-            
+            capi.Logger.Warning($"[GUI] After: Current stageName {stageName}");
+            capi.Logger.Warning($"[GUI] Stage seen by GUI: {progressionManager.Stage}");
+            capi.Logger.Warning($"[GUI] DomainPoints seen by GUI: {progressionManager.DomainPoints}");
         }
 
         bool OnDomainButton(DomainEnum domain)
@@ -175,7 +180,8 @@ namespace zenith.GUI
         public override void OnGuiClosed()
         {
             this.TryClose();
-            DomainDetailsGUI.TryClose(); 
+            
+            DomainDetailsGUI? .TryClose(); 
             capi.Logger.Notification("Dialog closed");
         }
 

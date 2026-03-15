@@ -4,9 +4,12 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using zenith.Config;
 using static zenith.Core.ZenithBehavior;
@@ -90,7 +93,11 @@ namespace zenith.Core.Domains
               if (Tier > OldTier ) // Publisher of Event Should Never Care if its registered on the subscriber(ZenithBehavior)
                 {
                     OnTierUp?.Invoke(this); // Fires To EVERYONE, Subscriber Decides to Receive
+                Log($"[SERVER] Tier increased to {Tier}");
+                 Log($"[SERVER] Writing Tier to watched attributes...");
+                    SaveTier();               
                     OnDomainChanged?.Invoke(this);
+                    NotifyChanged();
 
                 }
 
@@ -100,22 +107,26 @@ namespace zenith.Core.Domains
                     IsMaxed = true;
                     DomainMaxed?.Invoke(this);
                     OnDomainChanged?.Invoke(this);
+                    NotifyChanged();
 
                 }
             }
           
         }
 
-        /// <summary>
-        /// Handles the event when a player's tier is increased and logs the new tier level.
-        /// </summary>
-        /// <remarks>This method is triggered when a player's tier is upgraded. It is recommended to
-        /// ensure that the player is properly initialized before invoking this method. The method sends a notification
-        /// message to the player indicating the new tier level.</remarks>
-        
 
+        public void SaveTier()
+        {
+            var zenithTree = entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute();
+            entity.WatchedAttributes["zenith"] = zenithTree;
 
- 
+            var domainTree = zenithTree.GetTreeAttribute(Domain.ToString()) ?? new TreeAttribute();
+            zenithTree[Domain.ToString()] = domainTree;
+
+            domainTree.SetInt("Tier", Tier);
+
+            entity.WatchedAttributes.MarkPathDirty("zenith");
+        }
 
 
             /// <summary>

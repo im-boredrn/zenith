@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -213,7 +214,9 @@ namespace zenith.Core
             watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
+
             OnProgressionChanged?.Invoke();
+           Log("[EVENT] OnProgressionChanged fired");
 
         }
 
