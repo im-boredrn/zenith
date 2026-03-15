@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.GUI;
@@ -26,9 +27,14 @@ namespace zenith.Core.Domains
         //#REF Dictionary Creation
         public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
 
+        private TreeAttribute watchedZenith;
+
         public DomainManager(Entity entity, ModConfig config)
         {
             this.entity = entity;
+
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
 
             domains = new Dictionary<DomainEnum, DomainSponge>();
 
@@ -62,13 +68,26 @@ namespace zenith.Core.Domains
         }
         public void LoadDomains()
         {
+
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
+
             foreach (var kv in domains)
             {
-                string keyCounter = $"zenith.{kv.Key}.counter";
-                string keyTier = $"zenith.{kv.Key}.tier";
-                kv.Value.Counter = entity.WatchedAttributes.GetFloat(keyCounter);
-                kv.Value.Tier = entity.WatchedAttributes.GetAsInt(keyTier);
+                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
+
+
+                kv.Value.Counter = domainTree.GetFloat("Counter", 0);
+                kv.Value.Tier = domainTree.GetInt("Tier", 0);
+                kv.Value.IsMaxed = domainTree.GetBool("Maxed", false);
+                //string keyCounter = $"zenith.{kv.Key}.counter";
+                //string keyTier = $"zenith.{kv.Key}.tier";
+                //string keyMaxed = $"zenith.{kv.Key}.maxed";
+                //kv.Value.Counter = entity.WatchedAttributes.GetFloat(keyCounter);
+                //kv.Value.Tier = entity.WatchedAttributes.GetAsInt(keyTier, 0);
+                //kv.Value.IsMaxed = entity.WatchedAttributes.GetAsBool(keyMaxed, false);
             }
+
         }
 
 
@@ -128,15 +147,30 @@ namespace zenith.Core.Domains
 
         public void SaveDomains()
         {
+
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
+
             foreach (var kv in domains)
             {
-                string keyCounter = $"zenith.{kv.Key}.counter";
-                string keyTier = $"zenith.{kv.Key}.tier";
-                entity.WatchedAttributes.SetFloat(keyCounter, kv.Value.Counter);
-                entity.WatchedAttributes.SetInt(keyTier, kv.Value.Tier);
-                entity.WatchedAttributes.MarkPathDirty(keyCounter);
-                entity.WatchedAttributes.MarkPathDirty(keyTier);
+                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
+                domainTree.SetInt("Tier", kv.Value.Tier);
+                domainTree.SetFloat("Counter", kv.Value.Counter);
+                domainTree.SetBool("Maxed", kv.Value.IsMaxed);
+                watchedZenith[kv.Key.ToString()] = domainTree;
+
+
+                //string keyCounter = $"zenith.{kv.Key}.counter";
+                //string keyTier = $"zenith.{kv.Key}.tier";
+                //string keyMaxed = $"zenith.{kv.Key}.maxed";
+                //entity.WatchedAttributes.SetFloat(keyCounter, kv.Value.Counter);
+                //entity.WatchedAttributes.SetInt(keyTier, kv.Value.Tier);
+                //entity.WatchedAttributes.SetBool(keyMaxed, kv.Value.IsMaxed);
+                //entity.WatchedAttributes.MarkPathDirty(keyCounter);
+                //entity.WatchedAttributes.MarkPathDirty(keyTier);
+                //entity.WatchedAttributes.MarkPathDirty(keyMaxed);
             }
+            entity.WatchedAttributes.MarkPathDirty("zenith");
         }
         
         public void ResetDomains()

@@ -42,18 +42,39 @@ namespace zenith.GUI
 
         public void UpdateDomainStats()
         {
+            if (!IsOpened())
+            {
+                capi.Logger.Warning("[FLOW] DomainGUI isnt opened Returning");
+                    return;
+            }
+            
             var sponge = domainManager.domains[domain]; 
             int Tier = sponge.Tier;
             bool Status = sponge.IsMaxed;
 
-            capi.Logger.Warning($"[FLOW] UpdateDomainStatsCalled! | Current Tier : {Tier} | Current Status: {Status}");
+             
+            capi.Logger.Warning($"[FLOW] UpdateDomainStatsCalled! Current Tier : {Tier} | Current Status: {Status}");
 
-            if (SingleComposer != null)
+            if ( SingleComposer != null)
             {
                 SingleComposer.GetDynamicText("tiertext")
                     .SetNewText($"Tier: {Tier}\n Maxed: {Status}");
-
+                SingleComposer.ReCompose();
             }
+
+
+        }
+
+
+        public override void OnGuiOpened()
+        {
+            if (IsOpened())
+            {
+                SingleComposer.Dispose();
+                SingleComposer.ReCompose();
+            }
+            SetupDialog();
+            UpdateDomainStats();
         }
     }
 }

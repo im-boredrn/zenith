@@ -56,17 +56,25 @@ namespace zenith.Core
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
-           
 
+            bool isClient = capi != null;
 
             
-
-
-            WireEvents();
+                WireEvents();
+            
             }
 
+
+        bool eventsWired = false;
             void WireEvents()
             {
+            if (eventsWired) 
+            {
+                Log("[FLOW] Events Already Wired Returning...");
+                return;
+            }
+            eventsWired = true;
+
             DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed;
             DomainManager.DomainMaxed += (d) =>
             {
@@ -76,11 +84,12 @@ namespace zenith.Core
             {
                 DomainEnum domain = d.Domain;
                 ZenithGui?.UpdateStats();
-                Log($"[EVENT] {domain} tier increased to {d.Tier}");
+                Log($"[EVENT] {domain} tier increased to {d.Tier}");// Double Fire Here
             };
 
             ProgressionManager.OnStageUp += (pm) =>
             {
+                Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
             };
         }

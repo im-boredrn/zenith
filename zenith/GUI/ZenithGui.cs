@@ -20,6 +20,8 @@ namespace zenith.GUI
 
         ProgressionManager progressionManager;
         DomainManager domainManager;
+        DomainDetailsGUI DomainDetailsGUI;
+        private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager) : base(capi)
         {
             this.progressionManager = progressionManager;
@@ -84,7 +86,9 @@ namespace zenith.GUI
             ElementBounds dropdownBounds = ElementBounds.Fixed(20, 60, 200, 35)
                 .WithAlignment(EnumDialogArea.LeftTop);
 
-            // Composer builds the UI TODO Add DropDown | Fix Stage Cutoff Issue
+            ClearComposers();
+
+            // Composer builds the UI 
             SingleComposer = capi.Gui
                 .CreateCompo("OrganismTracker", dialogBounds) // Then Chain Elements
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
@@ -111,8 +115,12 @@ namespace zenith.GUI
                 int rowY = startY - row * (buttonHeight + padding);  // vertical position
 
                 ElementBounds bounds = ElementBounds.Fixed(colX, rowY, buttonWidth, buttonHeight);
+                string buttonId = $"domainbtn_{domain}";
 
-                SingleComposer.AddButton(text, () => OnDomainButton(domain), bounds);
+                SingleComposer.AddButton(text, () => OnDomainButton(domain), bounds, EnumButtonStyle.Small, buttonId);
+
+                // Store ID for live updates
+                domainButtonIds[domain] = buttonId;
                 i++;     
                
             }
@@ -136,25 +144,42 @@ namespace zenith.GUI
             if (SingleComposer != null)
             {
                 SingleComposer.GetDynamicText("statstext")
-                    .SetNewText($"Stage : {stageName}\nDomainPoints: {DomainPoints}");
+                    .SetNewText($"Stage : {stageName}\nDomainPoints: {progressionManager.DomainPoints}");
             }
 
-            
+            SingleComposer.ReCompose();
 
         }
 
         bool OnDomainButton(DomainEnum domain)
         {
-            var detailGui = new DomainDetailsGUI(capi, domainManager, domain);
-            detailGui.TryOpen();
-            detailGui.UpdateDomainStats();
+
+
+
+            if (DomainDetailsGUI != null && DomainDetailsGUI.IsOpened())
+                DomainDetailsGUI.SingleComposer.Dispose();
+
+            DomainDetailsGUI = new DomainDetailsGUI(capi, domainManager, domain);
+           
+            DomainDetailsGUI.TryOpen();
+            DomainDetailsGUI.UpdateDomainStats();
+
             return true;
+
+          
         }
 
-
+    
         public override void OnGuiOpened()
         {
             capi.Logger.Notification("Dialog opened");
+
+            SingleComposer.Dispose();
+            capi.Logger.Notification("Disposing...");
+            SetupDialog();   // rebuild UI from fresh data
+            UpdateStats(); // Pull latest stage/domain values
+            
+
         }
 
         public override void OnGuiClosed()

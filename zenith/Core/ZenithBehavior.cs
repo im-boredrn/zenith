@@ -71,7 +71,7 @@ namespace zenith.Core
 
                 // Server-only systems
                 systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
-                systems.DomainManager.LoadDomains();
+
                 // Hook health behavior
                 var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
                 if (healthBehavior != null)

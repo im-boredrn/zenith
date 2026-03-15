@@ -95,8 +95,9 @@ namespace zenith.Core.Domains
                 if (Tier == MaxTier && !ContributedToEvolution)
                 {
                     ContributedToEvolution = true;
-                    DomainMaxed?.Invoke(this);
                     IsMaxed = true;
+                    DomainMaxed?.Invoke(this);
+                   
                 }
             }
           

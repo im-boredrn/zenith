@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
@@ -30,12 +31,16 @@ namespace zenith.Core
         private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
+        private TreeAttribute watchedZenith;
+
         private readonly Entity entity;
         private EntityPlayer Player => entity as EntityPlayer;
         // Constructor
         public ProgressionManager(Entity entity )
         {
             this.entity = entity;
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
         }
 
 
@@ -90,11 +95,12 @@ namespace zenith.Core
                 Stage++;
                 DomainPoints = 0;
                 stageIncreased = true;
-                OnStageUp?.Invoke(this);
                 if (stageIncreased) 
                 {
                     ApplyPassivesForAllDomains();
                     OnStageUpSave();
+                    OnStageUp?.Invoke(this);
+
                 }
 
             }
@@ -200,33 +206,45 @@ namespace zenith.Core
         /// progression is recorded and can be restored in future sessions.</remarks>
         private void SaveProgression()
         {
+            watchedZenith.SetInt("Stage", Stage);
+            watchedZenith.SetInt("DomainPoints", DomainPoints);
+            watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
+
+            entity.WatchedAttributes.MarkPathDirty("zenith");
+
+            //string keyStage = "zenith." + entity.GetName() + ".Stage";
+            //    string keyDPoints = "zenith." + entity.GetName() + ".DomainPoints";
+            //    string keyEPoints = "zenith." + entity.GetName() + ".EvolutionPoints";
+
+            //    entity.WatchedAttributes.SetInt(keyStage, Stage);
+            //    entity.WatchedAttributes.SetInt(keyDPoints, DomainPoints);
+            //    entity.WatchedAttributes.SetInt(keyEPoints, EvolutionPoints);
+
             
-
-                string keyStage = "zenith." + entity.GetName() + ".Stage";
-                string keyDPoints = "zenith." + entity.GetName() + ".DomainPoints";
-                string keyEPoints = "zenith." + entity.GetName() + ".EvolutionPoints";
-
-                entity.WatchedAttributes.SetInt(keyStage, Stage);
-                entity.WatchedAttributes.SetInt(keyDPoints, DomainPoints);
-                entity.WatchedAttributes.SetInt(keyEPoints, EvolutionPoints);
-
-            
-                entity.WatchedAttributes.MarkPathDirty(keyStage);
-                entity.WatchedAttributes.MarkPathDirty(keyDPoints);
-                entity.WatchedAttributes.MarkPathDirty(keyEPoints);
+            //    entity.WatchedAttributes.MarkPathDirty(keyStage);
+            //    entity.WatchedAttributes.MarkPathDirty(keyDPoints);
+            //    entity.WatchedAttributes.MarkPathDirty(keyEPoints);
             
         }
 
         public void LoadProgression()
         {
-            string keyStage = "zenith." + entity.GetName() + ".Stage";
-            string keyDPoints = "zenith." + entity.GetName() + ".DomainPoints";
-            string keyEPoints = "zenith." + entity.GetName() + ".EvolutionPoints";
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            // Defaults if nothing was saved yet
-            Stage = entity.WatchedAttributes.GetInt(keyStage, 1);
-            DomainPoints = entity.WatchedAttributes.GetInt(keyDPoints, 0);
-            EvolutionPoints = entity.WatchedAttributes.GetInt(keyEPoints, 0);
+            Stage = watchedZenith.GetInt("Stage", 1);
+            DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
+            EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
+
+
+            //string keyStage = "zenith." + entity.GetName() + ".Stage";
+            //string keyDPoints = "zenith." + entity.GetName() + ".DomainPoints";
+            //string keyEPoints = "zenith." + entity.GetName() + ".EvolutionPoints";
+
+            //// Defaults if nothing was saved yet
+            //Stage = entity.WatchedAttributes.GetInt(keyStage, 1);
+            //DomainPoints = entity.WatchedAttributes.GetInt(keyDPoints, 0);
+            //EvolutionPoints = entity.WatchedAttributes.GetInt(keyEPoints, 0);
 
             Log($"[LOAD] Stage: {Stage}, DomainPoints: {DomainPoints}, EvolutionPoints: {EvolutionPoints}");
         }
