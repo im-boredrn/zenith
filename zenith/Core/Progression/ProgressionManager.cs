@@ -15,14 +15,14 @@ using zenith.Core.Abilities;
 using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
-namespace zenith.Core
+namespace zenith.Core.Progression
 {
   
     // Tracks Three Numbers
     //  Stage
     // Domain Points
     // Evolution Points 
-    public class ProgressionManager
+    public class ProgressionManager : IStageProvider
     {
 
         
@@ -270,7 +270,16 @@ namespace zenith.Core
 
             return true;
         }
-        public string GetStageName(int stage)
+
+
+        public int GetStage()
+        {
+            return Stage;
+        }
+
+
+
+        public string GetStageName(int stage) // Extremely risky could cause bugs in the future, Stage = stage directly touches internals.
         {
             Stage = stage;
             return stage switch

@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using zenith.Core.Progression;
 using DomainEnum = zenith.Core.ZenithBehavior.DomainEnum;
 
 namespace zenith.Core.Abilities
 {
     public  class AbilityFactory
     {
-        ProgressionManager progressionManager;
-        public AbilityFactory(ProgressionManager progressionManager)
+        private readonly IStageProvider stageProvider;
+        public AbilityFactory(IStageProvider stageProvider)
         {
-            this.progressionManager = progressionManager;
+            this.stageProvider = stageProvider;
         }
 
        public  IPassives CreatePassives(DomainEnum domain)
@@ -27,7 +28,7 @@ namespace zenith.Core.Abilities
                 DomainEnum.Thermal => new ThermalPassive(),
                 DomainEnum.Cold => new ColdPassive(),
                 DomainEnum.Toxic => new ToxicPassive(),
-                DomainEnum.Bleed => new HemorrhagePassive(progressionManager),
+                DomainEnum.Bleed => new HemorrhagePassive(stageProvider),
                 DomainEnum.Drown => new DrownPassive(),
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };
@@ -43,7 +44,7 @@ namespace zenith.Core.Abilities
             return domain switch
             {
               DomainEnum.Kinetic => new KineticAttack(),
-                DomainEnum.Thermal => new ThermalAttack(progressionManager),
+                DomainEnum.Thermal => new ThermalAttack(stageProvider),
                 DomainEnum.Cold => new ColdAttack(),
                 DomainEnum.Toxic => new ToxicAttack(), // Could Add Poison if it exists
                 DomainEnum.Bleed => new HemorrhageAttack(),

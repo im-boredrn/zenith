@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
+using zenith.Core.Progression;
 
 namespace zenith.Core.Abilities
 {
@@ -11,17 +12,17 @@ namespace zenith.Core.Abilities
   
     internal class ThermalAttack : IAttackAbilities
     {
-        ProgressionManager progressionManager;  
+        private readonly IStageProvider  stageProvider;  
 
-        public ThermalAttack(ProgressionManager progressionManager)
+        public ThermalAttack(IStageProvider stageProvider)
         {
-            this.progressionManager = progressionManager;
+            this.stageProvider = stageProvider;
         }
 
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
         {
             float baseChance = 0.2f; // 20% chance on stage 1
-            float stageMult = progressionManager.GetStageMultiplier();
+            float stageMult = stageProvider.GetStageMultiplier();
 
             float finalChance = Math.Min(1f, baseChance * stageMult); // max 100%
             if (targetEntity.World.Rand.NextDouble() < finalChance)

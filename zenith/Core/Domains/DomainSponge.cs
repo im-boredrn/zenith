@@ -24,7 +24,7 @@ namespace zenith.Core.Domains
 
 //They should not store stage logic.
 // In other words Domain only knows about domain
-    public class DomainSponge // Dont Forget to make Properties Public
+    public class DomainSponge : IDomainInfo // Dont Forget to make Properties Public
     {
         private ModConfig Config => ConfigLoader.Config; // points to the static config
         public bool ContributedToEvolution { get; private set; } = false;
@@ -154,17 +154,31 @@ namespace zenith.Core.Domains
 
         }
 
-        public float GetResistanceValue()
-        {
-            return Tier * DamageReductionPerTier;
-        }
+        
 
+
+       
         public void NotifyChanged()
         {
             OnDomainChanged?.Invoke(this);
             // Also mark zenith dirty so GUI updates can trigger
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
+
+        public DomainEnum GetDomain()
+        {
+            return Domain;
+        }
+        bool IsDMaxed()
+        {
+            return IsMaxed;
+        }
+        public float GetResistanceValue()
+        {
+            return Tier * DamageReductionPerTier;
+        }
+
+
 
         /// <summary>
         /// Logs a warning message to the world logger if debug mode is enabled.

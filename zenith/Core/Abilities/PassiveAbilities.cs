@@ -8,6 +8,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Progression;
 
 namespace zenith.Core.Abilities
 {
@@ -61,11 +62,11 @@ namespace zenith.Core.Abilities
     internal class HemorrhagePassive : IPassives
     {
 
-        ProgressionManager progressionManager;
+        private readonly IStageProvider stageProvider;
 
-        public HemorrhagePassive(ProgressionManager progressionManager)
+        public HemorrhagePassive(IStageProvider stageProvider)
         {
-            this.progressionManager = progressionManager;
+            this.stageProvider = stageProvider;
         }
 
         public void Apply(EntityPlayer entityPlayer)
@@ -89,7 +90,7 @@ namespace zenith.Core.Abilities
 
 
             // Apply regen
-            float regenAmount = ZenithSettings.ZRegenAmount * progressionManager.GetStageMultiplier() ;
+            float regenAmount = ZenithSettings.ZRegenAmount * stageProvider.GetStageMultiplier() ;
             healthBehavior.Health = Math.Min(healthBehavior.MaxHealth, healthBehavior.Health + regenAmount);
             healthBehavior.MarkDirty();
         }

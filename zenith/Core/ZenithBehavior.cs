@@ -16,6 +16,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Progression;
 
 namespace zenith.Core
 {
@@ -61,6 +62,7 @@ namespace zenith.Core
         public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
         public ZenithSystems systems;
+        private readonly IStageProvider stageProvider;
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
@@ -113,7 +115,7 @@ namespace zenith.Core
                 return;
             }
             systems.DomainManager.ProcessDomain(domain, ref damage);
-            var domainState = systems.DomainManager.domains[domain];
+            var domainState = systems.DomainManager.domains[domain]; // Abstract
 
             Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage} ");
             
@@ -154,7 +156,7 @@ namespace zenith.Core
             var domainstate = systems.DomainManager.domains[domain];
 
             float domainResistance = domainstate.GetResistanceValue();
-            float stageMultiplier = systems.ProgressionManager.GetStageMultiplier();
+            float stageMultiplier = stageProvider.GetStageMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage = damage / (1f + finalResistance);

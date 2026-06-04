@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common.Entities;
 using zenith.Config;
-using zenith.Core;
 using zenith.Core.Domains;
+using zenith.Core.Progression;
 using static HarmonyLib.Code;
 using static zenith.Core.ZenithBehavior;
 
@@ -44,7 +44,7 @@ namespace zenith.GUI
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
+            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage)); // Abstract these
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
             string[] domainNames = domainManager.GetDomainNames();
@@ -139,7 +139,7 @@ namespace zenith.GUI
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
+            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage)); // Abstract
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
 

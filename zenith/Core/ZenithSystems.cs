@@ -9,6 +9,7 @@ using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Domains;
+using zenith.Core.Progression;
 using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
 
@@ -35,7 +36,7 @@ namespace zenith.Core
 
             // Core managers
             ProgressionManager = new ProgressionManager(entity);
-            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager);
+            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager); // Abstract
             ProgressionManager.SetFactory(abilityFactory);
             ProgressionManager.LoadProgression();
             DomainManager = new DomainManager(entity, modConfig);
@@ -44,7 +45,7 @@ namespace zenith.Core
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager);
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager); // Abstract
             }
 
             Passives = Enum.GetValues<DomainEnum>()
