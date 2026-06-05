@@ -47,6 +47,9 @@ namespace zenith.Core.Progression
         }
 
 
+        public event Action OnProgressionChanged; // UI only
+        public event Action OnStageUp; // UI only - eventually will merge into domains and then <T> will be needed
+
         /// <summary>
         /// Handles the event when the domain reaches its maximum capacity by incrementing domain points and evaluating
         /// stage progression.
@@ -65,8 +68,7 @@ namespace zenith.Core.Progression
                 return;
 
             }
-           
-
+          
             if (Stage < 3)
             {
                 DomainPoints++;
@@ -104,13 +106,12 @@ namespace zenith.Core.Progression
                 {
                     ApplyPassivesForAllDomains();
                     OnStageUpSave();
-                    OnStageUp?.Invoke(this);
+                    OnStageUp?.Invoke();
 
                 }
 
             }
         }
-        public event Action<ProgressionManager> OnStageUp;
         public float GetStageMultiplier()
         {
             if (Stage == 1)
@@ -201,7 +202,6 @@ namespace zenith.Core.Progression
         }
 
 
-        public event Action OnProgressionChanged;
 
         /// <summary>
         /// Saves the player's current progression state, including stage, domain points, and evolution points, to

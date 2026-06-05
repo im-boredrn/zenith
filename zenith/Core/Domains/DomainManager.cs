@@ -22,6 +22,7 @@ namespace zenith.Core.Domains
         private EntityPlayer Player => entity as EntityPlayer;
 
         private readonly Entity entity;
+        private readonly IDomainInfo domainInfo;
 
 
         //#REF Dictionary Creation
@@ -70,22 +71,22 @@ namespace zenith.Core.Domains
       
 
 
-        public event Action<DomainSponge> DomainMaxed;
-        public event Action<DomainSponge> TierUp; // DONT TOUCH
+        public event Action<DomainSponge> DomainMaxed; // Mixed - wait could be merged
+        public event Action<DomainSponge> TierUp; // DONT TOUCH - Mixed
 
-        void RegisterDomain(DomainEnum domain, DomainSponge sponge)
+        void RegisterDomain(IDomainInfo domainInfo, DomainSponge sponge)
         {
-            if (!domains.TryAdd(domain, sponge))
+            if (!domains.TryAdd(domainInfo.GetDomain(), sponge))
             {
-                Log($"[WARN] Domain {domain} already registered");
+                Log($"[WARN] Domain {domainInfo.GetDomainName()} already registered");
             }
 
-            domains[domain] = sponge;
+            domains[domainInfo.GetDomain()] = sponge;
 
             
                 sponge.OnTierUp += (s) =>
                 {
-                    Log($"[EVENT] {domain} tier increased to {s.Tier}");
+                    Log($"[EVENT] {domainInfo.GetDomainName()} tier increased to {s.GetTier()}");
 
                      var sapi = entity.World.Api as ICoreServerAPI;
                     if (sapi == null) return;
@@ -96,7 +97,7 @@ namespace zenith.Core.Domains
                     sapi.SendMessage(
                         player,
                         GlobalConstants.AllChatGroups,
-                        $"{domain} domain tier increased! New tier: {s.Tier}",
+                        $"{domainInfo.GetDomainName()} domain tier increased! New tier: {s.GetTier()}",
                         EnumChatType.Notification
                     );
 
@@ -171,7 +172,7 @@ namespace zenith.Core.Domains
             }
         }
 
-        public string[] GetDomainNames()
+        public string[] GetDomainNames() // Obselete
         {
             return domains.Keys.Select(d => d.ToString()).ToArray();
         }

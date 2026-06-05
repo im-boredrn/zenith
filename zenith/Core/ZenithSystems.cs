@@ -29,6 +29,7 @@ namespace zenith.Core
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
+        private readonly IDomainInfo domainInfo;
 
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
@@ -76,11 +77,9 @@ namespace zenith.Core
             }
             eventsWired = true;
 
-            DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed;
-            DomainManager.DomainMaxed += (d) =>
-            {
-                ZenithGui?.UpdateStats();
-            };
+            DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed; // Could this be simplified? 
+            domainInfo.DomainMaxed += ZenithGui?.UpdateStats();
+            
             DomainManager.TierUp += (d) =>
             {
                 DomainEnum domain = d.Domain;
@@ -88,7 +87,7 @@ namespace zenith.Core
                 Log($"[EVENT] {domain} tier increased to {d.Tier}");
             };
 
-            ProgressionManager.OnStageUp += (pm) =>
+            ProgressionManager.OnStageUp += 
             {
                 Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();

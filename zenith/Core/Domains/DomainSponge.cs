@@ -42,6 +42,7 @@ namespace zenith.Core.Domains
         public int Tier;
         public int OldTier;
         public bool IsMaxed = false;
+        public string DomainName => Domain.ToString();
       //  private int MemoryLevel;
 
 
@@ -60,13 +61,15 @@ namespace zenith.Core.Domains
             this.config = config;
             this.Domain = domain;
             this.entity = entity;
+
+            
         }
 
        
 
-        public event Action<DomainSponge> OnTierUp;
-        public event Action<DomainSponge> DomainMaxed;
-        public event Action<DomainSponge> OnDomainChanged;
+        public event Action<IDomainInfo> OnTierUp; // Mixed
+        public event Action<IDomainInfo> DomainMaxed; // Mixed
+        public event Action OnDomainChanged; // Global - aka No need for params
 
 
 
@@ -82,7 +85,7 @@ namespace zenith.Core.Domains
         public void ProcessDamage(float damage)
         {
             OldTier = Tier;
-
+           
             Counter += damage;
 
             if (Counter >= Threshold && Tier < MaxTier)// not <=MaxTier because if the tier is 2 it still fulfils requirements so it can go up one more
@@ -96,7 +99,7 @@ namespace zenith.Core.Domains
                 Log($"[SERVER] Tier increased to {Tier}");
                  Log($"[SERVER] Writing Tier to watched attributes...");
                     SaveTier();               
-                    OnDomainChanged?.Invoke(this);
+                    OnDomainChanged?.Invoke();
                     NotifyChanged();
 
                 }
@@ -106,7 +109,7 @@ namespace zenith.Core.Domains
                     ContributedToEvolution = true;
                     IsMaxed = true;
                     DomainMaxed?.Invoke(this);
-                    OnDomainChanged?.Invoke(this);
+                    OnDomainChanged?.Invoke();
                     NotifyChanged();
 
                 }
@@ -160,7 +163,7 @@ namespace zenith.Core.Domains
        
         public void NotifyChanged()
         {
-            OnDomainChanged?.Invoke(this);
+            OnDomainChanged?.Invoke();
             // Also mark zenith dirty so GUI updates can trigger
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
@@ -169,32 +172,39 @@ namespace zenith.Core.Domains
         {
             return Domain;
         }
-        bool IsDMaxed()
+
+        public string GetDomainName()
+        {
+            return DomainName;
+        }
+        public bool IsDMaxed()
         {
             return IsMaxed;
+        }
+
+        public int GetTier()
+        {
+            return Tier;
+        }
+
+        public float GetCounter()
+        {
+            return Counter;
+        }
+
+        public int GetThreshold()
+        {
+            return Threshold;
         }
         public float GetResistanceValue()
         {
             return Tier * DamageReductionPerTier;
         }
 
-
-
-        /// <summary>
-        /// Logs a warning message to the world logger if debug mode is enabled.
-        /// </summary>
-        /// <remarks>This method is intended for use during development and debugging. It will not log
-        /// messages if debug mode is disabled, ensuring that only relevant information is captured during debugging
-        /// sessions.</remarks>
-        /// <param name="message">The message to log as a warning. This should provide context about the event or condition being logged.</param>
         private void Log(string message)
         {
             if (!DebugMode) return;
             entity.World.Logger.Warning(message);
         }
-
-      
-
-
     }
 }
