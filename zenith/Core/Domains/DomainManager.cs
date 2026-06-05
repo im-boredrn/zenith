@@ -22,11 +22,10 @@ namespace zenith.Core.Domains
         private EntityPlayer Player => entity as EntityPlayer;
 
         private readonly Entity entity;
-        private readonly IDomainInfo domainInfo;
 
 
         //#REF Dictionary Creation
-        public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
+        public Dictionary<DomainEnum, IDomainInfo> Domains { get; private set; }
 
         //#REF TreeAttribute Usage
         public TreeAttribute watchedZenith;
@@ -38,7 +37,7 @@ namespace zenith.Core.Domains
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            domains = new Dictionary<DomainEnum, DomainSponge>();
+            Domains = new Dictionary<DomainEnum, IDomainInfo>();
 
             // Register all domains
             foreach (DomainEnum domain in Enum.GetValues(typeof(DomainEnum)))
@@ -46,7 +45,9 @@ namespace zenith.Core.Domains
                 if (domain == DomainEnum.None) continue;
 
 
-                var sponge = new DomainSponge(config, entity, domain);
+                var sponge = new DomainSponge(config, entity, domain); 
+                IDomainInfo domainInfo = sponge; // Needed for reference
+                
                 RegisterDomain(domain, sponge);
 
             }
@@ -59,7 +60,7 @@ namespace zenith.Core.Domains
 
             Log("[FLOW] Calling ProcessDomain");
 
-            if (!domains.TryGetValue(domain, out var domainstate)) 
+            if (!Domains.TryGetValue(domain, out var domainstate)) 
                 return;            
 
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
@@ -71,20 +72,21 @@ namespace zenith.Core.Domains
       
 
 
-        public event Action<DomainSponge> DomainMaxed; // Mixed - wait could be merged
-        public event Action<DomainSponge> TierUp; // DONT TOUCH - Mixed
+        // public event Action<DomainSponge> DomainMaxed; // Mixed - wait could be merged - Trying to merge rn 6/5/26
+       // public event Action<DomainSponge> TierUp; // - Mixed
 
-        void RegisterDomain(IDomainInfo domainInfo, DomainSponge sponge)
+
+
+        void RegisterDomain(DomainEnum key, IDomainInfo domainInfo)
         {
-            if (!domains.TryAdd(domainInfo.GetDomain(), sponge))
+            if (!Domains.TryAdd(key, domainInfo))
             {
                 Log($"[WARN] Domain {domainInfo.GetDomainName()} already registered");
             }
 
-            domains[domainInfo.GetDomain()] = sponge;
 
             
-                sponge.OnTierUp += (s) =>
+                domainInfo.OnTierUp += (s) =>
                 {
                     Log($"[EVENT] {domainInfo.GetDomainName()} tier increased to {s.GetTier()}");
 
@@ -102,10 +104,9 @@ namespace zenith.Core.Domains
                     );
 
                     SaveDomains();
-                    TierUp?.Invoke(s);
                 };
 
-            domainInfo.DomainMaxed += 
+            domainInfo.DomainMaxed += () =>
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 if (sapi == null) return;
@@ -118,7 +119,6 @@ namespace zenith.Core.Domains
                     EnumChatType.Notification
                     );
 
-                DomainMaxed?.Invoke(s);
                 SaveDomains();
             };
         }
@@ -127,15 +127,16 @@ namespace zenith.Core.Domains
 
         public void SaveDomains()
         {
-
+         
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
-            foreach (var kv in domains)
+            foreach (var kv in Domains)
             {
                 var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
-                domainTree.SetInt("Tier", kv.Value.Tier);
-                domainTree.SetFloat("Counter", kv.Value.Counter);
-                domainTree.SetBool("Maxed", kv.Value.IsMaxed);
+                var domain = kv.Value;
+                domainTree.SetInt("Tier", domain.GetTier());
+                domainTree.SetFloat("Counter", domain.GetCounter());
+                domainTree.SetBool("Maxed", domain.IsDMaxed());
                 watchedZenith[kv.Key.ToString()] = domainTree;
 
 
@@ -146,18 +147,22 @@ namespace zenith.Core.Domains
 
         public void LoadDomains()
         {
-
+         
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            foreach (var kv in domains)
+            foreach (var kv in Domains)
             {
                 var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
+                var domain = kv.Value;
 
+                var tier = domain.GetTier();
+                var counter = domain.GetCounter();
+                var isMaxed = domain.IsDMaxed();
 
-                kv.Value.Counter = domainTree.GetFloat("Counter", 0);
-                kv.Value.Tier = domainTree.GetInt("Tier", 0);
-                kv.Value.IsMaxed = domainTree.GetBool("Maxed", false);
+                counter = domainTree.GetFloat("Counter", 0);
+                tier = domainTree.GetInt("Tier", 0);
+                isMaxed = domainTree.GetBool("Maxed", false);
               
             }
 
@@ -165,16 +170,16 @@ namespace zenith.Core.Domains
 
         public void ResetDomains()
         {
-            foreach (var sponge in domains.Values)
+            foreach (var sponge in Domains.Values)
             {
-                sponge.Counter = 0;
-                sponge.Tier = 0;
+             // sponge.Counter = 0;
+              //  sponge.Tier = 0;
             }
         }
 
         public string[] GetDomainNames() // Obselete
         {
-            return domains.Keys.Select(d => d.ToString()).ToArray();
+            return Domains.Keys.Select(d => d.ToString()).ToArray();
         }
 
         //domains.Keys // Get the Keys

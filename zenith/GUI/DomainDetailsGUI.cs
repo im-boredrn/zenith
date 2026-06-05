@@ -24,10 +24,10 @@ namespace zenith.GUI
         {
             domainManager = dm;
             this.domain = domain;
-            var sponge = domainManager.domains[domain];
+            var sponge = domainManager.Domains[domain];
 
 
-           // changeHandler = (s) => UpdateDomainStats();
+           // changeHandler = (s) => UpdateDomainStats(); Delete once no bugs are found
             domainInfo.OnTierUp += (s) => UpdateDomainStats();
 
             domainInfo.OnDomainChanged += UpdateDomainStats;
@@ -86,16 +86,15 @@ namespace zenith.GUI
 
         public override void OnGuiOpened()
         {
-           
-            var sponge = domainManager.domains[domain];
 
-            sponge.OnDomainChanged += changeHandler;
+            base.OnGuiOpened(); // Recently added 
+            
             UpdateDomainStats();
         }
 
         public override void OnGuiClosed()
         {
-            var sponge = domainManager.domains[domain];
+            var sponge = domainManager.Domains[domain];
 
             sponge.OnDomainChanged -= changeHandler;
 

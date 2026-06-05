@@ -117,9 +117,9 @@ namespace zenith.Core
                 return;
             }
             systems.DomainManager.ProcessDomain(domain, ref damage);
-            var domainState = systems.DomainManager.domains[domain]; // Abstract
+            var domainState = systems.DomainManager.Domains[domain]; // Abstract
 
-            Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.Threshold} \n Damage Taken: {damage} ");
+            Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
             
         }
        
@@ -155,7 +155,7 @@ namespace zenith.Core
 
             if (domain == DomainEnum.None) return damage;
 
-            var domainstate = systems.DomainManager.domains[domain];
+            var domainstate = systems.DomainManager.Domains[domain];
 
             float domainResistance = domainInfo.GetResistanceValue();
             float stageMultiplier = stageProvider.GetStageMultiplier();

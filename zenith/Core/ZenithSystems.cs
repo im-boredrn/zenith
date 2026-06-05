@@ -29,7 +29,7 @@ namespace zenith.Core
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
-        private readonly IDomainInfo domainInfo;
+        private  IDomainInfo domainInfo;
 
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
@@ -42,6 +42,8 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
+
+            
            
             // GUI
             if (capi != null)
@@ -77,14 +79,19 @@ namespace zenith.Core
             }
             eventsWired = true;
 
-            DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed; // Could this be simplified? 
-            domainInfo.DomainMaxed += ZenithGui.UpdateStats; //() INVOKES - immediately call the method once it reaches this line of code
-            
-            DomainManager.TierUp += (d) =>
+            domainInfo.DomainMaxed += ProgressionManager.HandleDomainMaxed; // Could this be simplified? 
+            domainInfo.DomainMaxed += () =>               // These are 2 examples of how Action can be used
             {
-                DomainEnum domain = d.Domain;
+
+                Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
+                ZenithGui.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
+            };
+            
+            domainInfo.OnTierUp += (d) => // Action <d> so the parameters contain the object
+            {
+                DomainEnum domain = d.GetDomain();
                 ZenithGui?.UpdateStats();
-                Log($"[EVENT] {domain} tier increased to {d.Tier}");
+                Log($"[EVENT] {domain} tier increased to {d.GetTier()}");
             };
 
             ProgressionManager.OnStageUp +=ZenithGui.UpdateStats;

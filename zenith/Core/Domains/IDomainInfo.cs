@@ -17,6 +17,10 @@ namespace zenith.Core.Domains
 
         float GetResistanceValue();
 
+
+
+        void ProcessDamage(float damage);
+
         DomainEnum GetDomain();
         string GetDomainName();
 

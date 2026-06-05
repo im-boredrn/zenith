@@ -58,7 +58,7 @@ namespace zenith.Core.Progression
         /// domain points and checks whether the stage progression criteria are met. Ensure that the domain state is
         /// valid before invoking this method.</remarks>
         /// <param name="sponge">The DomainSponge instance representing the current domain state that triggered the event. Must not be null.</param>
-        public void HandleDomainMaxed(DomainSponge sponge)
+        public void HandleDomainMaxed()
         {
             Log("[FLOW] HandleDomainMaxed Called");
             var sapi = entity.World.Api as ICoreServerAPI;
