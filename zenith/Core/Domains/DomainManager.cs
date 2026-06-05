@@ -105,7 +105,7 @@ namespace zenith.Core.Domains
                     TierUp?.Invoke(s);
                 };
 
-            sponge.DomainMaxed += (s) =>
+            domainInfo.DomainMaxed += 
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 if (sapi == null) return;

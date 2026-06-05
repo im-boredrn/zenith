@@ -133,8 +133,8 @@ namespace zenith.GUI
 
        public void UpdateStats() 
         {
+            Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
             if (SingleComposer == null) return;
-
             Log("[GUI] UpdateStats called");
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");

@@ -68,7 +68,7 @@ namespace zenith.Core.Domains
        
 
         public event Action<IDomainInfo> OnTierUp; // Mixed
-        public event Action<IDomainInfo> DomainMaxed; // Mixed
+        public event Action DomainMaxed; // Mixed
         public event Action OnDomainChanged; // Global - aka No need for params
 
 
@@ -108,7 +108,7 @@ namespace zenith.Core.Domains
                 {
                     ContributedToEvolution = true;
                     IsMaxed = true;
-                    DomainMaxed?.Invoke(this);
+                    DomainMaxed?.Invoke();
                     OnDomainChanged?.Invoke();
                     NotifyChanged();
 

@@ -14,21 +14,24 @@ namespace zenith.GUI
     public class DomainDetailsGUI : GuiDialog
     {
         DomainEnum domain;  // <- the domain this GUI is showing
-        DomainManager domainManager;
+        readonly DomainManager  domainManager;
         private readonly IDomainInfo domainInfo;
         public bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
-        Action changeHandler;
+        readonly Action changeHandler;
         public DomainDetailsGUI(ICoreClientAPI capi, DomainManager dm, DomainEnum domain) : base(capi)
         {
             domainManager = dm;
             this.domain = domain;
             var sponge = domainManager.domains[domain];
-            changeHandler = (s) => UpdateDomainStats();
-            domainInfo.OnTierUp = (s) => UpdateDomainStats();
 
-            sponge.OnDomainChanged += changeHandler;
+
+           // changeHandler = (s) => UpdateDomainStats();
+            domainInfo.OnTierUp += (s) => UpdateDomainStats();
+
+            domainInfo.OnDomainChanged += UpdateDomainStats;
+           // sponge.OnDomainChanged += changeHandler;
 
             domainInfo = sponge;
             
@@ -51,7 +54,7 @@ namespace zenith.GUI
                 .Compose();
         }
 
-        public void UpdateDomainStats(IDomainInfo domain)
+        public void UpdateDomainStats( )
         {
             if (!IsOpened())
             {
@@ -103,7 +106,7 @@ namespace zenith.GUI
         private void Log(string message)
         {
             if (!DebugMode) return;
-            entity.World.Logger.Warning(message);
+            capi.World.Logger.Warning(message);
         }
     }
 }

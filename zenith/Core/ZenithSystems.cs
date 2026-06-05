@@ -78,7 +78,7 @@ namespace zenith.Core
             eventsWired = true;
 
             DomainManager.DomainMaxed += ProgressionManager.HandleDomainMaxed; // Could this be simplified? 
-            domainInfo.DomainMaxed += ZenithGui?.UpdateStats();
+            domainInfo.DomainMaxed += ZenithGui.UpdateStats; //() INVOKES - immediately call the method once it reaches this line of code
             
             DomainManager.TierUp += (d) =>
             {
@@ -87,11 +87,8 @@ namespace zenith.Core
                 Log($"[EVENT] {domain} tier increased to {d.Tier}");
             };
 
-            ProgressionManager.OnStageUp += 
-            {
-                Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
-                ZenithGui?.UpdateStats();
-            };
+            ProgressionManager.OnStageUp +=ZenithGui.UpdateStats;
+            
         }
 
 
