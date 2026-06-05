@@ -72,10 +72,10 @@ namespace zenith.Core
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 sapi?.Logger.Warning("Zenith behavior attached to SERVER");
-
+                DomainEnum domain;
                 // Server-only systems
                 systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
-
+                domainInfo = systems.DomainManager.Domains[domain]
                 // Hook health behavior
                 var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
                 if (healthBehavior != null)
@@ -156,8 +156,8 @@ namespace zenith.Core
             if (domain == DomainEnum.None) return damage;
 
             var domainstate = systems.DomainManager.Domains[domain];
-
-            float domainResistance = domainInfo.GetResistanceValue();
+            var domainobj = systems.DomainManager.Domains[domain];
+            float domainResistance = domainobj.GetResistanceValue();
             float stageMultiplier = stageProvider.GetStageMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 

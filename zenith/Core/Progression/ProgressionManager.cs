@@ -215,7 +215,7 @@ namespace zenith.Core.Progression
             watchedZenith.SetInt("Stage", Stage);
             watchedZenith.SetInt("DomainPoints", DomainPoints);
             watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
-            watchedZenith.SetString("StageName", GetStageName(Stage));
+            watchedZenith.SetString("StageName", GetStageName());
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
@@ -233,7 +233,7 @@ namespace zenith.Core.Progression
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
             EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
-             StageName = watchedZenith.GetString("StageName", GetStageName(Stage));
+             StageName = watchedZenith.GetString("StageName", GetStageName());
 
 
 
@@ -279,10 +279,10 @@ namespace zenith.Core.Progression
 
 
 
-        public string GetStageName(int stage) // Extremely risky could cause bugs in the future, Stage = stage directly touches internals.
+        public string GetStageName()
         {
-            Stage = stage;
-            return stage switch
+            
+            return Stage switch
             {
                 1 => "Adapting Organism",
                 2 => "Hyper-Adaptive Organism",

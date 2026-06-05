@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Tomar\\source\\repos\\zenith\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\gui\\domaindetailsgui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\gui\\domaindetailsgui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\progression\\progressionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\progression\\progressionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\gui\\zenithgui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\gui\\zenithgui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\progression\\istageprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\progression\\istageprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\domains\\domainsponge.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -19,12 +31,12 @@
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithsystems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\domains\\idomaininfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\domains\\idomaininfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -51,71 +63,110 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "DomainDetailsGUI.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\DomainDetailsGUI.cs",
+              "RelativeDocumentMoniker": "zenith\\GUI\\DomainDetailsGUI.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\DomainDetailsGUI.cs",
+              "RelativeToolTip": "zenith\\GUI\\DomainDetailsGUI.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowBAAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T23:02:49.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ProgressionManager.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Progression\\ProgressionManager.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Progression\\ProgressionManager.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Progression\\ProgressionManager.cs",
+              "RelativeToolTip": "zenith\\Core\\Progression\\ProgressionManager.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAMwNkAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T22:43:27.289Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IStageProvider.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Progression\\IStageProvider.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Progression\\IStageProvider.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Progression\\IStageProvider.cs",
+              "RelativeToolTip": "zenith\\Core\\Progression\\IStageProvider.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T22:54:43.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "ZenithGui.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\ZenithGui.cs",
               "RelativeDocumentMoniker": "zenith\\GUI\\ZenithGui.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\ZenithGui.cs",
-              "RelativeToolTip": "zenith\\GUI\\ZenithGui.cs",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAwwJ4AAAAuAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\ZenithGui.cs*",
+              "RelativeToolTip": "zenith\\GUI\\ZenithGui.cs*",
+              "ViewState": "AgIAACQAAAAAAAAAAIAwwI8AAABIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-05T21:08:53.029Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "DomainSponge.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\DomainSponge.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Domains\\DomainSponge.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\DomainSponge.cs",
               "RelativeToolTip": "zenith\\Core\\Domains\\DomainSponge.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAkwE0AAAASAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAADwvyEAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-05T21:38:25.774Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "DomainManager.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\DomainManager.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Domains\\DomainManager.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\DomainManager.cs",
               "RelativeToolTip": "zenith\\Core\\Domains\\DomainManager.cs",
-              "ViewState": "AgIAAFcAAAAAAAAAAAAewG8AAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAIkAAAAAAAAAAAAuwJYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-04T19:53:25.92Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "ZenithSystems.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithSystems.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\ZenithSystems.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithSystems.cs",
               "RelativeToolTip": "zenith\\Core\\ZenithSystems.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAArwCcAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAMwFkAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-04T21:38:47.963Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "IDomainInfo.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\IDomainInfo.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Domains\\IDomainInfo.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Domains\\IDomainInfo.cs",
               "RelativeToolTip": "zenith\\Core\\Domains\\IDomainInfo.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAUwBMAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-04T19:44:45.349Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "ZenithBehavior.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithBehavior.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\ZenithBehavior.cs",

@@ -79,22 +79,35 @@ namespace zenith.Core
             }
             eventsWired = true;
 
-            domainInfo.DomainMaxed += ProgressionManager.HandleDomainMaxed; // Could this be simplified? 
-            domainInfo.DomainMaxed += () =>               // These are 2 examples of how Action can be used
-            {
 
+            foreach ( var domain in DomainManager.Domains.Values) // per domain instance wire domain maxed event
+            {
+                domain.DomainMaxed += ProgressionManager.HandleDomainMaxed;
+                domain.DomainMaxed += () =>
+                {
+                    // These are 2 examples of how Action can be used
+
+                    Log($"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
+                    ZenithGui.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
+                };
+
+                domain.OnTierUp += (d) => // Action <d> so the parameters contain the object
+                {
+                    DomainEnum domain = d.GetDomain();
+                    ZenithGui?.UpdateStats();
+                    Log($"[EVENT] {domain} tier increased to {d.GetTier()}");
+                };
+
+            }
+
+
+
+
+            ProgressionManager.OnStageUp += () =>
+            {
                 Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
-                ZenithGui.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
-            };
-            
-            domainInfo.OnTierUp += (d) => // Action <d> so the parameters contain the object
-            {
-                DomainEnum domain = d.GetDomain();
                 ZenithGui?.UpdateStats();
-                Log($"[EVENT] {domain} tier increased to {d.GetTier()}");
             };
-
-            ProgressionManager.OnStageUp +=ZenithGui.UpdateStats;
             
         }
 

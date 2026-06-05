@@ -24,34 +24,40 @@ namespace zenith.GUI
         {
             domainManager = dm;
             this.domain = domain;
-            var sponge = domainManager.Domains[domain];
+
+            domainInfo = domainManager.Domains[domain]; // Important for dictionary lookup
+
+            domainInfo.OnTierUp += (d) =>
+            {
+
+                UpdateDomainStats();
+            };
 
 
            // changeHandler = (s) => UpdateDomainStats(); Delete once no bugs are found
-            domainInfo.OnTierUp += (s) => UpdateDomainStats();
+       
 
-            domainInfo.OnDomainChanged += UpdateDomainStats;
-           // sponge.OnDomainChanged += changeHandler;
-
-            domainInfo = sponge;
-            
             SetupDialog();
 
-           
+            // sponge.OnDomainChanged += changeHandler;
+
+
         }
 
         public void SetupDialog()
         {
-            var sponge = domainInfo.GetDomain(); // Always the live object
-            int Tier = domainInfo.GetTier();
-            bool Status = domainInfo.IsDMaxed();
 
+           
+            
+                bool Status = domainInfo.IsDMaxed();
+                int Tier = domainInfo.GetTier();
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
-            SingleComposer = capi.Gui.CreateCompo("DomainDetail", bounds)
-                .AddShadedDialogBG(ElementBounds.Fill, true)
-                .AddDialogTitleBar($"{domain} Details", OnGuiClosed)
-                .AddDynamicText($"Tier: {Tier}\n Maxed: {Status} ", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 40), "tiertext")
-                .Compose();
+                SingleComposer = capi.Gui.CreateCompo("DomainDetail", bounds)
+                    .AddShadedDialogBG(ElementBounds.Fill, true)
+                    .AddDialogTitleBar($"{domain} Details", OnGuiClosed)
+                    .AddDynamicText($"Tier: {Tier}\n Maxed: {Status} ", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 40), "tiertext")
+                    .Compose();
+      
         }
 
         public void UpdateDomainStats( )
@@ -66,7 +72,7 @@ namespace zenith.GUI
 
             var domainTree = zenithTree?.GetTreeAttribute(domain.ToString());
 
-            int Tier = domainTree?.GetInt("Tier") ?? -1;
+            int Tier = domainTree?.GetInt("Tier") ?? 0;
             bool Status = domainTree?.GetBool("Maxed") ?? false;
             string newText = $"Tier: {Tier}\n Maxed: {Status}";
 

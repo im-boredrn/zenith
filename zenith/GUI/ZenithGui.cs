@@ -29,11 +29,10 @@ namespace zenith.GUI
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager) : base(capi)
         {
-            this.progressionManager = progressionManager;
+            this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
-            IStageProvider stageProvider = progressionManager;
 
         }
 
@@ -48,7 +47,7 @@ namespace zenith.GUI
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(stageProvider.GetStage())); // Abstract these
+            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
             string[] domainNames = domainManager.GetDomainNames();
@@ -142,7 +141,7 @@ namespace zenith.GUI
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(stageProvider.GetStage())); // Abstract
+            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); // Abstract
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
 
@@ -191,7 +190,6 @@ namespace zenith.GUI
         public override void OnGuiClosed()
         {
             this.TryClose();
-            progressionManager.OnProgressionChanged -= UpdateStats;
             DomainDetailsGUI? .TryClose(); 
            Log("Dialog closed");
         }
