@@ -109,7 +109,7 @@ public class zenithCore : ModSystem
             var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
             if (zenithBehavior?.systems != null)
             {
-                zenithBehavior.systems.ProgressionManager.TickPassives();
+                zenithBehavior.systems.AbilityFactory.TickPassives();
             }
         }
     }

@@ -25,8 +25,8 @@ namespace zenith.Core.Progression
     public class ProgressionManager : IStageProvider
     {
 
-        
-        private bool DebugMode => ZenithSettings.ZDebugMode;
+
+        private static bool DebugMode => ZenithSettings.ZDebugMode;
         public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
         public int Stage { get; private set; }
         public string StageName { get; private set; }
@@ -104,7 +104,6 @@ namespace zenith.Core.Progression
                 stageIncreased = true;
                 if (stageIncreased) 
                 {
-                    ApplyPassivesForAllDomains();
                     OnStageUpSave();
                     OnStageUp?.Invoke();
 
@@ -124,59 +123,7 @@ namespace zenith.Core.Progression
             return 1;
         }
 
-        public void ApplyPassives(DomainEnum domain)
-        {
-
-            if (!CanUseAbilities())
-            {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return; 
-            }
-
-
-
-            var passive = abilityFactory.CreatePassives(domain);
-            passive?.Apply(Player);
-
-            Log($"[DATA] {domain} passive applied!"); ;
-        }
-
-        public void TickPassives()
-        {
-            if (!CanUseAbilities())
-            {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return;
-            }
-            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
-            {
-                var passive = abilityFactory.CreatePassives(domain);
-                passive?.Tick(Player);
-            }
-        }
-
-
-        public void HandleAttack(DomainEnum domain, DamageSource source, EntityAgent target)
-        {
-            if (!CanUseAbilities()) 
-            {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return;
-            }
-
-            var attack = abilityFactory.CreateAttack(domain);
-
-           
-            attack?.OnAttack(source, target);
-        }
-
-        private AbilityFactory abilityFactory;
-
-        public void SetFactory(AbilityFactory factory)
-        {
-            this.abilityFactory = factory;
-        }
-
+       
 
 
         /// <summary>
@@ -239,44 +186,13 @@ namespace zenith.Core.Progression
             Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
         }
 
-        private void ApplyPassivesForAllDomains()
-        {
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
-            {
-                if (domain == DomainEnum.None) continue;
-                ApplyPassives(domain);
-            }
-        }
-
-        public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
-        {
-            
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
-            {
-                if (domain == DomainEnum.None) continue;
-
-
-                HandleAttack(domain, source, targetEntity );
-            }
-        }
-        private bool CanUseAbilities()
-        {
-            if (Stage < 2)
-            {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return false;
-            }
-
-            return true;
-        }
+     
 
 
         public int GetStage()
         {
             return Stage;
         }
-
-
 
         public string GetStageName()
         {

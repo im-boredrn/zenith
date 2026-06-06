@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
+using zenith.Config;
 using zenith.Core.Progression;
 using DomainEnum = zenith.Core.ZenithBehavior.DomainEnum;
 
@@ -11,10 +14,18 @@ namespace zenith.Core.Abilities
     public  class AbilityFactory
     {
         private readonly IStageProvider stageProvider;
-        public AbilityFactory(IStageProvider stageProvider)
+        private static bool DebugMode => ZenithSettings.ZDebugMode;
+
+        private readonly Entity entity;
+        private EntityPlayer Player => entity as EntityPlayer;
+
+        public AbilityFactory(IStageProvider stageProvider, Entity entity)
         {
             this.stageProvider = stageProvider;
+            this.entity = entity;
         }
+
+
 
        public  IPassives CreatePassives(DomainEnum domain)
         {
@@ -52,10 +63,89 @@ namespace zenith.Core.Abilities
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };
         }
-       // public static IActiveAbilites CreateActives(DomainEnum domain)
-       // {
+        // public static IActiveAbilites CreateActives(DomainEnum domain)
+        // {
         //    return domain switch
-         //   { DomainEnum.Kinetic => new }
-       // }
+        //   { DomainEnum.Kinetic => new }
+        // }
+
+
+
+        private bool CanUseAbilities()
+        {
+            if (stageProvider.GetStage() < 2)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void ApplyPassives(DomainEnum domain)
+        {
+
+            if (!CanUseAbilities())
+            {
+             //   Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return;
+            }
+
+
+
+            var passive = CreatePassives(domain);
+            passive?.Apply(Player);
+
+        }
+
+        public void TickPassives()
+        {
+            if (!CanUseAbilities())
+            {
+             //   Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return;
+            }
+            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
+            {
+                var passive = CreatePassives(domain);
+                passive?.Tick(Player);
+            }
+        }
+
+
+        public void HandleAttack(DomainEnum domain, DamageSource source, EntityAgent target)
+        {
+            if (!CanUseAbilities())
+            {
+               // Log($"[DATA] Current Stage is : {Stage} | Returning...");
+                return;
+            }
+
+            var attack = CreateAttack(domain);
+
+
+            attack?.OnAttack(source, target);
+        }
+
+        public void ApplyPassivesForAllDomains()
+        {
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
+            {
+                if (domain == DomainEnum.None) continue;
+                ApplyPassives(domain);
+            }
+        }
+
+        public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
+        {
+
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
+            {
+                if (domain == DomainEnum.None) continue;
+
+
+                HandleAttack(domain, source, targetEntity);
+            }
+        }
+
     }
 }

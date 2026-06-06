@@ -22,6 +22,7 @@ namespace zenith.Core
 
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
+        public AbilityFactory AbilityFactory { get; }
         public ZenithGui ZenithGui { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
@@ -37,9 +38,10 @@ namespace zenith.Core
 
             // Core managers
             ProgressionManager = new ProgressionManager(entity);
-            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager); // Abstract
-            ProgressionManager.SetFactory(abilityFactory);
+            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager, entity); // Abstract
             ProgressionManager.LoadProgression();
+
+
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
 
@@ -102,11 +104,12 @@ namespace zenith.Core
 
 
 
-
+            // On stage up Update GUI and check if domains can get passives
             ProgressionManager.OnStageUp += () =>
             {
                 Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
+                AbilityFactory?.ApplyPassivesForAllDomains(); 
             };
             
         }
@@ -117,7 +120,7 @@ namespace zenith.Core
             var player = entity as EntityPlayer;
             if (player == null) return;
 
-            ProgressionManager.TickPassives();
+            AbilityFactory?.TickPassives();
         }
         private void Log(string message)
         {
