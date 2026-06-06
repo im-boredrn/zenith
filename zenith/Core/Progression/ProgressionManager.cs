@@ -136,8 +136,7 @@ namespace zenith.Core.Progression
 
 
             var passive = abilityFactory.CreatePassives(domain);
-            if(passive != null)
-            passive.Apply(Player);
+            passive?.Apply(Player);
 
             Log($"[DATA] {domain} passive applied!"); ;
         }
@@ -167,8 +166,8 @@ namespace zenith.Core.Progression
 
             var attack = abilityFactory.CreateAttack(domain);
 
-            if(attack != null)
-            attack.OnAttack(source, target);
+           
+            attack?.OnAttack(source, target);
         }
 
         private AbilityFactory abilityFactory;

@@ -88,7 +88,7 @@ namespace zenith.Core
                     // These are 2 examples of how Action can be used
 
                     Log($"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
-                    ZenithGui.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
+                    ZenithGui?.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
                 };
 
                 domain.OnTierUp += (d) => // Action <d> so the parameters contain the object

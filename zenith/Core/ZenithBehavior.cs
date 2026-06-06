@@ -64,7 +64,7 @@ namespace zenith.Core
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
         public ZenithSystems systems;
         private readonly IStageProvider stageProvider;
-        private readonly IDomainInfo domainInfo;
+        private  IDomainInfo domainInfo;
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
@@ -72,10 +72,10 @@ namespace zenith.Core
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 sapi?.Logger.Warning("Zenith behavior attached to SERVER");
-                DomainEnum domain;
                 // Server-only systems
                 systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
-                domainInfo = systems.DomainManager.Domains[domain]
+
+
                 // Hook health behavior
                 var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
                 if (healthBehavior != null)
@@ -97,6 +97,9 @@ namespace zenith.Core
                 // Client-only systems (GUI)
                 systems = new ZenithSystems(entity, new ModConfig(), capi);
             }
+
+
+            stageProvider = systems.ProgressionManager; 
         }
 
         public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
@@ -118,7 +121,7 @@ namespace zenith.Core
             }
             systems.DomainManager.ProcessDomain(domain, ref damage);
             var domainState = systems.DomainManager.Domains[domain]; // Abstract
-
+            domainInfo = systems.DomainManager.Domains[domain];
             Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
             
         }
@@ -156,8 +159,8 @@ namespace zenith.Core
             if (domain == DomainEnum.None) return damage;
 
             var domainstate = systems.DomainManager.Domains[domain];
-            var domainobj = systems.DomainManager.Domains[domain];
-            float domainResistance = domainobj.GetResistanceValue();
+
+            float domainResistance = domainstate.GetResistanceValue();
             float stageMultiplier = stageProvider.GetStageMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
