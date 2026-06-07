@@ -95,7 +95,7 @@ namespace zenith.Core.Progression
         /// domain points to ensure progression is handled correctly.</remarks>
         private void CheckStageProgression()
         {
-            bool stageIncreased = false;
+            bool stageIncreased ;
 
             if (DomainPoints >= StageUpRequirement && Stage < 3)
             {
@@ -158,6 +158,8 @@ namespace zenith.Core.Progression
         /// progression is recorded and can be restored in future sessions.</remarks>
         private void SaveProgression()
         {
+            Log("[FLOW] SaveProgression Called");
+
             watchedZenith.SetInt("Stage", Stage);
             watchedZenith.SetInt("DomainPoints", DomainPoints);
             watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);

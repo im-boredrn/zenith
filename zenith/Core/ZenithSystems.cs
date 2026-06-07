@@ -18,7 +18,7 @@ namespace zenith.Core
   
         public class ZenithSystems
         {
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+        public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
@@ -38,7 +38,7 @@ namespace zenith.Core
 
             // Core managers
             ProgressionManager = new ProgressionManager(entity);
-            AbilityFactory abilityFactory = new AbilityFactory(ProgressionManager, entity); // Abstract
+             AbilityFactory = new AbilityFactory(ProgressionManager, entity); // Abstract
             ProgressionManager.LoadProgression();
 
 
@@ -56,12 +56,12 @@ namespace zenith.Core
             Passives = Enum.GetValues<DomainEnum>()
     .Cast<DomainEnum>()
     .Where(d => d != DomainEnum.None) // skip None
-    .ToDictionary(d => d, d => abilityFactory.CreatePassives(d));
+    .ToDictionary(d => d, d => AbilityFactory.CreatePassives(d));
 
             Attack = Enum.GetValues(typeof(DomainEnum))
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
-                .ToDictionary(d => d, d => abilityFactory.CreateAttack(d));
+                .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
 
          //   bool isClient = capi != null;
 
@@ -119,8 +119,9 @@ namespace zenith.Core
         {
             var player = entity as EntityPlayer;
             if (player == null) return;
-
-            AbilityFactory?.TickPassives();
+      //      Log($"[FLOW] OnServerTick Called");
+            AbilityFactory?.TickPassives(); // If OST is Called Why isn't TickPassives
+         //   Log($"[DATA] Current Side is {player.World.Side}");
         }
         private void Log(string message)
         {

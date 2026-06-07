@@ -97,8 +97,6 @@ namespace zenith.Core.Domains
                 {
                     OnTierUp?.Invoke(this); // Fires To EVERYONE, Subscriber Decides to Receive
                 Log($"[SERVER] Tier increased to {Tier}");
-                 Log($"[SERVER] Writing Tier to watched attributes...");
-                    SaveTier();               
                     OnDomainChanged?.Invoke();
                     NotifyChanged();
 
@@ -118,19 +116,7 @@ namespace zenith.Core.Domains
         }
 
 
-        public void SaveTier()
-        {
-            var zenithTree = entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute();
-            entity.WatchedAttributes["zenith"] = zenithTree;
-
-            var domainTree = zenithTree.GetTreeAttribute(Domain.ToString()) ?? new TreeAttribute();
-            zenithTree[Domain.ToString()] = domainTree;
-
-            domainTree.SetInt("Tier", Tier);
-
-            entity.WatchedAttributes.MarkPathDirty("zenith");
-        }
-
+     
 
             /// <summary>
             /// Calculates the final damage value after applying resistance based on the character's tier and damage
@@ -199,6 +185,13 @@ namespace zenith.Core.Domains
         public float GetResistanceValue()
         {
             return Tier * DamageReductionPerTier;
+        }
+
+        public void LoadState(float counter, int tier, bool maxed)
+        {
+            Counter = counter;
+            Tier = tier;
+            IsMaxed = maxed;
         }
 
         private void Log(string message)

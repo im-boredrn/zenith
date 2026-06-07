@@ -127,43 +127,46 @@ namespace zenith.Core.Domains
 
         public void SaveDomains()
         {
-         
+            Log($"[FLOW] Calling SaveDomains");
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
-            foreach (var kv in Domains)
+            foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
-                var domain = kv.Value;
+                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
+
                 domainTree.SetInt("Tier", domain.GetTier());
                 domainTree.SetFloat("Counter", domain.GetCounter());
                 domainTree.SetBool("Maxed", domain.IsDMaxed());
-                watchedZenith[kv.Key.ToString()] = domainTree;
 
 
-                
+                watchedZenith[domain.ToString()] = domainTree;
+
+                Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
+
+
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
-        public void LoadDomains()
+        public void LoadDomains() // Is it cause its only loaded once
         {
          
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            foreach (var kv in Domains)
+            foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
-                var domain = kv.Value;
+                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
-                var tier = domain.GetTier();
-                var counter = domain.GetCounter();
-                var isMaxed = domain.IsDMaxed();
 
-                counter = domainTree.GetFloat("Counter", 0);
-                tier = domainTree.GetInt("Tier", 0);
-                isMaxed = domainTree.GetBool("Maxed", false);
-              
+                domain.LoadState(
+                    domainTree.GetFloat("Counter", 0),
+                    domainTree.GetInt("Tier", 0),
+                    domainTree.GetBool("Maxed", false));
+
+               
+                Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
+
             }
 
         }

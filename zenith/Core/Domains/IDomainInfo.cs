@@ -17,7 +17,7 @@ namespace zenith.Core.Domains
 
         float GetResistanceValue();
 
-
+        void LoadState(float counter, int tier, bool maxed);
 
         void ProcessDamage(float damage);
 

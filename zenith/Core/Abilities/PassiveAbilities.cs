@@ -73,7 +73,7 @@ namespace zenith.Core.Abilities
         { }
         public void Tick(EntityPlayer entityPlayer)
         {
-
+          
             var healthBehavior = entityPlayer.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior == null) return;
             var zenith = entityPlayer.WatchedAttributes.GetTreeAttribute("zenith");

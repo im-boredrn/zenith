@@ -21,10 +21,8 @@ namespace zenith.GUI
 
         public override string ToggleKeyCombinationCode => null;
 
-        ProgressionManager progressionManager;
         DomainManager domainManager;
         private readonly IStageProvider stageProvider;
-        private readonly IDomainInfo domainInfo;
         DomainDetailsGUI DomainDetailsGUI;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager) : base(capi)

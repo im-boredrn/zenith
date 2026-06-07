@@ -32,7 +32,7 @@ namespace zenith.Core.Abilities
 
             if (domain == DomainEnum.None)
                 return null;
-
+       //     Log("[FLOW] CreatePassives Called " + domain);
             return domain switch
             {
                 DomainEnum.Kinetic => new KineticPassive(),
@@ -43,7 +43,7 @@ namespace zenith.Core.Abilities
                 DomainEnum.Drown => new DrownPassive(),
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };
-
+            
         }
 
         public  IAttackAbilities CreateAttack(DomainEnum domain)
@@ -54,7 +54,7 @@ namespace zenith.Core.Abilities
 
             return domain switch
             {
-              DomainEnum.Kinetic => new KineticAttack(),
+              DomainEnum.Kinetic => new KineticAttack(), // Maybe a movement buff
                 DomainEnum.Thermal => new ThermalAttack(stageProvider),
                 DomainEnum.Cold => new ColdAttack(),
                 DomainEnum.Toxic => new ToxicAttack(), // Could Add Poison if it exists
@@ -86,7 +86,7 @@ namespace zenith.Core.Abilities
 
             if (!CanUseAbilities())
             {
-             //   Log($"[DATA] Current Stage is : {Stage} | Returning...");
+             //   Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
                 return;
             }
 
@@ -97,15 +97,18 @@ namespace zenith.Core.Abilities
 
         }
 
-        public void TickPassives()
+        public void TickPassives() 
         {
-            if (!CanUseAbilities())
+           // Log($"[FLOW] Tick Passives Called");
+
+            if (!CanUseAbilities()) 
             {
-             //   Log($"[DATA] Current Stage is : {Stage} | Returning...");
+               // Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
                 return;
             }
-            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
+            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None)) 
             {
+                //Log($"[DATA] ticking {domain} for : {Player}");
                 var passive = CreatePassives(domain);
                 passive?.Tick(Player);
             }
@@ -116,7 +119,7 @@ namespace zenith.Core.Abilities
         {
             if (!CanUseAbilities())
             {
-               // Log($"[DATA] Current Stage is : {Stage} | Returning...");
+             //  Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
                 return;
             }
 
@@ -145,6 +148,12 @@ namespace zenith.Core.Abilities
 
                 HandleAttack(domain, source, targetEntity);
             }
+        }
+
+        private void Log(string message)
+        {
+            if (!DebugMode) return;
+            Player.World.Logger.Warning(message);
         }
 
     }

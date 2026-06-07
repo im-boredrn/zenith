@@ -24,7 +24,7 @@ public class zenithCore : ModSystem
     public ZenithGui ZenithGui;
     public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
-    private readonly long tickListenerId;
+ //   private readonly long tickListenerId;
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
@@ -125,9 +125,9 @@ public class zenithCore : ModSystem
         Api = null;
         base.Dispose();
 
-        if (tickListenerId > 0)
+       // if (tickListenerId > 0)
         {
-            sapi.Event.UnregisterGameTickListener(tickListenerId);
+      //      sapi.Event.UnregisterGameTickListener(tickListenerId);
         }
     }
 }

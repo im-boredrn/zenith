@@ -19,7 +19,6 @@ namespace zenith.GUI
         public bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
-        readonly Action changeHandler;
         public DomainDetailsGUI(ICoreClientAPI capi, DomainManager dm, DomainEnum domain) : base(capi)
         {
             domainManager = dm;
@@ -102,7 +101,6 @@ namespace zenith.GUI
         {
             var sponge = domainManager.Domains[domain];
 
-            sponge.OnDomainChanged -= changeHandler;
 
             base.OnGuiClosed(); // I just realized the syntax base most likely means its usual behavior before override im so fucking tired
             this.TryClose();
