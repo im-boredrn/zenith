@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 using zenith.Core.Progression;
 
 namespace zenith.Core.Abilities
@@ -29,6 +30,9 @@ namespace zenith.Core.Abilities
             {
                 targetEntity.Ignite();
             }
+
+            targetEntity.Stats.Set("healingeffectivness", "Thermal", -0.2f, true);
+
          }
     }
 
@@ -36,27 +40,32 @@ namespace zenith.Core.Abilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity )
         {
-
+            // maybe bleed if it exists
         }
     }
 
     internal class KineticAttack : IAttackAbilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
-        {
-
-        }
+        { }
     }
 
     internal class ColdAttack : IAttackAbilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
-        { }
+        {
+            targetEntity.Stats.Set("walkspeed", "cold", -0.1f, true);
+        
+        
+        }
     }
     internal class ToxicAttack : IAttackAbilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
-        { }
+        {
+            targetEntity.Stats.Set("hungerrate", "Toxic", 0.5f, true);
+        
+        }
     }
 
     internal class DrownAttack : IAttackAbilities

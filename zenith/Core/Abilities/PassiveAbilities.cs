@@ -42,12 +42,20 @@ namespace zenith.Core.Abilities
 
         public void Apply( EntityPlayer entityPlayer) 
         {
+            var playerStats = entityPlayer.Stats;
             entityPlayer.Properties.KnockbackResistance *= 2f;
             entityPlayer.Properties.FallDamage = false;
-            entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); //Fix loading
+            entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); // IDEK if I need all the save load stats stuff
+            playerStats.Set("jumpHeightMul", "zenith", 0.2f, true); // Make Vals Custimizable eventually - maybe even through GUI
+            playerStats.Set("miningSpeedMul", "zenith", 0.3f, true);
+            playerStats.Set("armorWalkSpeedAffectedness", "zenith", 0.0f, true); // IDK if - or + helps speed
+            playerStats.Set("meleeWeaponsDamage", "zenith", 0.3f, true); // Also remember to mult by stage eventually
+
+          
+
         }
 
-      public  void Tick(EntityPlayer entityPlayer)
+        public  void Tick(EntityPlayer entityPlayer)
         {
         }
     }
@@ -56,7 +64,7 @@ namespace zenith.Core.Abilities
     {
         public void Apply(EntityPlayer entityPlayer)
         {
-            
+          
         }
         public void Tick(EntityPlayer entityPlayer)
         {
@@ -123,7 +131,9 @@ namespace zenith.Core.Abilities
     internal class DrownPassive : IPassives
     {
         public void Apply(EntityPlayer entityPlayer)
-        { }
+        {
+            
+         }
 
         public void Tick(EntityPlayer entityPlayer)
         { }

@@ -127,7 +127,6 @@ namespace zenith.Core.Progression
         {
             return Stage switch
             {
-                1 => ZenithSettings.ZStageSpeed1,
                 2 => ZenithSettings.ZStageSpeed2,
                 3 => ZenithSettings.ZStageSpeed3,
                 _ => 1f

@@ -64,11 +64,6 @@ namespace zenith.Core
             //   bool isClient = capi != null;
 
 
-         
-        
-        
-
-
         WireEvents();
             
             }
@@ -123,6 +118,17 @@ namespace zenith.Core
                 }
             };
             
+        }
+
+        public void ApplyAttack(DamageSource source, EntityAgent targetEntity)
+        {
+            foreach (var domains in DomainManager.Domains.Values)
+            {
+
+                if (CanUseAttack(domains))
+                AbilityFactory.HandleAttack(domains.GetDomain(), source, targetEntity);
+            }
+
         }
 
 

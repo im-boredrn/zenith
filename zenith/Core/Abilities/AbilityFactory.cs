@@ -113,8 +113,6 @@ namespace zenith.Core.Abilities
             
 
             var attack = CreateAttack(domain);
-
-
             attack?.OnAttack(source, target);
         }
 
@@ -123,13 +121,7 @@ namespace zenith.Core.Abilities
         public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
         {
 
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
-            {
-                if (domain == DomainEnum.None) continue;
-
-
-                HandleAttack(domain, source, targetEntity);
-            }
+           
         }
 
         private void Log(string message)

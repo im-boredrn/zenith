@@ -104,7 +104,8 @@ namespace zenith.Core
 
         public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
         {
-            systems.AbilityFactory?.ApplyAttackAbilitiesForAllDomains(source, targetEntity);
+
+            systems.ApplyAttack(source, targetEntity);
         }
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
