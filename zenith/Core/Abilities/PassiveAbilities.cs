@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Progression;
@@ -16,11 +17,34 @@ namespace zenith.Core.Abilities
 
     internal class KineticPassive : IPassives
     {
+        private TreeAttribute watchedZenith;
+        private readonly IStageProvider stageProvider;
+        public KineticPassive(EntityPlayer entityPlayer, IStageProvider stageProvider)
+        {
+            watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
+
+            this.stageProvider = stageProvider;
+        }   
+
+        private void LoadStats(EntityPlayer entity)
+        {
+            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entity.WatchedAttributes["zenith"] = watchedZenith;
+
+        }
+
+        private void SaveStats(EntityPlayer player)
+        {
+            watchedZenith.SetFloat("walkspeedMult", stageProvider.GetSpeedMultiplier());
+            player.WatchedAttributes.MarkPathDirty("zenith");
+        }
 
         public void Apply( EntityPlayer entityPlayer) 
         {
             entityPlayer.Properties.KnockbackResistance *= 2f;
             entityPlayer.Properties.FallDamage = false;
+            entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); //Fix loading
         }
 
       public  void Tick(EntityPlayer entityPlayer)

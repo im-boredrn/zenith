@@ -26,9 +26,14 @@ namespace zenith.Config
         public static float ZStageResistanceMultiplier3 => Config?.StageResistanceMultiplier3 ?? 1.4f;
         public static bool ZDebugMode => Config?.GlobalDebugMode ?? false;
         public static float ZRegenAmount => Config?.RegenAmount ?? 0.25f;
+        public static float ZStageSpeed1 => Config?.StageSpeed1 ?? 0.1f;
+        public static float ZStageSpeed2 => Config?.StageSpeed2 ?? 0.2f;
+        public static float ZStageSpeed3 => Config?.StageSpeed3 ?? 0.3f;
 
 
-        
-        
+
+
+
+
     }
 }

@@ -123,7 +123,18 @@ namespace zenith.Core.Progression
             return 1;
         }
 
-       
+        public float GetSpeedMultiplier()
+        {
+            return Stage switch
+            {
+                1 => ZenithSettings.ZStageSpeed1,
+                2 => ZenithSettings.ZStageSpeed2,
+                3 => ZenithSettings.ZStageSpeed3,
+                _ => 1f
+            };
+        }
+
+
 
 
         /// <summary>
@@ -177,13 +188,10 @@ namespace zenith.Core.Progression
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            var zenithTree = entity.WatchedAttributes.GetTreeAttribute("zenith");
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
             EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
              StageName = watchedZenith.GetString("StageName", GetStageName());
-
-
 
             Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
         }

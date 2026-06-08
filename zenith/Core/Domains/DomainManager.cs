@@ -125,7 +125,7 @@ namespace zenith.Core.Domains
 
      
 
-        public void SaveDomains()
+        public void SaveDomains() // Not saving correctly
         {
             Log($"[FLOW] Calling SaveDomains");
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
@@ -134,12 +134,15 @@ namespace zenith.Core.Domains
             {
                 var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
+
+               
+
                 domainTree.SetInt("Tier", domain.GetTier());
                 domainTree.SetFloat("Counter", domain.GetCounter());
                 domainTree.SetBool("Maxed", domain.IsDMaxed());
 
 
-                watchedZenith[domain.ToString()] = domainTree;
+                watchedZenith[domain.GetDomainName()] = domainTree;
 
                 Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
 
@@ -148,7 +151,7 @@ namespace zenith.Core.Domains
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
-        public void LoadDomains() // Is it cause its only loaded once
+        public void LoadDomains() 
         {
          
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());

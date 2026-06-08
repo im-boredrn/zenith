@@ -10,6 +10,8 @@ namespace zenith.Core.Domains
      public interface IDomainInfo
     {
         int GetTier();
+        int GetMaxTier();
+
         float GetCounter();
 
         int GetThreshold();
@@ -18,7 +20,6 @@ namespace zenith.Core.Domains
         float GetResistanceValue();
 
         void LoadState(float counter, int tier, bool maxed);
-
         void ProcessDamage(float damage);
 
         DomainEnum GetDomain();

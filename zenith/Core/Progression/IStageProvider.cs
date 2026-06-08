@@ -14,6 +14,7 @@ namespace zenith.Core.Progression
         int GetStage();
         float GetStageMultiplier();
         string GetStageName();
+        float GetSpeedMultiplier();
 
         event Action OnStageUp;
     }

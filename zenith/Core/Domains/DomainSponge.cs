@@ -173,6 +173,11 @@ namespace zenith.Core.Domains
             return Tier;
         }
 
+        public int GetMaxTier()
+        {
+            return MaxTier;
+        }
+
         public float GetCounter()
         {
             return Counter;

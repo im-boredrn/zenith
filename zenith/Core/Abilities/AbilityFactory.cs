@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using zenith.Config;
+using zenith.Core.Domains;
 using zenith.Core.Progression;
 using DomainEnum = zenith.Core.ZenithBehavior.DomainEnum;
 
@@ -18,24 +19,24 @@ namespace zenith.Core.Abilities
 
         private readonly Entity entity;
         private EntityPlayer Player => entity as EntityPlayer;
-
         public AbilityFactory(IStageProvider stageProvider, Entity entity)
         {
             this.stageProvider = stageProvider;
             this.entity = entity;
+
         }
 
 
 
        public  IPassives CreatePassives(DomainEnum domain)
         {
-
+            
             if (domain == DomainEnum.None)
                 return null;
        //     Log("[FLOW] CreatePassives Called " + domain);
             return domain switch
             {
-                DomainEnum.Kinetic => new KineticPassive(),
+                DomainEnum.Kinetic => new KineticPassive(Player,stageProvider),
                 DomainEnum.Thermal => new ThermalPassive(),
                 DomainEnum.Cold => new ColdPassive(),
                 DomainEnum.Toxic => new ToxicPassive(),
@@ -49,7 +50,7 @@ namespace zenith.Core.Abilities
         public  IAttackAbilities CreateAttack(DomainEnum domain)
         {
 
-            if (domain == DomainEnum.None)
+            if (domain == DomainEnum.None) 
                 return null;
 
             return domain switch
@@ -71,57 +72,45 @@ namespace zenith.Core.Abilities
 
 
 
-        private bool CanUseAbilities()
-        {
-            if (stageProvider.GetStage() < 2)
-            {
-                return false;
-            }
+        //private bool CanUseAbilities()
+        //{
+        //    if (stageProvider.GetStage() < 2)
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+
+
+        //    return true;
+        //}
+
+
+       
+        
 
         public void ApplyPassives(DomainEnum domain)
         {
-
-            if (!CanUseAbilities())
-            {
-             //   Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
-                return;
-            }
-
-
-
             var passive = CreatePassives(domain);
             passive?.Apply(Player);
 
         }
 
-        public void TickPassives() 
+        public void TickPassives(DomainEnum domain ) 
         {
            // Log($"[FLOW] Tick Passives Called");
 
-            if (!CanUseAbilities()) 
-            {
-               // Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
-                return;
-            }
-            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None)) 
-            {
+           
+            
                 //Log($"[DATA] ticking {domain} for : {Player}");
                 var passive = CreatePassives(domain);
                 passive?.Tick(Player);
-            }
+            
         }
 
 
         public void HandleAttack(DomainEnum domain, DamageSource source, EntityAgent target)
         {
-            if (!CanUseAbilities())
-            {
-             //  Log($"[DATA] Current Stage is : {stageProvider.GetStage()} | Returning...");
-                return;
-            }
+            
 
             var attack = CreateAttack(domain);
 
@@ -129,19 +118,12 @@ namespace zenith.Core.Abilities
             attack?.OnAttack(source, target);
         }
 
-        public void ApplyPassivesForAllDomains()
-        {
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
-            {
-                if (domain == DomainEnum.None) continue;
-                ApplyPassives(domain);
-            }
-        }
+      
 
         public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
         {
 
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
             {
                 if (domain == DomainEnum.None) continue;
 

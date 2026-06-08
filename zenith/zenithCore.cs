@@ -11,8 +11,8 @@ using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core;
 using zenith.Core.Abilities;
+using zenith.Core.Domains;
 using zenith.GUI;
-
 namespace zenith;
 public class zenithCore : ModSystem
 {
@@ -22,9 +22,13 @@ public class zenithCore : ModSystem
     public static string ModId { get; private set; }
     public static ICoreAPI Api { get; private set; }
     public ZenithGui ZenithGui;
+
+    
+    
     public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
- //   private readonly long tickListenerId;
+ //   private readonly long tickListenerId;   
+
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
@@ -109,7 +113,7 @@ public class zenithCore : ModSystem
             var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
             if (zenithBehavior?.systems != null)
             {
-                zenithBehavior.systems.AbilityFactory.TickPassives();
+                zenithBehavior.systems.OnServerTick(dt); // changed from systems.AbilityFactory.Tick Pssives
             }
         }
     }

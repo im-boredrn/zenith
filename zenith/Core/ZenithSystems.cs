@@ -30,7 +30,6 @@ namespace zenith.Core
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
-        private  IDomainInfo domainInfo;
 
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
@@ -38,14 +37,13 @@ namespace zenith.Core
 
             // Core managers
             ProgressionManager = new ProgressionManager(entity);
-             AbilityFactory = new AbilityFactory(ProgressionManager, entity); // Abstract
+             AbilityFactory = new AbilityFactory(ProgressionManager ,entity); // Abstract
             ProgressionManager.LoadProgression();
 
 
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
 
-            
            
             // GUI
             if (capi != null)
@@ -63,10 +61,15 @@ namespace zenith.Core
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
 
-         //   bool isClient = capi != null;
+            //   bool isClient = capi != null;
 
-            
-                WireEvents();
+
+         
+        
+        
+
+
+        WireEvents();
             
             }
 
@@ -109,7 +112,15 @@ namespace zenith.Core
             {
                 Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
-                AbilityFactory?.ApplyPassivesForAllDomains(); 
+
+                foreach (var domain in DomainManager.Domains.Values)
+                {
+                    if (domain.GetDomain() == DomainEnum.None) continue;
+
+
+                    if (CanUsePassive(domain))
+                        AbilityFactory.ApplyPassives(domain.GetDomain());
+                }
             };
             
         }
@@ -120,9 +131,31 @@ namespace zenith.Core
             var player = entity as EntityPlayer;
             if (player == null) return;
       //      Log($"[FLOW] OnServerTick Called");
-            AbilityFactory?.TickPassives(); // If OST is Called Why isn't TickPassives
-         //   Log($"[DATA] Current Side is {player.World.Side}");
+
+            foreach (var domain in DomainManager.Domains.Values)
+            {
+
+                if (CanUsePassive(domain))
+                AbilityFactory?.TickPassives(domain.GetDomain());
+
+            }
+            //   Log($"[DATA] Current Side is {player.World.Side}");
         }
+
+        private bool CanUsePassive( IDomainInfo domain)
+        {
+            var passiveReq = DomainManager.Domains[domain.GetDomain()].GetMaxTier() / 2;
+
+            return ProgressionManager.GetStage() >= 2 && domain.GetTier() >= passiveReq;
+        }
+
+        private bool CanUseAttack(IDomainInfo domain)
+        {
+            var attackReq = domain.GetMaxTier() / 2;
+
+            return ProgressionManager.GetStage() >= 2 && domain.GetTier() >= attackReq;
+        }
+
         private void Log(string message)
         {
             if (!DebugMode) return;

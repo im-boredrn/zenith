@@ -21,5 +21,9 @@ public class ModConfig
     public float StageResistanceMultiplier2 { get; set; } = 1.2f;
     public float StageResistanceMultiplier3 { get; set; } = 1.4f;
     public float RegenAmount { get; set; } = 0.25f;
+    public float StageSpeed1 { get; set; } = 0.1f;
+    public float StageSpeed2 { get; set; } = 0.2f;
+    public float StageSpeed3 { get; set; } = 0.3f;
+
 
 }
