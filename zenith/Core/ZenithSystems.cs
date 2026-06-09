@@ -43,7 +43,7 @@ namespace zenith.Core
 
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
-
+            RefreshStats();
            
             // GUI
             if (capi != null)
@@ -85,29 +85,35 @@ namespace zenith.Core
                 domain.DomainMaxed += ProgressionManager.HandleDomainMaxed;
                 domain.DomainMaxed += () =>
                 {
-                    // These are 2 examples of how Action can be used
-
                     Log($"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
                     ZenithGui?.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
+                    if (CanUsePassive(domain))
+                    {
+                        AbilityFactory.ApplyPassives(domain.GetDomain());
+                        Log($"[EVENT] Stats Refreshed!");
+                    }
                 };
 
                 domain.OnTierUp += (d) => // Action <d> so the parameters contain the object
                 {
-                    DomainEnum domain = d.GetDomain();
                     ZenithGui?.UpdateStats();
                     Log($"[EVENT] {domain} tier increased to {d.GetTier()}");
+
+                    if (CanUsePassive(d))
+                    {
+                        AbilityFactory.ApplyPassives(d.GetDomain());
+                        Log($"[EVENT] Stats Refreshed!");
+                    }
                 };
 
             }
-
-
-
             // On stage up Update GUI and check if domains can get passives
             ProgressionManager.OnStageUp += () =>
             {
                 Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
-
+                RefreshStats();
+                Log($"[EVENT] Stats Refreshed!");
                 foreach (var domain in DomainManager.Domains.Values)
                 {
                     if (domain.GetDomain() == DomainEnum.None) continue;
@@ -160,6 +166,15 @@ namespace zenith.Core
             var attackReq = domain.GetMaxTier() / 2;
 
             return ProgressionManager.GetStage() >= 2 && domain.GetTier() >= attackReq;
+        }
+
+        private void RefreshStats()
+        {
+            foreach (var domain in DomainManager.Domains.Values)
+            {
+                if (CanUsePassive(domain))
+                   AbilityFactory.ApplyPassives(domain.GetDomain());
+            }
         }
 
         private void Log(string message)

@@ -31,7 +31,7 @@ namespace zenith.Core.Abilities
                 targetEntity.Ignite();
             }
 
-            targetEntity.Stats.Set("healingeffectivness", "Thermal", -0.2f, true);
+          //  targetEntity.Stats.Set("healingeffectivness", "Thermal", -0.2f, true);
 
          }
     }
@@ -54,7 +54,7 @@ namespace zenith.Core.Abilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
         {
-            targetEntity.Stats.Set("walkspeed", "cold", -0.1f, true);
+       //     targetEntity.Stats.Set("walkspeed", "cold", -0.1f, true);
         
         
         }
@@ -63,7 +63,7 @@ namespace zenith.Core.Abilities
     {
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
         {
-            targetEntity.Stats.Set("hungerrate", "Toxic", 0.5f, true);
+     //       targetEntity.Stats.Set("hungerrate", "Toxic", 0.5f, true);
         
         }
     }

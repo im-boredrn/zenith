@@ -118,11 +118,7 @@ namespace zenith.Core.Abilities
 
       
 
-        public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
-        {
-
-           
-        }
+       
 
         private void Log(string message)
         {

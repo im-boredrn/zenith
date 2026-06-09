@@ -48,9 +48,8 @@ namespace zenith.Core.Abilities
             entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); // IDEK if I need all the save load stats stuff
             playerStats.Set("jumpHeightMul", "zenith", 0.2f, true); // Make Vals Custimizable eventually - maybe even through GUI
             playerStats.Set("miningSpeedMul", "zenith", 0.3f, true);
-            playerStats.Set("armorWalkSpeedAffectedness", "zenith", 0.0f, true); // IDK if - or + helps speed
+            playerStats.Set("armorWalkSpeedAffectedness", "zenith", -3.4f, true); // IDK if - or + helps speed
             playerStats.Set("meleeWeaponsDamage", "zenith", 0.3f, true); // Also remember to mult by stage eventually
-
           
 
         }
@@ -74,7 +73,11 @@ namespace zenith.Core.Abilities
     internal class ToxicPassive : IPassives
     {
         public void Apply(EntityPlayer entityPlayer)
-        { }
+        {
+
+            entityPlayer.Stats.Set("hungerrate", "zenith", -0.5f, true);
+        
+        }
 
         public void Tick(EntityPlayer entityPlayer)
         { }

@@ -188,11 +188,6 @@ namespace zenith.Core.Domains
             return Domains.Keys.Select(d => d.ToString()).ToArray();
         }
 
-        //domains.Keys // Get the Keys
-        //.Select(d => d.ToString()) // Convert Each Enum to string
-        //.ToArray(); // Convert to array
-
-
 
 
         private void Log(string message)
