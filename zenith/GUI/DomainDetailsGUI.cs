@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace zenith.GUI
 
             domainInfo = domainManager.Domains[domain]; // Important for dictionary lookup
 
-            domainInfo.OnTierUp += (d) =>
+            domainInfo.OnTierUp += (d) => // I need to unsub or event leakage
             {
 
                 UpdateDomainStats();
@@ -50,11 +51,13 @@ namespace zenith.GUI
             
                 bool Status = domainInfo.IsDMaxed();
                 int Tier = domainInfo.GetTier();
+           // float counter = domainInfo.GetCounter();
+          //  float threshold = domainInfo.GetThreshold();
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
                 SingleComposer = capi.Gui.CreateCompo("DomainDetail", bounds)
                     .AddShadedDialogBG(ElementBounds.Fill, true)
                     .AddDialogTitleBar($"{domain} Details", OnGuiClosed)
-                    .AddDynamicText($"Tier: {Tier}\n Maxed: {Status} ", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 40), "tiertext")
+                    .AddDynamicText($"Tier: {Tier}\n Maxed: {Status}", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 70), "tiertext")
                     .Compose();
       
         }
@@ -73,6 +76,8 @@ namespace zenith.GUI
 
             int Tier = domainTree?.GetInt("Tier") ?? 0;
             bool Status = domainTree?.GetBool("Maxed") ?? false;
+          //  float Counter = domainTree?.GetFloat("Counter") ?? 0;
+          //  int Threshold = domainInfo.GetThreshold();
             string newText = $"Tier: {Tier}\n Maxed: {Status}";
 
             Log($"[CLIENT CHECK] Tier directly from entity: {Tier}");
@@ -102,7 +107,13 @@ namespace zenith.GUI
             var sponge = domainManager.Domains[domain];
 
 
-            base.OnGuiClosed(); // I just realized the syntax base most likely means its usual behavior before override im so fucking tired
+            domainInfo.OnTierUp -= (d) => 
+            {
+
+                UpdateDomainStats();
+            };
+
+            base.OnGuiClosed();
             this.TryClose();
             this.Dispose(); 
         }

@@ -106,6 +106,7 @@ namespace zenith.Core.Domains
                 {
                     ContributedToEvolution = true;
                     IsMaxed = true;
+                    Counter = 0;
                     DomainMaxed?.Invoke();
                     OnDomainChanged?.Invoke();
                     NotifyChanged();
