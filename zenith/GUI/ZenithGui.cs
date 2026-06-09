@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
-using static HarmonyLib.Code;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.GUI

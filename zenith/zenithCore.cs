@@ -122,7 +122,7 @@ public class zenithCore : ModSystem
 
     public override void Dispose()
     {
-        HarmonyInstance?.UnpatchAll(ModId);
+        HarmonyInstance?.UnpatchSelf();
         HarmonyInstance = null;
         Logger = null;
         ModId = null;
