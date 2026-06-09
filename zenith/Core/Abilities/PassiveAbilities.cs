@@ -21,35 +21,24 @@ namespace zenith.Core.Abilities
         private readonly IStageProvider stageProvider;
         public KineticPassive(EntityPlayer entityPlayer, IStageProvider stageProvider)
         {
-            watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
-
+         
             this.stageProvider = stageProvider;
         }   
 
-        private void LoadStats(EntityPlayer entity)
-        {
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+      
 
-        }
-
-        private void SaveStats(EntityPlayer player)
-        {
-            watchedZenith.SetFloat("walkspeedMult", stageProvider.GetSpeedMultiplier());
-            player.WatchedAttributes.MarkPathDirty("zenith");
-        }
+      
 
         public void Apply( EntityPlayer entityPlayer) 
         {
             var playerStats = entityPlayer.Stats;
             entityPlayer.Properties.KnockbackResistance *= 2f;
             entityPlayer.Properties.FallDamage = false;
-            entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); // IDEK if I need all the save load stats stuff
-            playerStats.Set("jumpHeightMul", "zenith", 0.2f, true); // Make Vals Custimizable eventually - maybe even through GUI
-            playerStats.Set("miningSpeedMul", "zenith", 0.3f, true);
-            playerStats.Set("armorWalkSpeedAffectedness", "zenith", -3.4f, true); // IDK if - or + helps speed
-            playerStats.Set("meleeWeaponsDamage", "zenith", 0.3f, true); // Also remember to mult by stage eventually
+            entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); 
+            playerStats.Set("jumpHeightMul", "zenith", stageProvider.GetJumpHeightMultiplier(), true); 
+            playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
+            playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
+            playerStats.Set("meleeWeaponsDamage", "zenith", stageProvider.GetDamageMultiplier(), true); 
           
 
         }

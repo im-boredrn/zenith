@@ -15,6 +15,12 @@ namespace zenith.Core.Progression
         float GetStageMultiplier();
         string GetStageName();
         float GetSpeedMultiplier();
+        float GetDamageMultiplier();
+        float GetIgniteChanceMultiplier();
+        float GetResistanceMultiplier();
+        float GetJumpHeightMultiplier();
+        float GetMiningSpeedMultiplier();
+        float GetArmorWSAMultiplier();
 
         event Action OnStageUp;
     }

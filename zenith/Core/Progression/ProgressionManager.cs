@@ -113,14 +113,26 @@ namespace zenith.Core.Progression
         }
         public float GetStageMultiplier()
         {
-            if (Stage == 1)
+            return Stage switch
             {
-                return ZenithSettings.ZStageResistanceMultiplier1;
-            }
-            else if (Stage == 2) return ZenithSettings.ZStageResistanceMultiplier2;
-            else if (Stage == 3) return ZenithSettings.ZStageResistanceMultiplier3;
+                1 => ZenithSettings.ZStageMultiplier1,
+                2 => ZenithSettings.ZStageMultiplier2,
+                3 => ZenithSettings.ZStageMultiplier3,
 
-            return 1;
+                _ => 0f
+            };
+        }
+
+        public float GetResistanceMultiplier()
+        {
+            return Stage switch
+            {
+                1 => ZenithSettings.ZStageResistanceMultiplier1,
+                2 => ZenithSettings.ZStageResistanceMultiplier2,
+                3 => ZenithSettings.ZStageResistanceMultiplier3,
+                _ => 0f
+
+            };
         }
 
         public float GetSpeedMultiplier()
@@ -129,11 +141,66 @@ namespace zenith.Core.Progression
             {
                 2 => ZenithSettings.ZStageSpeed2,
                 3 => ZenithSettings.ZStageSpeed3,
-                _ => 1f
+                _ => 0f
+            };
+        }
+
+        public float GetJumpHeightMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageJumpHeightMultipiler2,
+                3 => ZenithSettings.ZStageJumpHeightMultipiler3,
+                _ => 0f
+            };
+
+        }
+
+        public float GetMiningSpeedMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageMiningSpeedMultipiler2,
+                3 => ZenithSettings.ZStageMiningSpeedMultipiler3,
+                _ => 0f
+            };
+
+        }
+
+        public float GetArmorWSAMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageArmorWSAMultipiler2,
+                3 => ZenithSettings.ZStageArmorWSAMultipiler3,
+                _ => 0f
+            };
+
+        }
+
+        public float GetDamageMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageDamage2,
+                3 => ZenithSettings.ZStageDamage3,
+                _ => 0f
             };
         }
 
 
+
+        public float GetIgniteChanceMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageIgniteChanceMultipiler2,
+                3 => ZenithSettings.ZStageIgniteChanceMultipiler3,
+                _ => 0f
+            };
+        }
+
+        
 
 
         /// <summary>

@@ -22,10 +22,10 @@ namespace zenith.Core.Abilities
 
         public void OnAttack(DamageSource source, EntityAgent targetEntity)
         {
-            float baseChance = 0.2f; // 20% chance on stage 1
-            float stageMult = stageProvider.GetStageMultiplier();
+            float baseChance = 0.1f; // 10% chance 
+            float stageMult = stageProvider.GetIgniteChanceMultiplier(); // Untested
 
-            float finalChance = Math.Min(1f, baseChance * stageMult); // max 100%
+            float finalChance = Math.Min(1f, baseChance + stageMult); // max 100%
             if (targetEntity.World.Rand.NextDouble() < finalChance)
             {
                 targetEntity.Ignite();

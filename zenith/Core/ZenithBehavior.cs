@@ -162,7 +162,7 @@ namespace zenith.Core
             var domainstate = systems.DomainManager.Domains[domain];
 
             float domainResistance = domainstate.GetResistanceValue();
-            float stageMultiplier = stageProvider.GetStageMultiplier();
+            float stageMultiplier = stageProvider.GetResistanceMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage = damage / (1f + finalResistance);
