@@ -167,16 +167,16 @@ namespace zenith.Core.Progression
 
         }
 
-        public float GetArmorWSAMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageArmorWSAMultipiler2,
-                3 => ZenithSettings.ZStageArmorWSAMultipiler3,
-                _ => 0f
-            };
+        //public float GetArmorWSAMultiplier()
+        //{
+        //    return Stage switch
+        //    {
+        //        2 => ZenithSettings.ZStageArmorWSAMultipiler2,
+        //        3 => ZenithSettings.ZStageArmorWSAMultipiler3,
+        //        _ => 0f
+        //    };
 
-        }
+        //}
 
         public float GetDamageMultiplier()
         {

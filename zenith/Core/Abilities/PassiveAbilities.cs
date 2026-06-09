@@ -37,7 +37,7 @@ namespace zenith.Core.Abilities
             entityPlayer.Stats.Set("walkspeed", "zenith", stageProvider.GetSpeedMultiplier(), true); 
             playerStats.Set("jumpHeightMul", "zenith", stageProvider.GetJumpHeightMultiplier(), true); 
             playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
-            playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
+          //  playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
             playerStats.Set("meleeWeaponsDamage", "zenith", stageProvider.GetDamageMultiplier(), true); 
           
 
