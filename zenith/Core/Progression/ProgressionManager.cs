@@ -15,18 +15,18 @@ using zenith.Core.Abilities;
 using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
-namespace zenith.Core
+namespace zenith.Core.Progression
 {
   
     // Tracks Three Numbers
     //  Stage
     // Domain Points
     // Evolution Points 
-    public class ProgressionManager
+    public class ProgressionManager : IStageProvider
     {
 
-        
-        private bool DebugMode => ZenithSettings.ZDebugMode;
+
+        private static bool DebugMode => ZenithSettings.ZDebugMode;
         public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
         public int Stage { get; private set; }
         public string StageName { get; private set; }
@@ -47,6 +47,9 @@ namespace zenith.Core
         }
 
 
+        public event Action OnProgressionChanged; // UI only
+        public event Action OnStageUp; // UI only - eventually will merge into domains and then <T> will be needed
+
         /// <summary>
         /// Handles the event when the domain reaches its maximum capacity by incrementing domain points and evaluating
         /// stage progression.
@@ -55,7 +58,7 @@ namespace zenith.Core
         /// domain points and checks whether the stage progression criteria are met. Ensure that the domain state is
         /// valid before invoking this method.</remarks>
         /// <param name="sponge">The DomainSponge instance representing the current domain state that triggered the event. Must not be null.</param>
-        public void HandleDomainMaxed(DomainSponge sponge)
+        public void HandleDomainMaxed()
         {
             Log("[FLOW] HandleDomainMaxed Called");
             var sapi = entity.World.Api as ICoreServerAPI;
@@ -65,8 +68,7 @@ namespace zenith.Core
                 return;
 
             }
-           
-
+          
             if (Stage < 3)
             {
                 DomainPoints++;
@@ -93,7 +95,7 @@ namespace zenith.Core
         /// domain points to ensure progression is handled correctly.</remarks>
         private void CheckStageProgression()
         {
-            bool stageIncreased = false;
+            bool stageIncreased ;
 
             if (DomainPoints >= StageUpRequirement && Stage < 3)
             {
@@ -102,81 +104,103 @@ namespace zenith.Core
                 stageIncreased = true;
                 if (stageIncreased) 
                 {
-                    ApplyPassivesForAllDomains();
                     OnStageUpSave();
-                    OnStageUp?.Invoke(this);
+                    OnStageUp?.Invoke();
 
                 }
 
             }
         }
-        public event Action<ProgressionManager> OnStageUp;
         public float GetStageMultiplier()
         {
-            if (Stage == 1)
+            return Stage switch
             {
-                return ZenithSettings.ZStageResistanceMultiplier1;
-            }
-            else if (Stage == 2) return ZenithSettings.ZStageResistanceMultiplier2;
-            else if (Stage == 3) return ZenithSettings.ZStageResistanceMultiplier3;
+                1 => ZenithSettings.ZStageMultiplier1,
+                2 => ZenithSettings.ZStageMultiplier2,
+                3 => ZenithSettings.ZStageMultiplier3,
 
-            return 1;
+                _ => 0f
+            };
         }
 
-        public void ApplyPassives(DomainEnum domain)
+        public float GetResistanceMultiplier()
         {
-
-            if (!CanUseAbilities())
+            return Stage switch
             {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return; 
-            }
+                1 => ZenithSettings.ZStageResistanceMultiplier1,
+                2 => ZenithSettings.ZStageResistanceMultiplier2,
+                3 => ZenithSettings.ZStageResistanceMultiplier3,
+                _ => 0f
 
-
-
-            var passive = abilityFactory.CreatePassives(domain);
-            if(passive != null)
-            passive.Apply(Player);
-
-            Log($"[DATA] {domain} passive applied!"); ;
+            };
         }
 
-        public void TickPassives()
+        public float GetSpeedMultiplier()
         {
-            if (!CanUseAbilities())
+            return Stage switch
             {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return;
-            }
-            foreach (var domain in Enum.GetValues<DomainEnum>().Where(d => d != DomainEnum.None))
-            {
-                var passive = abilityFactory.CreatePassives(domain);
-                passive?.Tick(Player);
-            }
+                2 => ZenithSettings.ZStageSpeed2,
+                3 => ZenithSettings.ZStageSpeed3,
+                _ => 0f
+            };
         }
 
-
-        public void HandleAttack(DomainEnum domain, DamageSource source, EntityAgent target)
+        public float GetJumpHeightMultiplier()
         {
-            if (!CanUseAbilities()) 
+            return Stage switch
             {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return;
-            }
+                2 => ZenithSettings.ZStageJumpHeightMultipiler2,
+                3 => ZenithSettings.ZStageJumpHeightMultipiler3,
+                _ => 0f
+            };
 
-            var attack = abilityFactory.CreateAttack(domain);
-
-            if(attack != null)
-            attack.OnAttack(source, target);
         }
 
-        private AbilityFactory abilityFactory;
-
-        public void SetFactory(AbilityFactory factory)
+        public float GetMiningSpeedMultiplier()
         {
-            this.abilityFactory = factory;
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageMiningSpeedMultipiler2,
+                3 => ZenithSettings.ZStageMiningSpeedMultipiler3,
+                _ => 0f
+            };
+
         }
 
+        //public float GetArmorWSAMultiplier()
+        //{
+        //    return Stage switch
+        //    {
+        //        2 => ZenithSettings.ZStageArmorWSAMultipiler2,
+        //        3 => ZenithSettings.ZStageArmorWSAMultipiler3,
+        //        _ => 0f
+        //    };
+
+        //}
+
+        public float GetDamageMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageDamage2,
+                3 => ZenithSettings.ZStageDamage3,
+                _ => 0f
+            };
+        }
+
+
+
+        public float GetIgniteChanceMultiplier()
+        {
+            return Stage switch
+            {
+                2 => ZenithSettings.ZStageIgniteChanceMultipiler2,
+                3 => ZenithSettings.ZStageIgniteChanceMultipiler3,
+                _ => 0f
+            };
+        }
+
+        
 
 
         /// <summary>
@@ -201,7 +225,6 @@ namespace zenith.Core
         }
 
 
-        public event Action OnProgressionChanged;
 
         /// <summary>
         /// Saves the player's current progression state, including stage, domain points, and evolution points, to
@@ -212,10 +235,12 @@ namespace zenith.Core
         /// progression is recorded and can be restored in future sessions.</remarks>
         private void SaveProgression()
         {
+            Log("[FLOW] SaveProgression Called");
+
             watchedZenith.SetInt("Stage", Stage);
             watchedZenith.SetInt("DomainPoints", DomainPoints);
             watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
-            watchedZenith.SetString("StageName", GetStageName(Stage));
+            watchedZenith.SetString("StageName", GetStageName());
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
@@ -229,51 +254,26 @@ namespace zenith.Core
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            var zenithTree = entity.WatchedAttributes.GetTreeAttribute("zenith");
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
             EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
-             StageName = watchedZenith.GetString("StageName", GetStageName(Stage));
-
-
+             StageName = watchedZenith.GetString("StageName", GetStageName());
 
             Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
         }
 
-        private void ApplyPassivesForAllDomains()
+     
+
+
+        public int GetStage()
         {
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
-            {
-                if (domain == DomainEnum.None) continue;
-                ApplyPassives(domain);
-            }
+            return Stage;
         }
 
-        public void ApplyAttackAbilitiesForAllDomains(DamageSource source, EntityAgent targetEntity)
+        public string GetStageName()
         {
             
-            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
-            {
-                if (domain == DomainEnum.None) continue;
-
-
-                HandleAttack(domain, source, targetEntity );
-            }
-        }
-        private bool CanUseAbilities()
-        {
-            if (Stage < 2)
-            {
-                Log($"[DATA] Current Stage is : {Stage} | Returning...");
-                return false;
-            }
-
-            return true;
-        }
-        public string GetStageName(int stage)
-        {
-            Stage = stage;
-            return stage switch
+            return Stage switch
             {
                 1 => "Adapting Organism",
                 2 => "Hyper-Adaptive Organism",

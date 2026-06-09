@@ -25,7 +25,7 @@ namespace zenith.Core.Domains
 
 
         //#REF Dictionary Creation
-        public Dictionary<DomainEnum, DomainSponge> domains { get; private set; }
+        public Dictionary<DomainEnum, IDomainInfo> Domains { get; private set; }
 
         //#REF TreeAttribute Usage
         public TreeAttribute watchedZenith;
@@ -37,7 +37,7 @@ namespace zenith.Core.Domains
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            domains = new Dictionary<DomainEnum, DomainSponge>();
+            Domains = new Dictionary<DomainEnum, IDomainInfo>();
 
             // Register all domains
             foreach (DomainEnum domain in Enum.GetValues(typeof(DomainEnum)))
@@ -45,7 +45,9 @@ namespace zenith.Core.Domains
                 if (domain == DomainEnum.None) continue;
 
 
-                var sponge = new DomainSponge(config, entity, domain);
+                var sponge = new DomainSponge(config, entity, domain); 
+                IDomainInfo domainInfo = sponge; // Needed for reference
+                
                 RegisterDomain(domain, sponge);
 
             }
@@ -58,7 +60,7 @@ namespace zenith.Core.Domains
 
             Log("[FLOW] Calling ProcessDomain");
 
-            if (!domains.TryGetValue(domain, out var domainstate)) 
+            if (!Domains.TryGetValue(domain, out var domainstate)) 
                 return;            
 
             domainstate.ProcessDamage(damage); // Handles Everything inside itself
@@ -70,22 +72,23 @@ namespace zenith.Core.Domains
       
 
 
-        public event Action<DomainSponge> DomainMaxed;
-        public event Action<DomainSponge> TierUp; // DONT TOUCH
+        // public event Action<DomainSponge> DomainMaxed; // Mixed - wait could be merged - Trying to merge rn 6/5/26
+       // public event Action<DomainSponge> TierUp; // - Mixed
 
-        void RegisterDomain(DomainEnum domain, DomainSponge sponge)
+
+
+        void RegisterDomain(DomainEnum key, IDomainInfo domainInfo)
         {
-            if (!domains.TryAdd(domain, sponge))
+            if (!Domains.TryAdd(key, domainInfo))
             {
-                Log($"[WARN] Domain {domain} already registered");
+                Log($"[WARN] Domain {domainInfo.GetDomainName()} already registered");
             }
 
-            domains[domain] = sponge;
 
             
-                sponge.OnTierUp += (s) =>
+                domainInfo.OnTierUp += (s) =>
                 {
-                    Log($"[EVENT] {domain} tier increased to {s.Tier}");
+                    Log($"[EVENT] {domainInfo.GetDomainName()} tier increased to {s.GetTier()}");
 
                      var sapi = entity.World.Api as ICoreServerAPI;
                     if (sapi == null) return;
@@ -96,15 +99,14 @@ namespace zenith.Core.Domains
                     sapi.SendMessage(
                         player,
                         GlobalConstants.AllChatGroups,
-                        $"{domain} domain tier increased! New tier: {s.Tier}",
+                        $"{domainInfo.GetDomainName()} domain tier increased! New tier: {s.GetTier()}",
                         EnumChatType.Notification
                     );
 
                     SaveDomains();
-                    TierUp?.Invoke(s);
                 };
 
-            sponge.DomainMaxed += (s) =>
+            domainInfo.DomainMaxed += () =>
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 if (sapi == null) return;
@@ -117,69 +119,74 @@ namespace zenith.Core.Domains
                     EnumChatType.Notification
                     );
 
-                DomainMaxed?.Invoke(s);
                 SaveDomains();
             };
         }
 
      
 
-        public void SaveDomains()
+        public void SaveDomains() // Not saving correctly
         {
-
+            Log($"[FLOW] Calling SaveDomains");
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
-            foreach (var kv in domains)
+            foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
-                domainTree.SetInt("Tier", kv.Value.Tier);
-                domainTree.SetFloat("Counter", kv.Value.Counter);
-                domainTree.SetBool("Maxed", kv.Value.IsMaxed);
-                watchedZenith[kv.Key.ToString()] = domainTree;
+                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
 
-                
+               
+
+                domainTree.SetInt("Tier", domain.GetTier());
+                domainTree.SetFloat("Counter", domain.GetCounter());
+                domainTree.SetBool("Maxed", domain.IsDMaxed());
+
+
+                watchedZenith[domain.GetDomainName()] = domainTree;
+
+                Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
+
+
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
-        public void LoadDomains()
+        public void LoadDomains() 
         {
-
+         
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
-            foreach (var kv in domains)
+            foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[kv.Key.ToString()] as TreeAttribute ?? new TreeAttribute();
+                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
 
-                kv.Value.Counter = domainTree.GetFloat("Counter", 0);
-                kv.Value.Tier = domainTree.GetInt("Tier", 0);
-                kv.Value.IsMaxed = domainTree.GetBool("Maxed", false);
-              
+                domain.LoadState(
+                    domainTree.GetFloat("Counter", 0),
+                    domainTree.GetInt("Tier", 0),
+                    domainTree.GetBool("Maxed", false));
+
+               
+                Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
+
             }
 
         }
 
         public void ResetDomains()
         {
-            foreach (var sponge in domains.Values)
+            foreach (var sponge in Domains.Values)
             {
-                sponge.Counter = 0;
-                sponge.Tier = 0;
+             // sponge.Counter = 0;
+              //  sponge.Tier = 0;
             }
         }
 
-        public string[] GetDomainNames()
+        public string[] GetDomainNames() // Obselete
         {
-            return domains.Keys.Select(d => d.ToString()).ToArray();
+            return Domains.Keys.Select(d => d.ToString()).ToArray();
         }
-
-        //domains.Keys // Get the Keys
-        //.Select(d => d.ToString()) // Convert Each Enum to string
-        //.ToArray(); // Convert to array
-
 
 
 

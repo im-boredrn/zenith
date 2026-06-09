@@ -16,6 +16,8 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Domains;
+using zenith.Core.Progression;
 
 namespace zenith.Core
 {
@@ -61,6 +63,8 @@ namespace zenith.Core
         public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
         public ZenithSystems systems;
+        private readonly IStageProvider stageProvider;
+        private  IDomainInfo domainInfo;
 
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
@@ -68,9 +72,9 @@ namespace zenith.Core
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 sapi?.Logger.Warning("Zenith behavior attached to SERVER");
-
                 // Server-only systems
                 systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
+
 
                 // Hook health behavior
                 var healthBehavior = entity.GetBehavior<EntityBehaviorHealth>();
@@ -93,11 +97,15 @@ namespace zenith.Core
                 // Client-only systems (GUI)
                 systems = new ZenithSystems(entity, new ModConfig(), capi);
             }
+
+
+            stageProvider = systems.ProgressionManager; 
         }
 
         public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
         {
-            systems.ProgressionManager.ApplyAttackAbilitiesForAllDomains(source, targetEntity);
+
+            systems.ApplyAttack(source, targetEntity);
         }
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
@@ -113,9 +121,9 @@ namespace zenith.Core
                 return;
             }
             systems.DomainManager.ProcessDomain(domain, ref damage);
-            var domainState = systems.DomainManager.domains[domain];
-
-            Log($"Domain :{domain}\n Tier: {domainState.Tier}\n Counter: {domainState.Counter}/{domainState.Threshold} \n Damage Taken: {damage} ");
+            var domainState = systems.DomainManager.Domains[domain]; // Abstract
+            domainInfo = systems.DomainManager.Domains[domain];
+            Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
             
         }
        
@@ -151,10 +159,10 @@ namespace zenith.Core
 
             if (domain == DomainEnum.None) return damage;
 
-            var domainstate = systems.DomainManager.domains[domain];
+            var domainstate = systems.DomainManager.Domains[domain];
 
             float domainResistance = domainstate.GetResistanceValue();
-            float stageMultiplier = systems.ProgressionManager.GetStageMultiplier();
+            float stageMultiplier = stageProvider.GetResistanceMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage = damage / (1f + finalResistance);

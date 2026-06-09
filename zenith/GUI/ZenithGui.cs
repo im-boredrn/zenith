@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common.Entities;
 using zenith.Config;
-using zenith.Core;
 using zenith.Core.Domains;
-using static HarmonyLib.Code;
+using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.GUI
@@ -21,16 +13,17 @@ namespace zenith.GUI
 
         public override string ToggleKeyCombinationCode => null;
 
-        ProgressionManager progressionManager;
         DomainManager domainManager;
+        private readonly IStageProvider stageProvider;
         DomainDetailsGUI DomainDetailsGUI;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager) : base(capi)
         {
-            this.progressionManager = progressionManager;
+            this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
+
         }
 
 
@@ -44,7 +37,7 @@ namespace zenith.GUI
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
+            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
             string[] domainNames = domainManager.GetDomainNames();
@@ -55,7 +48,7 @@ namespace zenith.GUI
             int buttonHeight = 30;
             int padding = 10;
 
-            int totalButtons = domainManager.domains.Count;
+            int totalButtons = domainManager.Domains.Count;
             int totalWidth = totalButtons * (buttonWidth + padding) - padding;
 
             // Start X so the row is centered
@@ -100,15 +93,15 @@ namespace zenith.GUI
                 .AddDynamicText($"Stage : {StageName}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext"); // This should Stay since its an overall
 
             int i = 0;
-            foreach (var kvp in domainManager.domains)
+            foreach (var kvp in domainManager.Domains)
             {
                
                 DomainEnum domain = kvp.Key;
-                DomainSponge sponge = kvp.Value;
+                IDomainInfo sponge = kvp.Value;
 
                 string text = $"{domain}";
 
-                if (sponge.IsMaxed)
+                if (sponge.IsDMaxed())
                     text += "MAX";
 
                 int row = i / buttonsPerRow;
@@ -134,12 +127,11 @@ namespace zenith.GUI
        public void UpdateStats() 
         {
             if (SingleComposer == null) return;
-
             Log("[GUI] UpdateStats called");
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", progressionManager.GetStageName(progressionManager.Stage));
+            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); // Abstract
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
 
@@ -188,7 +180,6 @@ namespace zenith.GUI
         public override void OnGuiClosed()
         {
             this.TryClose();
-            progressionManager.OnProgressionChanged -= UpdateStats;
             DomainDetailsGUI? .TryClose(); 
            Log("Dialog closed");
         }
