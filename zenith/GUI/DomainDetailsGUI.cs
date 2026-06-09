@@ -57,7 +57,7 @@ namespace zenith.GUI
                 SingleComposer = capi.Gui.CreateCompo("DomainDetail", bounds)
                     .AddShadedDialogBG(ElementBounds.Fill, true)
                     .AddDialogTitleBar($"{domain} Details", OnGuiClosed)
-                    .AddDynamicText($"Tier: {Tier}\n Maxed: {Status}", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 70), "tiertext")
+                    .AddDynamicText($"Tier: {Tier}\n Maxed: {Status}", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 40), "tiertext")
                     .Compose();
       
         }
