@@ -123,6 +123,8 @@ namespace zenith.Core
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
             };
+
+            
             
         }
 

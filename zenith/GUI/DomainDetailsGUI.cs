@@ -17,7 +17,7 @@ namespace zenith.GUI
         DomainEnum domain;  // <- the domain this GUI is showing
         readonly DomainManager  domainManager;
         private readonly IDomainInfo domainInfo;
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+        public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
         public DomainDetailsGUI(ICoreClientAPI capi, DomainManager dm, DomainEnum domain) : base(capi)
@@ -47,22 +47,27 @@ namespace zenith.GUI
         public void SetupDialog()
         {
 
-           
-            
-                bool Status = domainInfo.IsDMaxed();
+            ElementBounds buttonBounds =
+                ElementBounds.Fixed(0, 0, 120, 30)
+                .WithAlignment(EnumDialogArea.RightBottom);
+
+            bool Status = domainInfo.IsDMaxed();
                 int Tier = domainInfo.GetTier();
            // float counter = domainInfo.GetCounter();
           //  float threshold = domainInfo.GetThreshold();
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
+
+
                 SingleComposer = capi.Gui.CreateCompo("DomainDetail", bounds)
                     .AddShadedDialogBG(ElementBounds.Fill, true)
                     .AddDialogTitleBar($"{domain} Details", OnGuiClosed)
                     .AddDynamicText($"Tier: {Tier}\n Maxed: {Status}", CairoFont.WhiteSmallText(), ElementBounds.Fixed(20, 50, 200, 40), "tiertext")
+                   
                     .Compose();
       
         }
 
-        public void UpdateDomainStats( )
+        public void UpdateDomainStats()
         {
             if (!IsOpened())
             {
@@ -93,11 +98,13 @@ namespace zenith.GUI
 
         }
 
+     
+
 
         public override void OnGuiOpened()
         {
 
-            base.OnGuiOpened(); // Recently added 
+            base.OnGuiOpened(); 
             
             UpdateDomainStats();
         }
@@ -109,7 +116,6 @@ namespace zenith.GUI
 
             domainInfo.OnTierUp -= (d) => 
             {
-
                 UpdateDomainStats();
             };
 
