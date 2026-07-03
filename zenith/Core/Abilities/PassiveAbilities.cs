@@ -19,10 +19,14 @@ namespace zenith.Core.Abilities
     {
         private TreeAttribute watchedZenith;
         private readonly IStageProvider stageProvider;
+        private readonly EntityPlayer entity;
         public KineticPassive(EntityPlayer entityPlayer, IStageProvider stageProvider)
         {
          
             this.stageProvider = stageProvider;
+            this.entity = entityPlayer; // New Line If stats stop working inspect this (07/3/26)
+            watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
+            entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
         }   
 
       
@@ -38,8 +42,21 @@ namespace zenith.Core.Abilities
             playerStats.Set("jumpHeightMul", "zenith", stageProvider.GetJumpHeightMultiplier(), true); 
             playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
           //  playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
-            playerStats.Set("meleeWeaponsDamage", "zenith", stageProvider.GetDamageMultiplier(), true); 
-          
+            playerStats.Set("meleeWeaponsDamage", "zenith", stageProvider.GetDamageMultiplier(), true);
+
+            SaveStats(); // So I can retrieve stats for GUI
+            // could also mark dirty here if other method causes issues.
+        }
+
+        public void SaveStats()
+        {
+            watchedZenith.SetFloat("Speed", stageProvider.GetSpeedMultiplier());
+            watchedZenith.SetFloat("JHM", stageProvider.GetJumpHeightMultiplier());
+            watchedZenith.SetFloat("MSM", stageProvider.GetMiningSpeedMultiplier());
+            watchedZenith.SetFloat("Dmg", stageProvider.GetDamageMultiplier());
+
+            entity.WatchedAttributes.MarkPathDirty("zenith");
+
 
         }
 

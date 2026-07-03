@@ -23,4 +23,6 @@ namespace zenith.Core.Abilities
     {
         void Activate();
     }
+
+    
 }

@@ -16,6 +16,7 @@ namespace zenith.GUI
         DomainManager domainManager;
         private readonly IStageProvider stageProvider;
         DomainDetailsGUI DomainDetailsGUI;
+        BonusGUI BonusGUI;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager) : base(capi)
         {
@@ -89,8 +90,8 @@ namespace zenith.GUI
                 .CreateCompo("OrganismTracker", dialogBounds) // Then Chain Elements
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
-
-                .AddDynamicText($"Stage : {StageName}\nDomainPoints: {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext"); // This should Stay since its an overall
+                 .AddButton("Bonuses", () => OnShowBonuses(), buttonBounds, EnumButtonStyle.Small)
+                .AddDynamicText($"Stage : {StageName}\nDomainPoints : {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext");
 
             int i = 0;
             foreach (var kvp in domainManager.Domains)
@@ -131,7 +132,7 @@ namespace zenith.GUI
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); // Abstract
+            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
 
@@ -164,7 +165,23 @@ namespace zenith.GUI
           
         }
 
-    
+        private bool OnShowBonuses()
+        {
+            // Display the Domains Stat Boosts
+
+            if (BonusGUI != null)
+            {
+                BonusGUI.TryClose();
+                BonusGUI.TryOpen();
+            }
+
+            BonusGUI = new BonusGUI(capi, stageProvider);
+            BonusGUI.TryOpen();
+            Log("Bonus GUI Button Clicked:");
+
+            return true;
+        }
+
         public override void OnGuiOpened()
         {
             Log("Dialog opened");

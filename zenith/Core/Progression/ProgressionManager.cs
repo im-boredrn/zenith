@@ -48,7 +48,7 @@ namespace zenith.Core.Progression
 
 
         public event Action OnProgressionChanged; // UI only
-        public event Action OnStageUp; // UI only - eventually will merge into domains and then <T> will be needed
+        public event Action OnStageUp; // UI only 
 
         /// <summary>
         /// Handles the event when the domain reaches its maximum capacity by incrementing domain points and evaluating
