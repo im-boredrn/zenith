@@ -54,8 +54,7 @@
               "RelativeToolTip": "zenith\\Core\\Progression\\ProgressionManager.cs",
               "ViewState": "AgIAAPsAAAAAAAAAAAAkwPsAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-03T18:37:10.635Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-03T18:37:10.635Z"
             },
             {
               "$type": "Document",
@@ -67,8 +66,7 @@
               "RelativeToolTip": "zenith\\Core\\Abilities\\PassiveAbilities.cs",
               "ViewState": "AgIAACMAAAAAAAAAAAAxwDUAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T21:39:21.654Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-02T21:39:21.654Z"
             },
             {
               "$type": "Document",
@@ -80,8 +78,7 @@
               "RelativeToolTip": "zenith\\GUI\\BonusGUI.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAAAAEsAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T21:33:49.399Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-02T21:33:49.399Z"
             },
             {
               "$type": "Document",
@@ -91,7 +88,7 @@
               "RelativeDocumentMoniker": "zenith\\GUI\\ZenithGui.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\GUI\\ZenithGui.cs",
               "RelativeToolTip": "zenith\\GUI\\ZenithGui.cs",
-              "ViewState": "AgIAAJwAAAAAAAAAAAAmwK4AAABfAAAAAAAAAA==",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAqwK4AAABfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-18T15:45:58.828Z",
               "EditorCaption": ""
@@ -106,8 +103,7 @@
               "RelativeToolTip": "zenith\\GUI\\DomainDetailsGUI.cs",
               "ViewState": "AgIAAB0AAAAAAAAAAAAwwHUAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-03T16:49:41.982Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-03T16:49:41.982Z"
             }
           ]
         }
