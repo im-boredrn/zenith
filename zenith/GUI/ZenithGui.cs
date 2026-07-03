@@ -9,7 +9,7 @@ namespace zenith.GUI
 {
     public class ZenithGui : GuiDialog
     {
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+        public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
 
@@ -172,7 +172,7 @@ namespace zenith.GUI
             if (BonusGUI != null)
             {
                 BonusGUI.TryClose();
-                BonusGUI.TryOpen();
+                BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
 
             BonusGUI = new BonusGUI(capi, stageProvider);

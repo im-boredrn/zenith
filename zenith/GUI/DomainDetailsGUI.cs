@@ -116,7 +116,6 @@ namespace zenith.GUI
 
             domainInfo.OnTierUp -= (d) => 
             {
-
                 UpdateDomainStats();
             };
 
