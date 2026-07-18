@@ -8,6 +8,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
 using zenith.GUI;
@@ -26,6 +27,8 @@ namespace zenith.Core
         public ZenithGui ZenithGui { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
+        public Assimilation.Assimilation Assimilation { get; }
+
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
@@ -37,9 +40,10 @@ namespace zenith.Core
 
             // Core managers
             ProgressionManager = new ProgressionManager(entity);
-             AbilityFactory = new AbilityFactory(ProgressionManager ,entity); // Abstract
+             AbilityFactory = new AbilityFactory(ProgressionManager ,entity); 
             ProgressionManager.LoadProgression();
 
+            Assimilation = new Assimilation.Assimilation(entity);
 
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
@@ -48,7 +52,7 @@ namespace zenith.Core
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager); // Abstract
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager); 
             }
 
             Passives = Enum.GetValues<DomainEnum>()

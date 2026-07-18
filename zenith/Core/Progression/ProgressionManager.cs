@@ -30,7 +30,7 @@ namespace zenith.Core.Progression
         public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
         public int Stage { get; private set; }
         public string StageName { get; private set; }
-        private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
+       static private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
         private TreeAttribute watchedZenith;
@@ -77,7 +77,7 @@ namespace zenith.Core.Progression
             }
             else
             {
-                EvolutionPoints += 20;
+                EvolutionPoints += 20; // Could be used in Assim Evolution - Use EVPoints to improve traits
                 SaveProgression();
             }
 

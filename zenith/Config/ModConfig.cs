@@ -42,8 +42,12 @@ public class ModConfig
     public float StageMiningSpeedMultipiler2 { get; set; } = 2.5f;
     public float StageMiningSpeedMultipiler3 { get; set; } = 3.2f;
 
-  //  public float StageArmorWSAMultipiler2 { get; set; } = -0.2f;
-   // public float StageArmorWSAMultipiler3 { get; set; } = -0.4f;
+    //  public float StageArmorWSAMultipiler2 { get; set; } = -0.2f;
+    // public float StageArmorWSAMultipiler3 { get; set; } = -0.4f;
+
+    public int AssimThreshhold { get; set; } = 20;
+    public int AssimMaxStage { get; set; } = 5;
+    
 
 
 

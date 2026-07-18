@@ -51,8 +51,14 @@ namespace zenith.Config
         public static float ZStageMiningSpeedMultipiler2 => Config?.StageMiningSpeedMultipiler2 ?? 2.5f;
         public static float ZStageMiningSpeedMultipiler3 => Config?.StageMiningSpeedMultipiler3 ?? 3.2f;
 
-      //  public static float ZStageArmorWSAMultipiler2 => Config?.StageArmorWSAMultipiler2 ?? -0.2f;
-      //  public static float ZStageArmorWSAMultipiler3 => Config?.StageArmorWSAMultipiler3 ?? -0.4f;
+        //  public static float ZStageArmorWSAMultipiler2 => Config?.StageArmorWSAMultipiler2 ?? -0.2f;
+        //  public static float ZStageArmorWSAMultipiler3 => Config?.StageArmorWSAMultipiler3 ?? -0.4f;
+
+
+        //Assimilation
+        public static int ZAssimThreshold => Config?.AssimThreshhold ?? 20;
+        public static int ZAssimMaxStage => Config?.AssimMaxStage ?? 5;
+
 
 
 
