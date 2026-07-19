@@ -45,9 +45,7 @@ namespace zenith.Core.Assimilation
             LoadAssim();
             
         }
-        Action OnAssimStageUp;
-        Action OnAssimCounterChanged;
-        Action OnAssimChanged; // Refine events later
+       readonly Action  OnAssimChanged; 
       
         public void TryAssimilate(IServerPlayer player)
         {
@@ -165,9 +163,10 @@ namespace zenith.Core.Assimilation
             {
                 AssimCounter = 0;
                 AssimStage++;
+                SaveAssim();
+                OnAssimChanged.Invoke();
             }
-            SaveAssim();
-            OnAssimChanged.Invoke();
+           
         }
 
 
@@ -182,22 +181,13 @@ namespace zenith.Core.Assimilation
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
             Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
-           
-
-            // OnAssimChanged.Invoke
         }
 
         public void LoadAssim()
         {
-            Log("[FLOW] LoadAssim Called"); 
-
-
             AssimCounter = watchedZenith.GetInt("AssimCounter", 0);
            AssimStage = watchedZenith.GetInt("AssimStage", 0);
             Log($"[LOAD] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}");
-
-          
-
         }
 
 
@@ -206,11 +196,6 @@ namespace zenith.Core.Assimilation
             if (!DebugMode) return;
             Player.World.Logger.Warning(message);
         }
-
-
-        // Assimilation :
-
-       
       
         // Fix Consumed Attribute - Postponed
         //Add Proper Events for UI - Interchangable with adding UI
