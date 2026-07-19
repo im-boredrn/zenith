@@ -111,7 +111,10 @@ namespace zenith.Core.Assimilation
 
             var entityName = es.GetName();
 
-            Assimilate(entityName, player);
+            
+            CreatureType type = CreatureClass(es);
+            Assimilate(entityName, player, type);
+
 
             Log($"[DATA] Progress : {AssimCounter}/{Threshold}");
         }
@@ -124,54 +127,56 @@ namespace zenith.Core.Assimilation
 
             if (code.Contains("bear")) return CreatureType.bear;
 
-            if (code.Contains("wolf")) return CreatureType.fox;
+            if (code.Contains("wolf")) return CreatureType.wolf;
+
+            if (code.Contains("fox")) return CreatureType.fox;
 
 
             return CreatureType.unknown;
         }
 
 
-        private void Assimilate(string entityName, IServerPlayer player )
+        private void Assimilate(string entityName, IServerPlayer player, CreatureType creatureType )
         {
 
-            switch (entityName)
+            switch (creatureType)
             {
-                case "Dead drifter":
+                case CreatureType.drifter:
                     {
                         AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue ; 
                       
                         break;
                     }
 
-                case "Dead deep drifter":
+                case CreatureType.bear:
                     {
                         AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
-                case "Dead tainted drifter":
+                case CreatureType.wolf:
                     {
                         AssimCounter += 3 * ZenithSettings.ZAssimCreatureValue * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
-                case "Dead corrupt drifter":
+                case CreatureType.fox:
                     {
                         AssimCounter += 4 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
-                case "Dead nightmare drifter":
-                    {
-                        AssimCounter += 5 * ZenithSettings.ZAssimCreatureValue;
-                        break;
-                    }
+                //case "Dead nightmare drifter":
+                //    {
+                //        AssimCounter += 5 * ZenithSettings.ZAssimCreatureValue;
+                //        break;
+                //    }
 
-                case "Dead double-headed drifter":
-                    {
-                        AssimCounter += 6 * ZenithSettings.ZAssimCreatureValue;
-                        break;
-                    }
+                //case "Dead double-headed drifter":
+                //    {
+                //        AssimCounter += 6 * ZenithSettings.ZAssimCreatureValue;
+                //        break;
+                //    }
 
                 default:
                     {
