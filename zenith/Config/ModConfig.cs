@@ -47,7 +47,7 @@ public class ModConfig
 
     public int AssimThreshhold { get; set; } = 20;
     public int AssimMaxStage { get; set; } = 5;
-    
+    public int AssimCreatureValue { get; set; } = 1;
 
 
 

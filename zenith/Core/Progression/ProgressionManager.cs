@@ -33,7 +33,7 @@ namespace zenith.Core.Progression
        static private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
-        private TreeAttribute watchedZenith;
+        private readonly TreeAttribute watchedZenith;
 
         private readonly Entity entity;
         private EntityPlayer Player => entity as EntityPlayer;
@@ -251,8 +251,7 @@ namespace zenith.Core.Progression
 
         public void LoadProgression()
         {
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+           
 
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);

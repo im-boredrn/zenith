@@ -11,6 +11,7 @@ using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
+using zenith.Core.Traits;
 using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
 
@@ -28,6 +29,7 @@ namespace zenith.Core
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
         public Assimilation.Assimilation Assimilation { get; }
+        public TraitManager TraitManager { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
@@ -44,7 +46,7 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             Assimilation = new Assimilation.Assimilation(entity);
-
+            TraitManager = new TraitManager(entity);
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
@@ -128,6 +130,11 @@ namespace zenith.Core
                 }
             };
 
+            Assimilation.OnAssimStageUp += () =>
+            {
+                TraitManager.CanUseTraits();
+                // Eventually Refresh stats though may be pointless due to OnAssimChanged
+            };
             
             
         }

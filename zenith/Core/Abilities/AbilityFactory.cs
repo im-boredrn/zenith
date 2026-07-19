@@ -64,29 +64,6 @@ namespace zenith.Core.Abilities
                 _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, null)
             };
         }
-        // public static IActiveAbilites CreateActives(DomainEnum domain)
-        // {
-        //    return domain switch
-        //   { DomainEnum.Kinetic => new }
-        // }
-
-
-
-        //private bool CanUseAbilities()
-        //{
-        //    if (stageProvider.GetStage() < 2)
-        //    {
-        //        return false;
-        //    }
-
-
-
-        //    return true;
-        //}
-
-
-       
-        
 
         public void ApplyPassives(DomainEnum domain)
         {

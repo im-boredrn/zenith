@@ -23,7 +23,7 @@ namespace zenith.Core.Assimilation
        static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer;
 
-        private TreeAttribute watchedZenith;
+        private readonly TreeAttribute watchedZenith;
 
 
 
@@ -45,7 +45,8 @@ namespace zenith.Core.Assimilation
             LoadAssim();
             
         }
-       readonly Action  OnAssimChanged; 
+      public  event Action  OnAssimChanged;
+        public  event Action OnAssimStageUp;
       
         public void TryAssimilate(IServerPlayer player)
         {
@@ -87,7 +88,7 @@ namespace zenith.Core.Assimilation
         {
             var es = Player?.EntitySelection?.Entity;
      
-            Log($"Entity Name : {es.GetName()} | Entity Alive? : {es.Alive}");
+            Log($"[DATA] Entity Name : {es.GetName()} ");
 
             
 
@@ -108,7 +109,7 @@ namespace zenith.Core.Assimilation
             {
                 case "Dead drifter":
                     {
-                        AssimCounter ++;
+                        AssimCounter ++; // * Zsettings.CreatureVal
                         break;
                     }
 
@@ -148,7 +149,10 @@ namespace zenith.Core.Assimilation
                         break;
                     }
             }
-            OnAssimChanged.Invoke();
+            var sapi = entity.World.Api as ICoreServerAPI;
+
+            sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
+            OnAssimChanged?.Invoke();
             SaveAssim();
             AssimStageUp();
         }
@@ -159,12 +163,13 @@ namespace zenith.Core.Assimilation
 
         private void AssimStageUp()
         {
-            if (AssimCounter >= Threshold)
+            if (AssimCounter >= ZenithSettings.ZAssimThreshold)
             {
                 AssimCounter = 0;
                 AssimStage++;
                 SaveAssim();
-                OnAssimChanged.Invoke();
+                OnAssimChanged?.Invoke();
+                OnAssimStageUp.Invoke();
             }
            
         }
