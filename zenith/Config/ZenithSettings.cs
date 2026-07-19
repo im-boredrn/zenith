@@ -59,7 +59,7 @@ namespace zenith.Config
         public static int ZAssimThreshold => Config?.AssimThreshhold ?? 20;
         public static int ZAssimMaxStage => Config?.AssimMaxStage ?? 5;
 
-
+        public static int ZAssimCreatureValue => Config?.AssimCreatureValue ?? 1;
 
 
 

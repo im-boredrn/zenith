@@ -105,41 +105,43 @@ namespace zenith.Core.Assimilation
 
         private void Assimilate(string entityName, IServerPlayer player )
         {
+
             switch (entityName)
             {
                 case "Dead drifter":
                     {
-                        AssimCounter ++; // * Zsettings.CreatureVal
+                        AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue ; 
+                      
                         break;
                     }
 
                 case "Dead deep drifter":
                     {
-                        AssimCounter += 2;
+                        AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
                 case "Dead tainted drifter":
                     {
-                        AssimCounter += 3;
+                        AssimCounter += 3 * ZenithSettings.ZAssimCreatureValue * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
                 case "Dead corrupt drifter":
                     {
-                        AssimCounter += 4;
+                        AssimCounter += 4 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
                 case "Dead nightmare drifter":
                     {
-                        AssimCounter += 5;
+                        AssimCounter += 5 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 
                 case "Dead double-headed drifter":
                     {
-                        AssimCounter += 6;
+                        AssimCounter += 6 * ZenithSettings.ZAssimCreatureValue;
                         break;
                     }
 

@@ -32,18 +32,19 @@ namespace zenith.Core.Traits
           
         }
 
-        public bool CanUseTraits( ) // Go more indepth later ie. Max Drifter
+        public void TryApplyTraits( ) // Go more indepth later ie. Max Drifter
         {
+        //    Log($"[FLOW] Can Use Traits Called!"); 
 
-            if (Assimilation?.AssimStage >= 1) // Might turn into IAssimilationProvider
+            if (Assimilation?.AssimStage < 1) // Might turn into IAssimilationProvider
             {
-                Traits.ApplyTraits();
-                Log($"Player Name : {Player.Player.PlayerName}");
-                
-                return true;
+                Log($"[FLOW] AssimStage too low Returned!");
+                return;
             }
 
-            return false;
+            Traits.ApplyTraits();
+         //   Log($"Player Name : {Player.Player.PlayerName}");
+
         }
 
         private void Log(string message)

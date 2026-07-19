@@ -132,7 +132,7 @@ namespace zenith.Core
 
             Assimilation.OnAssimStageUp += () =>
             {
-                TraitManager.CanUseTraits();
+                TraitManager.TryApplyTraits();
                 // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
             

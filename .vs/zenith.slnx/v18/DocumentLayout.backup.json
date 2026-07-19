@@ -7,23 +7,20 @@
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\assimilation\\assimilation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Tomar\\AppData\\Local\\Temp\\.vsdbgsrc\\501f201bccbfbe2883416bfe22fdaa5c52acc20745b46a250557a991ca912fcc\\GuiComposerHelpers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\traits\\traits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\traits\\traits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\zenithsystems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithsystems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\abilities\\passiveabilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\abilities\\passiveabilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\traits\\traitmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\traits\\traitmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\traits\\traits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\traits\\traits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\abilities\\passiveabilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\abilities\\passiveabilities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\abilities\\abilityfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -37,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -54,32 +51,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "GuiComposerHelpers.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\AppData\\Local\\Temp\\.vsdbgsrc\\501f201bccbfbe2883416bfe22fdaa5c52acc20745b46a250557a991ca912fcc\\GuiComposerHelpers.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\501f201bccbfbe2883416bfe22fdaa5c52acc20745b46a250557a991ca912fcc\\GuiComposerHelpers.cs",
-              "ToolTip": "C:\\Users\\Tomar\\AppData\\Local\\Temp\\.vsdbgsrc\\501f201bccbfbe2883416bfe22fdaa5c52acc20745b46a250557a991ca912fcc\\GuiComposerHelpers.cs [Read Only]",
-              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\501f201bccbfbe2883416bfe22fdaa5c52acc20745b46a250557a991ca912fcc\\GuiComposerHelpers.cs [Read Only]",
-              "ViewState": "AgIAALACAAAAAAAAAAAQwMgCAAACAAAAAQAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-19T16:56:14.485Z",
-              "EditorCaption": " [Read Only]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
               "Title": "Traits.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Traits\\Traits.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Traits\\Traits.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Traits\\Traits.cs",
               "RelativeToolTip": "zenith\\Core\\Traits\\Traits.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAQwDQAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwDQAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-19T16:04:49.33Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "TraitManager.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Traits\\TraitManager.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Traits\\TraitManager.cs",
@@ -87,12 +71,11 @@
               "RelativeToolTip": "zenith\\Core\\Traits\\TraitManager.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAQwBcAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-19T15:53:45.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-19T15:53:45.42Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "PassiveAbilities.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Abilities\\PassiveAbilities.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Abilities\\PassiveAbilities.cs",
@@ -100,8 +83,7 @@
               "RelativeToolTip": "zenith\\Core\\Abilities\\PassiveAbilities.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAAnwBoAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-19T15:46:15.214Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-19T15:46:15.214Z"
             },
             {
               "$type": "Document",
@@ -113,8 +95,7 @@
               "RelativeToolTip": "zenith\\Core\\ZenithSystems.cs",
               "ViewState": "AgIAAGoAAAAAAAAAAAAEwIYAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-18T22:56:42.37Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-18T22:56:42.37Z"
             },
             {
               "$type": "Document",
@@ -124,14 +105,14 @@
               "RelativeDocumentMoniker": "zenith\\Core\\Assimilation\\Assimilation.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\Assimilation.cs",
               "RelativeToolTip": "zenith\\Core\\Assimilation\\Assimilation.cs",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAYwJcAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAGEAAAAAAAAAAAAQwHEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-16T16:39:14.022Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "AbilityFactory.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Abilities\\AbilityFactory.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Abilities\\AbilityFactory.cs",
@@ -139,8 +120,7 @@
               "RelativeToolTip": "zenith\\Core\\Abilities\\AbilityFactory.cs",
               "ViewState": "AgIAADkAAAAAAAAAAAAYwEIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-19T15:46:44.246Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-19T15:46:44.246Z"
             }
           ]
         }
