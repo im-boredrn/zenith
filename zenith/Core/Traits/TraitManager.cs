@@ -6,10 +6,13 @@ using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Progression;
+using static zenith.Core.Assimilation.Assimilation;
+using CreatureType = zenith.Core.Assimilation.Assimilation.CreatureType;
 
 namespace zenith.Core.Traits
 {
@@ -24,6 +27,7 @@ namespace zenith.Core.Traits
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
         private readonly IAssimilationProvider assimilationProvider;
+
         public TraitManager(Entity entity, IAssimilationProvider assimilationProvider)
         {
             this.assimilationProvider = assimilationProvider;
@@ -31,6 +35,12 @@ namespace zenith.Core.Traits
 
             Traits = new Traits(entity, assimilationProvider);
           
+        }
+
+        public void CalcTraits()
+        {
+            assimilationProvider.GetCreatureLevel(CreatureType.drifter) 
+       
         }
 
         public void TryApplyTraits( ) // Go more indepth later ie. Drifter LVL, Wolf LVL

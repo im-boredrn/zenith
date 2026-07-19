@@ -44,8 +44,6 @@ public class ModConfig
     //  public float StageArmorWSAMultipiler2 { get; set; } = -0.2f;
     // public float StageArmorWSAMultipiler3 { get; set; } = -0.4f;
 
-    public int AssimThreshhold { get; set; } = 20;
-    public int AssimMaxStage { get; set; } = 5;
     public int AssimCreatureLVLMult { get; set; } = 1;
     public int GlobalCreatureMaxLVL { get; set; } = 30;
 

@@ -40,9 +40,9 @@ namespace zenith.Core.Traits
         {
 
             // TODO JHM ModConfig + Current Assim Level.
-            float finalVal = ZenithSettings.ZStageJumpHeightMultipiler + assimilationProvider.GetAssimStage(); // get total speed bonus
+            float finalVal = ZenithSettings.ZStageJumpHeightMultipiler; // get total speed bonus
 
-
+            // final val + TraitsTotal SpeedBonus
             return finalVal;
         }
 

@@ -18,24 +18,14 @@ namespace zenith.Core.Assimilation
     // Planned Features
     // Eating Mobs to gain traits ie. bunny for higher jumps and foxes for quicker movement.
 
-   
+
     public class Assimilation : EntityBehavior, IAssimilationProvider
     {
-       static public bool DebugMode => ZenithSettings.ZDebugMode;
+        static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer;
 
         private readonly TreeAttribute watchedZenith;
 
-
-
-
-        public int AssimCounter { get; private set; } // Individual corpses -- Might name it in modconfig "CorpseValueMultiplier" for tiers of enemies ie. 
-        //Dead Drifter - 1, Dead deep Drifter - 2 or 1.5, Dead two headed drifter - 5
-        // remove static and see if it persists
-        static private int Threshold => ZenithSettings.ZAssimThreshold;
-
-        public int AssimStage { get; private set; }
-        static private  int MaxStage => ZenithSettings.ZAssimMaxStage;
         public enum CreatureType
         {
             drifter,
@@ -46,37 +36,37 @@ namespace zenith.Core.Assimilation
             unknown
         }
 
-        static readonly Dictionary<CreatureType, AssimilationDefinition> definitions =
-             new Dictionary<CreatureType, AssimilationDefinition>()
+        public   Dictionary<CreatureType, AssimilationDefinition> Definitions { get; } =
+             new Dictionary<CreatureType, AssimilationDefinition>() 
              {
                  [CreatureType.drifter] = new AssimilationDefinition
                  {
                      EntityName = "drifter",
-                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
                  },
 
                  [CreatureType.bear] = new AssimilationDefinition
                  {
                      EntityName = "bear",
-                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
                  },
 
                    [CreatureType.hare] = new AssimilationDefinition
                    {
                        EntityName = "hare",
-                       MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
                    },
                    
                    [CreatureType.wolf] = new AssimilationDefinition
                    {
                        EntityName = "wolf",
-                       MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
                    },
 
                  [CreatureType.fox] = new AssimilationDefinition
                  {
                      EntityName = "fox",
-                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
                  },
 
              };
@@ -92,7 +82,6 @@ namespace zenith.Core.Assimilation
             
         }
       public  event Action  OnAssimChanged;
-        public  event Action OnAssimStageUp;
       
         public void TryAssimilate(IServerPlayer player)
         {
@@ -143,7 +132,11 @@ namespace zenith.Core.Assimilation
             CreatureType type = CreatureClass(es, player);
             Assimilate(entityName, player, type);
 
-            Log($"[DATA] Progress : {AssimCounter}/{Threshold}");
+
+            foreach (var trait in Definitions.Values)
+            {
+                Log($"[DATA] Progress : {trait.AssimLVL}/{trait.MaxLVL}");
+            }
         }
 
         private CreatureType CreatureClass(Entity entity, IServerPlayer serverPlayer)
@@ -164,34 +157,34 @@ namespace zenith.Core.Assimilation
         }
 
 
-        private void SendError(IServerPlayer player,string code, string errorMessage)
-        {
-            player.SendIngameError(code, errorMessage);
-        }
+
+ 
 
         private void Assimilate(string entityName, IServerPlayer player, CreatureType creatureType )
         {
-            definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; // Foreach level apply whatever bonus the creature has
-             // I'lll calc the trait gain in Trait Manager or whatever          
+
+            if (Definitions[creatureType].AssimLVL >= ZenithSettings.ZAssimGlobalCreatureMaxLVL)
+            {
+                SendError(player, "AssimError", "MaxLevelReached");
+                return;
+            }
+            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; // Foreach level apply whatever bonus the creature has
+             // I'll calc the trait gain in Trait Manager or whatever          
             var sapi = entity.World.Api as ICoreServerAPI;
 
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
             OnAssimChanged?.Invoke();
             SaveAssim();
-            AssimStageUp();
         }
 
-        private void AssimStageUp()
+        public int GetCreatureLevel(CreatureType creatureType)
         {
-            if (AssimCounter >= ZenithSettings.ZAssimThreshold)
-            {
-                AssimCounter = 0;
-                AssimStage++;
-                SaveAssim();
-                OnAssimChanged?.Invoke();
-                OnAssimStageUp.Invoke();
-            }
-           
+            return Definitions[creatureType].AssimLVL;
+        }
+
+        private void SortLVLs()
+        {
+
         }
 
 
@@ -200,40 +193,33 @@ namespace zenith.Core.Assimilation
             Log("[FLOW] SaveAssim Called");
 
 
-            watchedZenith.SetInt("AssimCounter", AssimCounter);
-            watchedZenith.SetInt("AssimStage", AssimStage);
 
+            foreach (var trait in Definitions.Values)
+            {
+                var LVLkey = Definitions.Keys + "LVL";
+                watchedZenith.SetInt(LVLkey, trait.AssimLVL);
+            }
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
-            Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
+            // Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
         }
 
         public void LoadAssim()
         {
-            AssimCounter = watchedZenith.GetInt("AssimCounter", 0);
-           AssimStage = watchedZenith.GetInt("AssimStage", 0);
-            Log($"[LOAD] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}");
-        }
 
-       
+            foreach (var trait in Definitions.Values)
+            {
+                var LVLkey = Definitions.Keys + "LVL";
 
+                trait.AssimLVL = watchedZenith.GetInt(LVLkey, 0);
 
+            }
 
+            foreach (var trait in Definitions.Values)
+            {
+                Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
 
-
-        public int GetAssimCounter()
-        {
-            return AssimCounter;
-        }
-
-        public int GetAssimStage()
-        {
-            return AssimStage;
-        }
-
-        public int GetAssimThreshold()
-        {
-            return ZenithSettings.ZAssimThreshold;
+            }
         }
 
 
@@ -242,10 +228,11 @@ namespace zenith.Core.Assimilation
             if (!DebugMode) return;
             Player.World.Logger.Warning(message);
         }
-      
-        
 
-
+        private void SendError(IServerPlayer player, string code, string errorMessage)
+        {
+            player.SendIngameError(code, errorMessage);
+        }
 
         public override string PropertyName()
         {

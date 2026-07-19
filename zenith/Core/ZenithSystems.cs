@@ -130,9 +130,9 @@ namespace zenith.Core
                 }
             };
 
-            Assimilation.OnAssimStageUp += () =>
+            Assimilation.OnAssimChanged += () =>
             {
-                TraitManager.TryApplyTraits();
+                
                 // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
             
