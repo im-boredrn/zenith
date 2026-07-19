@@ -145,16 +145,7 @@ namespace zenith.Core.Progression
             };
         }
 
-        public float GetJumpHeightMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageJumpHeightMultipiler2,
-                3 => ZenithSettings.ZStageJumpHeightMultipiler3,
-                _ => 0f
-            };
-
-        }
+      
 
         public float GetMiningSpeedMultiplier()
         {

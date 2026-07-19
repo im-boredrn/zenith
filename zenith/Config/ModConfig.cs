@@ -36,8 +36,7 @@ public class ModConfig
     public float StageIgniteChanceMultipiler2 { get; set; } = 0.05f; // 15% Chance
     public float StageIgniteChanceMultipiler3 { get; set; } = 0.1f; // 20% chance
 
-    public float StageJumpHeightMultipiler2 { get; set; } = 0.2f;
-    public float StageJumpHeightMultipiler3 { get; set; } = 0.4f;
+    public float StageJumpHeightMultipiler { get; set; } = 0.2f;
 
     public float StageMiningSpeedMultipiler2 { get; set; } = 2.5f;
     public float StageMiningSpeedMultipiler3 { get; set; } = 3.2f;

@@ -46,7 +46,7 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             Assimilation = new Assimilation.Assimilation(entity);
-            TraitManager = new TraitManager(entity);
+            TraitManager = new TraitManager(entity, Assimilation);
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();

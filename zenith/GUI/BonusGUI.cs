@@ -44,14 +44,14 @@ namespace zenith.GUI
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
             var speed = stageProvider.GetSpeedMultiplier();
-            var dmg = stageProvider.GetDamageMultiplier();
+           var dmg = stageProvider.GetDamageMultiplier();
             var mSpeed = stageProvider.GetMiningSpeedMultiplier();
-            var jHeight = stageProvider.GetJumpHeightMultiplier();
+            // var jHeight = stageProvider.GetJumpHeightMultiplier();
 
             SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($"Domain Bonuses", OnGuiClosed)
-                .AddDynamicText($"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X\n JumpHeight : +{jHeight}X ",
+                .AddDynamicText($"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
                 
 
@@ -73,17 +73,17 @@ namespace zenith.GUI
             var speed = zenith?.GetFloat("Speed", 0f ); 
             var dmg = zenith?.GetFloat("Dmg", 0f);
             var mSpeed = zenith?.GetFloat("MSM", 0f);
-            var jHeight = zenith?.GetFloat("JHM" , 0f);
+         //   var jHeight = zenith?.GetFloat("JHM" , 0f);
 
 
 
 
-            string newText = $"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X\n JumpHeight : +{jHeight}X ";
+            string newText = $"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");
             Log($"[FLOW] UpdateBonusStatsCalled! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $" Current Mining Speed : {mSpeed} | Current Jumpheight: {jHeight}");
+                $" Current Mining Speed : {mSpeed} ");
 
 
             if (SingleComposer != null)
@@ -92,7 +92,7 @@ namespace zenith.GUI
                     .SetNewText(newText, false, true, false);
             }
             Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $"Current Mining Speed : {mSpeed} | Current Jumpheight: {jHeight}");
+                $"Current Mining Speed : {mSpeed} ");
 
 
         }

@@ -18,7 +18,6 @@ namespace zenith.Core.Progression
         float GetDamageMultiplier();
         float GetIgniteChanceMultiplier();
         float GetResistanceMultiplier();
-        float GetJumpHeightMultiplier();
         float GetMiningSpeedMultiplier();
       //  float GetArmorWSAMultiplier();
 

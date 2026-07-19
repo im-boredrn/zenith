@@ -8,6 +8,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Assimilation;
 using zenith.Core.Progression;
 
 namespace zenith.Core.Traits
@@ -17,32 +18,32 @@ namespace zenith.Core.Traits
 
 
      public Traits Traits{ get; }
-        private Assimilation.Assimilation Assimilation { get; }
         private readonly TreeAttribute watchedZenith;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
-
-        public TraitManager(Entity entity)
+        private readonly IAssimilationProvider assimilationProvider;
+        public TraitManager(Entity entity, IAssimilationProvider assimilationProvider)
         {
+            this.assimilationProvider = assimilationProvider;
             this.entity = entity;
 
-            Traits = new Traits(entity);
+            Traits = new Traits(entity, assimilationProvider);
           
         }
 
-        public void TryApplyTraits( ) // Go more indepth later ie. Max Drifter
+        public void TryApplyTraits( ) // Go more indepth later ie. Drifter LVL, Wolf LVL
         {
         //    Log($"[FLOW] Can Use Traits Called!"); 
 
-            if (Assimilation?.AssimStage < 1) // Might turn into IAssimilationProvider
+           // if (eventually get creature level here () < 1) // Might turn into IAssimilationProvider
             {
                 Log($"[FLOW] AssimStage too low Returned!");
                 return;
             }
 
-            Traits.ApplyTraits();
+         //   Traits.ApplyTraits();
          //   Log($"Player Name : {Player.Player.PlayerName}");
 
         }

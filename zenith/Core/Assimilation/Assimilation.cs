@@ -10,6 +10,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Traits;
 
 namespace zenith.Core.Assimilation
 {
@@ -18,7 +19,7 @@ namespace zenith.Core.Assimilation
     // Eating Mobs to gain traits ie. bunny for higher jumps and foxes for quicker movement.
 
    
-    public class Assimilation : EntityBehavior
+    public class Assimilation : EntityBehavior, IAssimilationProvider
     {
        static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer;
@@ -35,7 +36,19 @@ namespace zenith.Core.Assimilation
 
         public int AssimStage { get; private set; }
         static private  int MaxStage => ZenithSettings.ZAssimMaxStage;
+        public enum CreatureType
+        {
+            drifter,
+            bear,
+            hare,
+            wolf,
+            fox,
+            unknown
+        }
 
+         // public Dictionary<CreatureType, int> creatureType;
+
+      
         public Assimilation(Entity entity) : base(entity)
         {
 
@@ -88,7 +101,7 @@ namespace zenith.Core.Assimilation
         {
             var es = Player?.EntitySelection?.Entity;
      
-            Log($"[DATA] Entity Name : {es.GetName()} ");
+         //   Log($"[DATA] Entity Name : {es.GetName()} | Entity Code : {es.Code} | Entity Code Path : {es.Code.Path}");
 
             
 
@@ -102,6 +115,21 @@ namespace zenith.Core.Assimilation
 
             Log($"[DATA] Progress : {AssimCounter}/{Threshold}");
         }
+
+        private CreatureType CreatureClass(Entity entity)
+        {
+            var code = entity.Code.Path;
+
+            if (code.Contains("drifter")) return CreatureType.drifter;
+
+            if (code.Contains("bear")) return CreatureType.bear;
+
+            if (code.Contains("wolf")) return CreatureType.fox;
+
+
+            return CreatureType.unknown;
+        }
+
 
         private void Assimilate(string entityName, IServerPlayer player )
         {
@@ -197,6 +225,27 @@ namespace zenith.Core.Assimilation
             Log($"[LOAD] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}");
         }
 
+       
+
+
+
+
+
+        public int GetAssimCounter()
+        {
+            return AssimCounter;
+        }
+
+        public int GetAssimStage()
+        {
+            return AssimStage;
+        }
+
+        public int GetAssimThreshold()
+        {
+            return ZenithSettings.ZAssimThreshold;
+        }
+
 
         private void Log(string message)
         {
@@ -204,14 +253,7 @@ namespace zenith.Core.Assimilation
             Player.World.Logger.Warning(message);
         }
       
-        // Fix Consumed Attribute - Postponed
-        //Add Proper Events for UI - Interchangable with adding UI
-        // 
-        // 8. AFTER THIS WORKS:
         
-        //      - Add progression effects
-        // Add UI - Could Use an interface thats connected through Zsystems
-
 
 
 

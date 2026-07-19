@@ -45,8 +45,7 @@ namespace zenith.Config
         public static float ZStageIgniteChanceMultipiler2 => Config?.StageIgniteChanceMultipiler2 ?? 0.1f; // 25%
         public static float ZStageIgniteChanceMultipiler3 => Config?.StageIgniteChanceMultipiler3 ?? 0.2f; // 35%
 
-        public static float ZStageJumpHeightMultipiler2 => Config?.StageJumpHeightMultipiler2 ?? 0.2f;
-        public static float ZStageJumpHeightMultipiler3 => Config?.StageJumpHeightMultipiler3 ?? 0.4f;
+        public static float ZStageJumpHeightMultipiler => Config?.StageJumpHeightMultipiler ?? 0.2f;
 
         public static float ZStageMiningSpeedMultipiler2 => Config?.StageMiningSpeedMultipiler2 ?? 2.5f;
         public static float ZStageMiningSpeedMultipiler3 => Config?.StageMiningSpeedMultipiler3 ?? 3.2f;

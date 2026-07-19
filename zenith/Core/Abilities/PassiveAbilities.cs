@@ -41,7 +41,6 @@ namespace zenith.Core.Abilities
 
             playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
           //  playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
-            playerStats.Set("meleeWeaponsDamage", "zenith", stageProvider.GetDamageMultiplier(), true);//Assim
 
             SaveStats(); // So I can retrieve stats for GUI
             // could also mark dirty here if other method causes issues.
