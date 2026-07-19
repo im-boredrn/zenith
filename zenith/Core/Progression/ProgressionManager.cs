@@ -135,18 +135,7 @@ namespace zenith.Core.Progression
             };
         }
 
-        public float GetSpeedMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageSpeed2,
-                3 => ZenithSettings.ZStageSpeed3,
-                _ => 0f
-            };
-        }
-
-      
-
+ 
         public float GetMiningSpeedMultiplier()
         {
             return Stage switch
@@ -169,16 +158,7 @@ namespace zenith.Core.Progression
 
         //}
 
-        public float GetDamageMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageDamage2,
-                3 => ZenithSettings.ZStageDamage3,
-                _ => 0f
-            };
-        }
-
+    
 
 
         public float GetIgniteChanceMultiplier()

@@ -30,15 +30,17 @@ namespace zenith.Core.Traits
             entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
         }
 
+        // Might need to create a method to add up all bonuses. 
+
         static public float GetSpeedMultiplier() // Possibly a fox, or wolf etc
         {
             return 1.2f;
         }
-         public float GetJumpHeightMultiplier( ) // Maybe A bunny
+         public float GetJumpHeightMultiplier( ) // Maybe A hare
         {
 
             // TODO JHM ModConfig + Current Assim Level.
-            float finalVal = ZenithSettings.ZStageJumpHeightMultipiler + assimilationProvider.GetAssimStage();
+            float finalVal = ZenithSettings.ZStageJumpHeightMultipiler + assimilationProvider.GetAssimStage(); // get total speed bonus
 
 
             return finalVal;
@@ -57,7 +59,8 @@ namespace zenith.Core.Traits
             {
                 0f,
                 GetSpeedMultiplier(),//1
-                GetJumpHeightMultiplier()//2
+                GetJumpHeightMultiplier(),//2
+                GetDamageMultiplier()
             };
         }
 
@@ -79,6 +82,8 @@ namespace zenith.Core.Traits
 
             watchedZenith.SetFloat("Speed", traitVals[1]);
             watchedZenith.SetFloat("JHM", traitVals[2]);
+            watchedZenith.SetFloat("Dmg", traitVals[3]);
+              
         }
     }
 }

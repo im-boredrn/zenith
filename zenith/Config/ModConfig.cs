@@ -27,11 +27,11 @@ public class ModConfig
 
     public float RegenAmount { get; set; } = 0.25f;
 
-    public float StageSpeed2 { get; set; } = 0.2f;
-    public float StageSpeed3 { get; set; } = 0.3f;
+    //public float StageSpeed2 { get; set; } = 0.2f;
+    //public float StageSpeed3 { get; set; } = 0.3f;
 
-    public float StageDamage2 { get; set; } = 0.5f;
-    public float StageDamage3 { get; set; } = 1f;
+    //public float StageDamage2 { get; set; } = 0.5f;
+    //public float StageDamage3 { get; set; } = 1f;
 
     public float StageIgniteChanceMultipiler2 { get; set; } = 0.05f; // 15% Chance
     public float StageIgniteChanceMultipiler3 { get; set; } = 0.1f; // 20% chance
@@ -46,7 +46,8 @@ public class ModConfig
 
     public int AssimThreshhold { get; set; } = 20;
     public int AssimMaxStage { get; set; } = 5;
-    public int AssimCreatureValue { get; set; } = 1;
+    public int AssimCreatureLVLMult { get; set; } = 1;
+    public int GlobalCreatureMaxLVL { get; set; } = 30;
 
 
 

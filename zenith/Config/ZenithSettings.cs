@@ -36,11 +36,11 @@ namespace zenith.Config
         
         public static float ZRegenAmount => Config?.RegenAmount ?? 0.25f;
         
-        public static float ZStageSpeed2 => Config?.StageSpeed2 ?? 0.2f;
-        public static float ZStageSpeed3 => Config?.StageSpeed3 ?? 0.3f;
+        //public static float ZStageSpeed2 => Config?.StageSpeed2 ?? 0.2f;
+        //public static float ZStageSpeed3 => Config?.StageSpeed3 ?? 0.3f;
         
-        public static float ZStageDamage2 => Config?.StageDamage2 ?? 0.5f;
-        public static float ZStageDamage3 => Config?.StageDamage3 ?? 1f;
+        //public static float ZStageDamage2 => Config?.StageDamage2 ?? 0.5f;
+        //public static float ZStageDamage3 => Config?.StageDamage3 ?? 1f;
 
         public static float ZStageIgniteChanceMultipiler2 => Config?.StageIgniteChanceMultipiler2 ?? 0.1f; // 25%
         public static float ZStageIgniteChanceMultipiler3 => Config?.StageIgniteChanceMultipiler3 ?? 0.2f; // 35%
@@ -58,7 +58,8 @@ namespace zenith.Config
         public static int ZAssimThreshold => Config?.AssimThreshhold ?? 20;
         public static int ZAssimMaxStage => Config?.AssimMaxStage ?? 5;
 
-        public static int ZAssimCreatureValue => Config?.AssimCreatureValue ?? 1;
+        public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
+        public static int ZAssimGlobalCreatureMaxLVL => Config?.AssimCreatureLVLMult ?? 1;
 
 
 

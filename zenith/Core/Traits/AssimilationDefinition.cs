@@ -8,8 +8,8 @@ namespace zenith.Core.Traits
     {
 
        public string EntityName { get; set; }
-       public int AssimValue { get; set; }
-        public int MaxValue { get; set; }
+       public int AssimLVL { get; set; }
+        public int MaxLVL { get; set; }
         public int SpeedGain { get; set; }
         public int JumpGain { get; set; }
         public int DamageGain { get; set; }

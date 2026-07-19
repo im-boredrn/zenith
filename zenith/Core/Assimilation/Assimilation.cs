@@ -46,8 +46,41 @@ namespace zenith.Core.Assimilation
             unknown
         }
 
-         // public Dictionary<CreatureType, int> creatureType;
+        static readonly Dictionary<CreatureType, AssimilationDefinition> definitions =
+             new Dictionary<CreatureType, AssimilationDefinition>()
+             {
+                 [CreatureType.drifter] = new AssimilationDefinition
+                 {
+                     EntityName = "drifter",
+                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                 },
 
+                 [CreatureType.bear] = new AssimilationDefinition
+                 {
+                     EntityName = "bear",
+                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                 },
+
+                   [CreatureType.hare] = new AssimilationDefinition
+                   {
+                       EntityName = "hare",
+                       MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                   },
+                   
+                   [CreatureType.wolf] = new AssimilationDefinition
+                   {
+                       EntityName = "wolf",
+                       MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                   },
+
+                 [CreatureType.fox] = new AssimilationDefinition
+                 {
+                     EntityName = "fox",
+                     MaxLVL = ZenithSettings.ZAssimCreatureLVLMult
+                 },
+
+             };
+ 
       
         public Assimilation(Entity entity) : base(entity)
         {
@@ -103,23 +136,17 @@ namespace zenith.Core.Assimilation
      
          //   Log($"[DATA] Entity Name : {es.GetName()} | Entity Code : {es.Code} | Entity Code Path : {es.Code.Path}");
 
-            
-
                 es.WatchedAttributes.SetAttribute("consumed", null);
-
-            
 
             var entityName = es.GetName();
 
-            
-            CreatureType type = CreatureClass(es);
+            CreatureType type = CreatureClass(es, player);
             Assimilate(entityName, player, type);
-
 
             Log($"[DATA] Progress : {AssimCounter}/{Threshold}");
         }
 
-        private CreatureType CreatureClass(Entity entity)
+        private CreatureType CreatureClass(Entity entity, IServerPlayer serverPlayer)
         {
             var code = entity.Code.Path;
 
@@ -132,58 +159,20 @@ namespace zenith.Core.Assimilation
             if (code.Contains("fox")) return CreatureType.fox;
 
 
+            SendError(serverPlayer, "AssimError", "Unknown Entity!");
             return CreatureType.unknown;
         }
 
 
+        private void SendError(IServerPlayer player,string code, string errorMessage)
+        {
+            player.SendIngameError(code, errorMessage);
+        }
+
         private void Assimilate(string entityName, IServerPlayer player, CreatureType creatureType )
         {
-
-            switch (creatureType)
-            {
-                case CreatureType.drifter:
-                    {
-                        AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue ; 
-                      
-                        break;
-                    }
-
-                case CreatureType.bear:
-                    {
-                        AssimCounter += 2 * ZenithSettings.ZAssimCreatureValue;
-                        break;
-                    }
-
-                case CreatureType.wolf:
-                    {
-                        AssimCounter += 3 * ZenithSettings.ZAssimCreatureValue * ZenithSettings.ZAssimCreatureValue;
-                        break;
-                    }
-
-                case CreatureType.fox:
-                    {
-                        AssimCounter += 4 * ZenithSettings.ZAssimCreatureValue;
-                        break;
-                    }
-
-                //case "Dead nightmare drifter":
-                //    {
-                //        AssimCounter += 5 * ZenithSettings.ZAssimCreatureValue;
-                //        break;
-                //    }
-
-                //case "Dead double-headed drifter":
-                //    {
-                //        AssimCounter += 6 * ZenithSettings.ZAssimCreatureValue;
-                //        break;
-                //    }
-
-                default:
-                    {
-                        player.SendIngameError("AssimError", "Unknown Entity!"); 
-                        break;
-                    }
-            }
+            definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; // Foreach level apply whatever bonus the creature has
+             // I'lll calc the trait gain in Trait Manager or whatever          
             var sapi = entity.World.Api as ICoreServerAPI;
 
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
@@ -191,10 +180,6 @@ namespace zenith.Core.Assimilation
             SaveAssim();
             AssimStageUp();
         }
-
-
-
-
 
         private void AssimStageUp()
         {
