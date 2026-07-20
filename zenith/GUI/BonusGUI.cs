@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
+using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
@@ -53,11 +54,15 @@ namespace zenith.GUI
             var jHeight = zenith?.GetFloat("JHM", 0f);
 
 
+            var totals = assimilationCore.CalculateTotals();
+
+          
+           
 
             SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($" Bonuses", OnGuiClosed)
-                .AddDynamicText($"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X\n JumpHeight : +{jHeight}X ",
+                .AddDynamicText($"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n MiningSpeed : +{mSpeed}X\n  : +{jHeight:F0}% JumpHeight ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
 
 
@@ -84,7 +89,7 @@ namespace zenith.GUI
 
 
 
-            string newText = $"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X ";
+            string newText = $"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n MiningSpeed : +{mSpeed}X\n  +{jHeight:F0}% JumpHeight ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");

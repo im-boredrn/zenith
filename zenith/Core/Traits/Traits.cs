@@ -80,9 +80,23 @@ namespace zenith.Core.Traits
         {
             var totals = assimilationProvider.CalculateTotals();
 
-            watchedZenith.SetFloat("Speed", totals.Speed);
-            watchedZenith.SetFloat("JHM", totals.Jump);
-            watchedZenith.SetFloat("Dmg", totals.Damage);
+            float speedBonus = (totals.Speed * 100f);
+
+            float  jumpDamage = (totals.Jump * 100f);
+
+            float damageBonus = (totals.Damage * 100f);
+
+//            float mineSpeedBonus = (totals.Mine * 100f);
+            // Work on Mining speed it looks outta place in the GUI
+
+             
+
+
+
+            watchedZenith.SetFloat("Speed", speedBonus);
+            watchedZenith.SetFloat("JHM", jumpDamage);
+            watchedZenith.SetFloat("Dmg", damageBonus);
+            //watchedZenith.SetFloat("MSM", mineSpeedBonus);
 
            // No need to load just saving for GUI retrieval
               

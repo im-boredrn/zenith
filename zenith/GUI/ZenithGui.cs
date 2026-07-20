@@ -19,6 +19,7 @@ namespace zenith.GUI
         private AssimilationCore AssimilationCore;
         DomainDetailsGUI DomainDetailsGUI;
         BonusGUI BonusGUI;
+        LevelGUI LevelGUI;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore) : base(capi)
         {
@@ -81,7 +82,7 @@ namespace zenith.GUI
                 ElementBounds.Fixed(0, 0, 120, 30)
                 .WithAlignment(EnumDialogArea.RightBottom);
 
-            ElementBounds buttonBounds2 = buttonBounds.FlatCopy().FixedUnder(buttonBounds, 5);
+            ElementBounds buttonBounds2 = buttonBounds.FlatCopy().FixedUnder(buttonBounds, -70);
 
             ElementBounds dropdownBounds = ElementBounds.Fixed(20, 60, 200, 35)
                 .WithAlignment(EnumDialogArea.LeftTop);
@@ -94,6 +95,7 @@ namespace zenith.GUI
                 .AddShadedDialogBG(ElementBounds.Fill, true) // Everything is on Top of this
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
                  .AddButton("Bonuses", () => OnShowBonuses(), buttonBounds, EnumButtonStyle.Small)
+                 .AddButton("Levels", () => OnShowLevels(), buttonBounds2, EnumButtonStyle.Small)
                 .AddDynamicText($"Stage : {StageName}\nDomainPoints : {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext");
 
             int i = 0;
@@ -184,6 +186,21 @@ namespace zenith.GUI
 
             return true;
         }
+
+        private bool OnShowLevels()
+        {
+            if (LevelGUI != null)
+            {
+                LevelGUI.TryClose();
+                LevelGUI.Dispose();
+            }
+
+            LevelGUI = new LevelGUI(capi, AssimilationCore);
+            LevelGUI.TryOpen();
+
+            return true;
+        }
+
 
         public override void OnGuiOpened()
         {
