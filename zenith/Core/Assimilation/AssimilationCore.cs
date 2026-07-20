@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
@@ -19,7 +20,7 @@ namespace zenith.Core.Assimilation
     // Eating Mobs to gain traits ie. bunny for higher jumps and foxes for quicker movement.
 
 
-    public class Assimilation : EntityBehavior, IAssimilationProvider
+    public class AssimilationCore : EntityBehavior, IAssimilationProvider
     {
         static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer;
@@ -42,43 +43,57 @@ namespace zenith.Core.Assimilation
                  [CreatureType.drifter] = new AssimilationDefinition
                  {
                      EntityName = "drifter",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                     DamageGain =0.01f
                  },
 
                  [CreatureType.bear] = new AssimilationDefinition
                  {
                      EntityName = "bear",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                     DamageGain = 0.03f // TODO : Individual Animal Gain Values
                  },
 
                    [CreatureType.hare] = new AssimilationDefinition
                    {
                        EntityName = "hare",
-                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
+                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                       JumpGain = 0.01f
                    },
                    
                    [CreatureType.wolf] = new AssimilationDefinition
                    {
                        EntityName = "wolf",
-                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
+                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                       DamageGain = 0.02f,
+                       SpeedGain = 0.01f
                    },
 
                  [CreatureType.fox] = new AssimilationDefinition
                  {
                      EntityName = "fox",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                     SpeedGain = 0.02f
                  },
+
+                 [CreatureType.unknown] = new AssimilationDefinition
+                 {
+                     EntityName = "?",
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+
+                 }
 
              };
  
       
-        public Assimilation(Entity entity) : base(entity)
+        public AssimilationCore(Entity entity) : base(entity)
         {
 
 
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
             LoadAssim();
+            CalculateTotals();
             
         }
       public  event Action  OnAssimChanged;
@@ -125,12 +140,15 @@ namespace zenith.Core.Assimilation
      
          //   Log($"[DATA] Entity Name : {es.GetName()} | Entity Code : {es.Code} | Entity Code Path : {es.Code.Path}");
 
-                es.WatchedAttributes.SetAttribute("consumed", null);
 
             var entityName = es.GetName();
 
             CreatureType type = CreatureClass(es, player);
+
+            if (type == CreatureType.unknown) return;
+
             Assimilate(entityName, player, type);
+            es.WatchedAttributes.SetAttribute("consumed", null); // used to be behind Assimilate ,comment is here just incase of bug.
 
 
             foreach (var trait in Definitions.Values)
@@ -172,19 +190,31 @@ namespace zenith.Core.Assimilation
              // I'll calc the trait gain in Trait Manager or whatever          
             var sapi = entity.World.Api as ICoreServerAPI;
 
+
+            
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
             OnAssimChanged?.Invoke();
             SaveAssim();
         }
 
-        public int GetCreatureLevel(CreatureType creatureType)
+        public float GetCreatureLevel(CreatureType creatureType)
         {
             return Definitions[creatureType].AssimLVL;
         }
 
-        private void SortLVLs()
-        {
+      
 
+        public TraitTotals CalculateTotals()
+        {
+            TraitTotals totals = new TraitTotals();
+
+            foreach (var trait in Definitions.Values)
+            {
+                totals.Speed += trait.AssimLVL * trait.SpeedGain;
+                totals.Damage += trait.AssimLVL * trait.DamageGain;
+                totals.Jump += trait.AssimLVL * trait.JumpGain;
+            }
+            return totals;
         }
 
 
@@ -192,12 +222,13 @@ namespace zenith.Core.Assimilation
         {
             Log("[FLOW] SaveAssim Called");
 
-
+            var totals = CalculateTotals();
 
             foreach (var trait in Definitions.Values)
             {
                 var LVLkey = Definitions.Keys + "LVL";
-                watchedZenith.SetInt(LVLkey, trait.AssimLVL);
+                watchedZenith.SetFloat(LVLkey, trait.AssimLVL);
+                watchedZenith.SetFloat(LVLkey, totals.Speed); // load the totals or the derived ??
             }
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
@@ -211,7 +242,7 @@ namespace zenith.Core.Assimilation
             {
                 var LVLkey = Definitions.Keys + "LVL";
 
-                trait.AssimLVL = watchedZenith.GetInt(LVLkey, 0);
+                trait.AssimLVL = watchedZenith.GetFloat(LVLkey, 0);
 
             }
 

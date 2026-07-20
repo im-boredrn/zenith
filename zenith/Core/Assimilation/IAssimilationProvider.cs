@@ -4,13 +4,14 @@ using System.Text;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using zenith.Config;
-using static zenith.Core.Assimilation.Assimilation;
+using static zenith.Core.Assimilation.AssimilationCore;
 
-namespace zenith.Core.Traits
+namespace zenith.Core.Assimilation
 {
     public interface IAssimilationProvider
     {
-        int GetCreatureLevel(CreatureType creatureType);
+        float GetCreatureLevel(CreatureType creatureType);
+        public TraitTotals CalculateTotals();
 
     }
 }

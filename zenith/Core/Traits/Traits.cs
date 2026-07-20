@@ -6,6 +6,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Assimilation;
 using zenith.Core.Progression;
 
 namespace zenith.Core.Traits
@@ -30,59 +31,60 @@ namespace zenith.Core.Traits
             entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
         }
 
-        // Might need to create a method to add up all bonuses. 
 
-        static public float GetSpeedMultiplier() // Possibly a fox, or wolf etc
+        //static public float GetSpeedMultiplier() // Possibly a fox, or wolf etc
+        //{
+        //    return 1.2f;
+        //}
+        // public float GetJumpHeightMultiplier( ) // Maybe A hare
+        //{
+
+        //    // TODO JHM ModConfig + Current Assim Level.
+        //    float finalVal = ZenithSettings.ZStageJumpHeightMultipiler; // get total speed bonus
+
+        //    // final val + TraitsTotal SpeedBonus
+        //    return finalVal;
+        //}
+
+        //static public float GetDamageMultiplier() // hostile entities like bear, drifter etc.
+        //{
+
+        //    return 1f;
+        //}
+
+
+        //public float[] GetMultValues()
+        //{
+        //    return new float[]
+        //    {
+        //        0f,
+        //        GetSpeedMultiplier(),//1
+        //        GetJumpHeightMultiplier(),//2
+        //        GetDamageMultiplier()
+        //    };
+        //}
+
+        public void ApplyTraits()
         {
-            return 1.2f;
-        }
-         public float GetJumpHeightMultiplier( ) // Maybe A hare
-        {
 
-            // TODO JHM ModConfig + Current Assim Level.
-            float finalVal = ZenithSettings.ZStageJumpHeightMultipiler; // get total speed bonus
-
-            // final val + TraitsTotal SpeedBonus
-            return finalVal;
-        }
-
-        static public float GetDamageMultiplier() // hostile entities like bear, drifter etc.
-        {
-
-            return 1f;
-        }
-
-
-        public float[] GetMultValues()
-        {
-            return new float[]
-            {
-                0f,
-                GetSpeedMultiplier(),//1
-                GetJumpHeightMultiplier(),//2
-                GetDamageMultiplier()
-            };
-        }
-
-        public void ApplyTraits( )
-        {
-
-            float[] traitVals = GetMultValues();
+            var totals = assimilationProvider.CalculateTotals();
             var entityPlayer = Player as EntityPlayer;
-            entityPlayer.Stats.Set("walkspeed", "zenith", traitVals[1], true); // Eventually values will come from AssimDef.
-            entityPlayer.Stats.Set("jumpHeightMul", "zenith", traitVals[2], true);
-            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", traitVals[3], true);//Assim
+            entityPlayer.Stats.Set("walkspeed", "zenith", totals.Speed, true); 
+            entityPlayer.Stats.Set("jumpHeightMul", "zenith", totals.Jump, true);
+            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", totals.Damage, true);
 
             SaveTraits();
         }
 
         public void SaveTraits()
         {
-            float[] traitVals = GetMultValues();
+            var totals = assimilationProvider.CalculateTotals();
 
-            watchedZenith.SetFloat("Speed", traitVals[1]);
-            watchedZenith.SetFloat("JHM", traitVals[2]);
-            watchedZenith.SetFloat("Dmg", traitVals[3]);
+            watchedZenith.SetFloat("Speed", totals.Speed);
+            watchedZenith.SetFloat("JHM", totals.Jump);
+            watchedZenith.SetFloat("Dmg", totals.Damage);
+
+           // No need to load just saving for GUI retrieval
               
         }
     }

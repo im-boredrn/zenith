@@ -45,7 +45,7 @@ namespace zenith.Config
         public static float ZStageIgniteChanceMultipiler2 => Config?.StageIgniteChanceMultipiler2 ?? 0.1f; // 25%
         public static float ZStageIgniteChanceMultipiler3 => Config?.StageIgniteChanceMultipiler3 ?? 0.2f; // 35%
 
-        public static float ZStageJumpHeightMultipiler => Config?.StageJumpHeightMultipiler ?? 0.2f;
+       // public static float ZStageJumpHeightMultipiler => Config?.StageJumpHeightMultipiler ?? 0.2f;
 
         public static float ZStageMiningSpeedMultipiler2 => Config?.StageMiningSpeedMultipiler2 ?? 2.5f;
         public static float ZStageMiningSpeedMultipiler3 => Config?.StageMiningSpeedMultipiler3 ?? 3.2f;
@@ -57,7 +57,7 @@ namespace zenith.Config
         //Assimilation
 
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
-        public static int ZAssimGlobalCreatureMaxLVL => Config?.AssimCreatureLVLMult ?? 1;
+        public static int ZAssimGlobalCreatureMaxLVL => Config?.GlobalCreatureMaxLVL ?? 30;
 
 
 

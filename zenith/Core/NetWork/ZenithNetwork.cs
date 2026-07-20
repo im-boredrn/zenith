@@ -42,7 +42,7 @@ namespace zenith.Core.NetWork
         private void HandleAssimilation(IServerPlayer player) //Execute
         {
             var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-            behavior?.systems?.Assimilation?.TryAssimilate(player);
+            behavior?.systems?.AssimilationCore?.TryAssimilate(player);
         }
     }
 }

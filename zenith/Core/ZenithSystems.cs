@@ -28,7 +28,7 @@ namespace zenith.Core
         public ZenithGui ZenithGui { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
-        public Assimilation.Assimilation Assimilation { get; }
+        public AssimilationCore AssimilationCore { get; }
         public TraitManager TraitManager { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
@@ -45,8 +45,8 @@ namespace zenith.Core
              AbilityFactory = new AbilityFactory(ProgressionManager ,entity); 
             ProgressionManager.LoadProgression();
 
-            Assimilation = new Assimilation.Assimilation(entity);
-            TraitManager = new TraitManager(entity, Assimilation);
+            AssimilationCore = new AssimilationCore(entity);
+            TraitManager = new TraitManager(entity, AssimilationCore);
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
@@ -54,7 +54,7 @@ namespace zenith.Core
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager); 
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore ); 
             }
 
             Passives = Enum.GetValues<DomainEnum>()
@@ -130,9 +130,9 @@ namespace zenith.Core
                 }
             };
 
-            Assimilation.OnAssimChanged += () =>
+            AssimilationCore.OnAssimChanged += () =>
             {
-                
+                TraitManager.Traits.ApplyTraits();
                 // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
             
