@@ -21,7 +21,6 @@ namespace zenith.Core.Traits
 
 
      public Traits Traits{ get; }
-        private readonly TreeAttribute watchedZenith;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         private EntityPlayer Player => entity as EntityPlayer;

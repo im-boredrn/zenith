@@ -13,5 +13,7 @@ namespace zenith.Core.Assimilation
         float GetCreatureLevel(CreatureType creatureType);
         public TraitTotals CalculateTotals();
 
+
+        event Action OnAssimChanged;
     }
 }

@@ -11,7 +11,6 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Traits;
 
 namespace zenith.Core.Assimilation
 {
@@ -169,6 +168,8 @@ namespace zenith.Core.Assimilation
 
             if (code.Contains("fox")) return CreatureType.fox;
 
+            if (code.Contains("hare")) return CreatureType.hare;
+
 
             SendError(serverPlayer, "AssimError", "Unknown Entity!");
             return CreatureType.unknown;
@@ -224,13 +225,21 @@ namespace zenith.Core.Assimilation
 
             var totals = CalculateTotals();
 
-            foreach (var trait in Definitions.Values)
+            foreach (var kvp in Definitions)
             {
-                var LVLkey = Definitions.Keys + "LVL";
-                watchedZenith.SetFloat(LVLkey, trait.AssimLVL);
-                watchedZenith.SetFloat(LVLkey, totals.Speed); // load the totals or the derived ??
+
+                var key = kvp.Key;
+                var trait = kvp.Value;
+
+                watchedZenith.SetInt($"{key}LVL", trait.AssimLVL);
+                //watchedZenith.SetFloat($"{key}LVL", totals.Speed);
+                //watchedZenith.SetFloat($"{key}LVL", totals.Jump);
+                //watchedZenith.SetFloat($"{key}LVL", totals.Damage);
+
+                Log($"KEY : {key}");
             }
 
+            
             entity.WatchedAttributes.MarkPathDirty("zenith");
             // Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
         }
@@ -242,7 +251,7 @@ namespace zenith.Core.Assimilation
             {
                 var LVLkey = Definitions.Keys + "LVL";
 
-                trait.AssimLVL = watchedZenith.GetFloat(LVLkey, 0);
+                trait.AssimLVL = watchedZenith.GetInt(LVLkey, 0);
 
             }
 
