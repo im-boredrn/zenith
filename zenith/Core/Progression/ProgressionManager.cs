@@ -30,10 +30,10 @@ namespace zenith.Core.Progression
         public int DomainPoints { get; private set; } // Dont Add values Ruins Persistance(set defaults in watched Attributes
         public int Stage { get; private set; }
         public string StageName { get; private set; }
-        private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
+       static private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
-        private TreeAttribute watchedZenith;
+        private readonly TreeAttribute watchedZenith;
 
         private readonly Entity entity;
         private EntityPlayer Player => entity as EntityPlayer;
@@ -77,7 +77,7 @@ namespace zenith.Core.Progression
             }
             else
             {
-                EvolutionPoints += 20;
+                EvolutionPoints += 20; // Could be used in Assim Evolution - Use EVPoints to improve traits
                 SaveProgression();
             }
 
@@ -135,27 +135,7 @@ namespace zenith.Core.Progression
             };
         }
 
-        public float GetSpeedMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageSpeed2,
-                3 => ZenithSettings.ZStageSpeed3,
-                _ => 0f
-            };
-        }
-
-        public float GetJumpHeightMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageJumpHeightMultipiler2,
-                3 => ZenithSettings.ZStageJumpHeightMultipiler3,
-                _ => 0f
-            };
-
-        }
-
+ 
         public float GetMiningSpeedMultiplier()
         {
             return Stage switch
@@ -178,16 +158,7 @@ namespace zenith.Core.Progression
 
         //}
 
-        public float GetDamageMultiplier()
-        {
-            return Stage switch
-            {
-                2 => ZenithSettings.ZStageDamage2,
-                3 => ZenithSettings.ZStageDamage3,
-                _ => 0f
-            };
-        }
-
+    
 
 
         public float GetIgniteChanceMultiplier()
@@ -251,8 +222,7 @@ namespace zenith.Core.Progression
 
         public void LoadProgression()
         {
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+           
 
             Stage = watchedZenith.GetInt("Stage", 1);
             DomainPoints = watchedZenith.GetInt("DomainPoints", 0);

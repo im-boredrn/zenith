@@ -26,12 +26,12 @@ namespace zenith.Core.Domains
 // In other words Domain only knows about domain
     public class DomainSponge : IDomainInfo // Dont Forget to make Properties Public
     {
-        private ModConfig Config => ConfigLoader.Config; // points to the static config
+        static private ModConfig Config => ConfigLoader.Config; // May be useless
         public bool ContributedToEvolution { get; private set; } = false;
-        public int Threshold => ZenithSettings.ZGlobalDomainThreshold;
-        public int MaxTier => ZenithSettings.ZGlobalDomainMaxTier;
+        static public int Threshold => ZenithSettings.ZGlobalDomainThreshold;
+        static public int MaxTier => ZenithSettings.ZGlobalDomainMaxTier;
         public float DamageReductionPerTier => ZenithSettings.ZDamageReductionPerTier;
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+        static public bool DebugMode => ZenithSettings.ZDebugMode;
 
         private readonly ModConfig config;
         public DomainEnum Domain { get; }

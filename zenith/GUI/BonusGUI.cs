@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using zenith.Config;
+using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
@@ -17,13 +18,15 @@ namespace zenith.GUI
         private readonly IDomainInfo domainInfo;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
         private readonly IStageProvider stageProvider;
+        private readonly AssimilationCore assimilationCore;
         public override string ToggleKeyCombinationCode => null;
 
 
-        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP) : base(capi)
+        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore) : base(capi)
         {
 
             this.stageProvider = stageP;
+            this.assimilationCore = assimilationCore;
 
             stageProvider.OnStageUp += () =>
             {
@@ -43,19 +46,22 @@ namespace zenith.GUI
 
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-            var speed = stageProvider.GetSpeedMultiplier();
-            var dmg = stageProvider.GetDamageMultiplier();
-            var mSpeed = stageProvider.GetMiningSpeedMultiplier();
-            var jHeight = stageProvider.GetJumpHeightMultiplier();
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
+            var speed = zenith?.GetFloat("Speed", 0f);
+            var dmg = zenith?.GetFloat("Dmg", 0f);
+            var mSpeed = zenith?.GetFloat("MSM", 0f);
+            var jHeight = zenith?.GetFloat("JHM", 0f);
+
+
 
             SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
-                .AddDialogTitleBar($"Domain Bonuses", OnGuiClosed)
+                .AddDialogTitleBar($" Bonuses", OnGuiClosed)
                 .AddDynamicText($"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X\n JumpHeight : +{jHeight}X ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
-                
 
-               
+
+
 
                 .Compose();
 
@@ -70,20 +76,20 @@ namespace zenith.GUI
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
             // Idk if any better methods exist
 
-            var speed = zenith?.GetFloat("Speed", 0f ); 
+            var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
             var mSpeed = zenith?.GetFloat("MSM", 0f);
-            var jHeight = zenith?.GetFloat("JHM" , 0f);
+              var jHeight = zenith?.GetFloat("JHM" , 0f);
 
 
 
 
-            string newText = $"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X\n JumpHeight : +{jHeight}X ";
+            string newText = $"Speed : +{speed}X\n Damage : +{dmg}X\n MiningSpeed : +{mSpeed}X ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");
             Log($"[FLOW] UpdateBonusStatsCalled! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $" Current Mining Speed : {mSpeed} | Current Jumpheight: {jHeight}");
+                $" Current Mining Speed : {mSpeed} ");
 
 
             if (SingleComposer != null)
@@ -92,7 +98,7 @@ namespace zenith.GUI
                     .SetNewText(newText, false, true, false);
             }
             Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $"Current Mining Speed : {mSpeed} | Current Jumpheight: {jHeight}");
+                $"Current Mining Speed : {mSpeed} | Current Jump Height {jHeight} ");
 
 
         }
@@ -128,6 +134,6 @@ namespace zenith.GUI
 
     }
 
-     
 
-    }
+
+}
