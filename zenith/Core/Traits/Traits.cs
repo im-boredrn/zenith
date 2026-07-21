@@ -86,8 +86,6 @@ namespace zenith.Core.Traits
 
             float damageBonus = (totals.Damage * 100f);
 
-//            float mineSpeedBonus = (totals.Mine * 100f);
-            // Work on Mining speed it looks outta place in the GUI
 
              
 
@@ -96,10 +94,7 @@ namespace zenith.Core.Traits
             watchedZenith.SetFloat("Speed", speedBonus);
             watchedZenith.SetFloat("JHM", jumpDamage);
             watchedZenith.SetFloat("Dmg", damageBonus);
-            //watchedZenith.SetFloat("MSM", mineSpeedBonus);
-
-           // No need to load just saving for GUI retrieval
-              
+     
         }
     }
 }
