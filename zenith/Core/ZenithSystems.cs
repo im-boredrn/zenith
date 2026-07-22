@@ -48,8 +48,9 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity);
-            TraitManager = new TraitManager(entity, AssimilationCore);
             StatOutput = new StatOutput(entity);
+            TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
+            
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
@@ -69,9 +70,6 @@ namespace zenith.Core
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
-
-            //   bool isClient = capi != null;
-
 
         WireEvents();
             

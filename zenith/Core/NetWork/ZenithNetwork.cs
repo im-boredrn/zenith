@@ -20,6 +20,8 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<ConsumePacket>()
                 .RegisterMessageType<SwitchPacket>()
                 .RegisterMessageType<IncreasePacket>()
+                .RegisterMessageType<DecreasePacket>()
+
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
@@ -33,7 +35,11 @@ namespace zenith.Core.NetWork
                 {
                     Handle(player, "Increase");
                 }
-            );
+            )
+                .SetMessageHandler<DecreasePacket>((player,packet) =>
+                {
+                    Handle(player, "Decrease");
+                });
 
         }
 
@@ -42,7 +48,9 @@ namespace zenith.Core.NetWork
             ClientChannel = capi.Network
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
-                .RegisterMessageType<SwitchPacket>();
+                .RegisterMessageType<SwitchPacket>()
+                .RegisterMessageType<IncreasePacket>()
+                .RegisterMessageType<DecreasePacket>();
         }
 
        
@@ -69,8 +77,9 @@ namespace zenith.Core.NetWork
                         break;
                     }
 
-                default:
+                case GlKeys.AltRight:
                     {
+                        ClientChannel?.SendPacket(new DecreasePacket());
                         break;
                     }
             }
@@ -93,6 +102,18 @@ namespace zenith.Core.NetWork
                 case "Switch":
                     {
                         behavior?.systems.StatOutput?.StatSwitch();
+                        break;
+                    }
+
+                case "Increase":
+                    {
+                        behavior?.systems?.StatOutput?.OutputChange("Increase"); // Could also pass down an int
+                        break;
+                    }
+
+                case "Decrease":
+                    {
+                        behavior?.systems?.StatOutput?.OutputChange("Decrease"); 
                         break;
                     }
             }

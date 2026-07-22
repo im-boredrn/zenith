@@ -25,6 +25,7 @@ public class zenithCore : ModSystem
     public ZenithGui ZenithGui;
 
     public ZenithNetwork ZenithNetwork { get; private set; }
+    public Keybinds Keybinds { get; private set; }
 
     public static ModConfig Config => ConfigLoader.Config;
  //   private readonly long tickListenerId;   
@@ -42,6 +43,8 @@ public class zenithCore : ModSystem
         base.Start(api);
 
         ZenithNetwork = new ZenithNetwork();
+
+        Keybinds = new Keybinds(ZenithNetwork);
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -58,18 +61,9 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     sapi.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
-
-
-                //if (!player.Entity.HasBehavior<Assimilation>())
-                //{
-                //    player.Entity.AddBehavior(new Assimilation(player.Entity));
-                //    sapi.Logger.Notification($"Assimilation Behavior attached to {player.PlayerName}");
-                //}
-
             }, "AttachBehaviors");
         };
         ZenithNetwork.RegisterServer(sapi);
-        // tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
     }
 
     public override void StartClientSide(ICoreClientAPI api) // Eventually might register hotkeys in a method
@@ -88,63 +82,12 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
-
-
-
             }, "AttachBehaviors");
-
-
-        
+ 
         };
 
-        var player = api.World.Player?.Entity as EntityPlayer;
-        if (player == null) return;
-
-        if (ZenithNetwork == null) return;
-        // Register hotkey once, at client start
-        api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
-        api.Input.SetHotKeyHandler("opendomain", comb =>
-        {
-           
-
-            var behavior = player.GetBehavior<ZenithBehavior>();
-            if (behavior?.systems?.ZenithGui != null)
-            {
-                behavior.systems.ZenithGui.Toggle();
-                return true;
-            }
-
-            return false;
-        });
-
-       
-
-        api.Input.RegisterHotKey("assimilate", "Consume", GlKeys.V, HotkeyType.GUIOrOtherControls); // Use Znetwork
-        api.Input.SetHotKeyHandler("assimilate", comb =>
-        {
-                ZenithNetwork.Request(GlKeys.V);
-                return true; 
-        });
-
-        api.Input.RegisterHotKey("statselect", "Switch Stat", GlKeys.Keypad9, HotkeyType.GUIOrOtherControls);
-        api.Input.SetHotKeyHandler("statselect", comb =>
-        {
-                ZenithNetwork.Request(GlKeys.Keypad9);
-            return false;
-
-        });
-
-        api.Input.RegisterHotKey("increaseoutput", "Increase Stat", GlKeys.AltLeft, HotkeyType.GUIOrOtherControls);
-        api.Input.SetHotKeyHandler("increaseoutput", comb =>
-        {
-            ZenithNetwork.Request(GlKeys.AltLeft);
-            return true;
-        });
+        Keybinds.WireKeybinds(api);
     }
-
-
-    
-    
 
     private void OnServerTick(float dt)
     {
@@ -161,8 +104,6 @@ public class zenithCore : ModSystem
             }
         }
     }
-
-    
 
     public override void Dispose()
     {

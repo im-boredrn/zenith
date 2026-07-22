@@ -6,6 +6,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using zenith.Config;
+using zenith.Core.Assimilation;
 
 namespace zenith.Core.NetWork
 {
@@ -64,8 +65,30 @@ namespace zenith.Core.NetWork
            
             Log($"[DATA] SSI : {SelectedStatIndex} | Selected Stat : {selectedStat}");
 
-           
+        }
 
+        public void OutputChange(string intent)
+        {
+#pragma warning disable IDE0019
+            var sapi = entity.World.Api as ICoreServerAPI;
+            if (sapi == null) return;
+#pragma warning restore IDE0019
+
+            switch (intent)
+            {
+                case "Increase":
+                    {
+                        OutputPercent += 10;
+                        break;
+                    }
+
+                case "Decrease":
+                    {
+                        OutputPercent -= 10; break;
+                    }
+            }
+
+            sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"Current Output: {OutputPercent}%", EnumChatType.Notification);
 
         }
 

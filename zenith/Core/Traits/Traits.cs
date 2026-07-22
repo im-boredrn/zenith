@@ -7,6 +7,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 
 namespace zenith.Core.Traits
@@ -19,12 +20,13 @@ namespace zenith.Core.Traits
         private readonly Entity entity;
         private readonly IAssimilationProvider assimilationProvider;
         private EntityPlayer Player => entity as EntityPlayer;
-
+        private StatOutput StatOutput;
       
-        public Traits(Entity entity, IAssimilationProvider assimilationProvider)
+        public Traits(Entity entity, IAssimilationProvider assimilationProvider, StatOutput statOutput)
         {
             this.entity = entity;
             this.assimilationProvider = assimilationProvider;
+            this.StatOutput = statOutput;
             var entityPlayer = Player as EntityPlayer;
 
             watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
