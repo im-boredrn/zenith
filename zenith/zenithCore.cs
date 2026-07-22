@@ -72,7 +72,7 @@ public class zenithCore : ModSystem
         // tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
     }
 
-    public override void StartClientSide(ICoreClientAPI api)
+    public override void StartClientSide(ICoreClientAPI api) // Eventually might register hotkeys in a method
     {
         ZenithNetwork.RegisterClient(api);
 
@@ -114,6 +114,8 @@ public class zenithCore : ModSystem
             return false;
         });
 
+       
+
         api.Input.RegisterHotKey("assimilate", "Consume", GlKeys.V, HotkeyType.GUIOrOtherControls); // Use Znetwork
         api.Input.SetHotKeyHandler("assimilate", comb =>
         {
@@ -129,6 +131,23 @@ public class zenithCore : ModSystem
             }
 
             return false;
+        });
+
+        api.Input.RegisterHotKey("statselect", "Switch Stat", GlKeys.Keypad9, HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("statselect", comb =>
+        {
+            var player = api.World.Player?.Entity as EntityPlayer;
+            if (player == null) return false;
+
+            if (ZenithNetwork != null)
+            {
+                ZenithNetwork.RequestSwitch();
+
+                return true;
+            }
+
+            return false;
+
         });
     }
 

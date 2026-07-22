@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zenith.Core.Assimilation
+namespace zenith.Core.NetWork
 {
     [ProtoContract]
-    public class ConsumePacket
+    public class SwitchPacket
     {
         [ProtoMember(1)]
-        public string KeybindAssim { get; private set; }
+        public string KeybindSwitch { get; private set; }
     }
 }

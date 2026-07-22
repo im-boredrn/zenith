@@ -10,6 +10,7 @@ using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using zenith.Core.Traits;
 using zenith.GUI;
@@ -30,6 +31,7 @@ namespace zenith.Core
 
         public AssimilationCore AssimilationCore { get; }
         public TraitManager TraitManager { get; }
+        public StatOutput StatOutput { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
@@ -47,6 +49,7 @@ namespace zenith.Core
 
             AssimilationCore = new AssimilationCore(entity);
             TraitManager = new TraitManager(entity, AssimilationCore);
+            StatOutput = new StatOutput(entity);
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();

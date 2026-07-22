@@ -60,7 +60,7 @@ namespace zenith.Core
         {EnumDamageType.Suffocation, DomainEnum.Drown }
 };
 
-        public bool DebugMode => ZenithSettings.ZDebugMode;
+      static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
         public ZenithSystems systems;
         private readonly IStageProvider stageProvider;
