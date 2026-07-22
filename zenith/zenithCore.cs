@@ -74,6 +74,8 @@ public class zenithCore : ModSystem
 
     public override void StartClientSide(ICoreClientAPI api) // Eventually might register hotkeys in a method
     {
+#pragma warning disable IDE0019
+
         ZenithNetwork.RegisterClient(api);
 
         api.Event.PlayerJoin += (IClientPlayer player) =>
@@ -95,14 +97,15 @@ public class zenithCore : ModSystem
         
         };
 
+        var player = api.World.Player?.Entity as EntityPlayer;
+        if (player == null) return;
 
-
+        if (ZenithNetwork == null) return;
         // Register hotkey once, at client start
         api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
         api.Input.SetHotKeyHandler("opendomain", comb =>
         {
-            var player = api.World.Player?.Entity as EntityPlayer;
-            if (player == null) return false;
+           
 
             var behavior = player.GetBehavior<ZenithBehavior>();
             if (behavior?.systems?.ZenithGui != null)
@@ -119,35 +122,23 @@ public class zenithCore : ModSystem
         api.Input.RegisterHotKey("assimilate", "Consume", GlKeys.V, HotkeyType.GUIOrOtherControls); // Use Znetwork
         api.Input.SetHotKeyHandler("assimilate", comb =>
         {
-
-            var player = api.World.Player?.Entity as EntityPlayer;
-            if (player == null) return false;
-
-            if (ZenithNetwork!= null)
-            {
-                ZenithNetwork.RequestAssimilation();
-
-                return true;
-            }
-
-            return false;
+                ZenithNetwork.Request(GlKeys.V);
+                return true; 
         });
 
         api.Input.RegisterHotKey("statselect", "Switch Stat", GlKeys.Keypad9, HotkeyType.GUIOrOtherControls);
         api.Input.SetHotKeyHandler("statselect", comb =>
         {
-            var player = api.World.Player?.Entity as EntityPlayer;
-            if (player == null) return false;
-
-            if (ZenithNetwork != null)
-            {
-                ZenithNetwork.RequestSwitch();
-
-                return true;
-            }
-
+                ZenithNetwork.Request(GlKeys.Keypad9);
             return false;
 
+        });
+
+        api.Input.RegisterHotKey("increaseoutput", "Increase Stat", GlKeys.AltLeft, HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("increaseoutput", comb =>
+        {
+            ZenithNetwork.Request(GlKeys.AltLeft);
+            return true;
         });
     }
 

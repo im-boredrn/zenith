@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zenith.Core.NetWork
+namespace zenith.Core.NetWork.Packets
 {
+
     [ProtoContract]
-    public class SwitchPacket
+    public class DecreasePacket
     {
+
         [ProtoMember(1)]
-        public string KeybindSwitch { get; private set; }
+        public string KeybindDecrease { get; private set; }
     }
 }

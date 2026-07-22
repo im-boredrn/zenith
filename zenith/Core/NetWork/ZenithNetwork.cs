@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
+using zenith.Core.NetWork.Packets;
 
 namespace zenith.Core.NetWork
 {
@@ -18,14 +19,21 @@ namespace zenith.Core.NetWork
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
                 .RegisterMessageType<SwitchPacket>()
+                .RegisterMessageType<IncreasePacket>()
+
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
-                    HandleAssimilation(player); // Once packet is requested this launches
+                    Handle(player, "Consume"); // Once packet is requested this launches
                 })
                 .SetMessageHandler<SwitchPacket>((player, packet) =>
                 {
-                    HandleSwitch(player);
-                });
+                    Handle(player, "Switch");
+                })
+                .SetMessageHandler<IncreasePacket>((player, packet) =>
+                {
+                    Handle(player, "Increase");
+                }
+            );
 
         }
 
@@ -37,26 +45,57 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<SwitchPacket>();
         }
 
-        public void RequestAssimilation() // keybind
+       
+        public void Request(GlKeys glKeys)
         {
-            ClientChannel?.SendPacket(new ConsumePacket());
-        }
-        public void RequestSwitch()
-        {
-            ClientChannel?.SendPacket(new SwitchPacket());
+
+            switch (glKeys)
+            {
+                case GlKeys.Keypad9:
+                    {
+                        ClientChannel?.SendPacket(new SwitchPacket());
+                        break;
+                    }
+
+                case GlKeys.V:
+                    {
+                        ClientChannel?.SendPacket(new ConsumePacket());
+                        break;
+                    }
+
+                case GlKeys.AltLeft:
+                    {
+                        ClientChannel?.SendPacket(new IncreasePacket());
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+            }
         }
 
-        private void HandleSwitch (IServerPlayer player)
+        private void Handle (IServerPlayer player, string packet)
         {
             var behavior = player.Entity.GetBehavior<ZenithBehavior>();
 
-            behavior?.systems.StatOutput?.StatSwitch();
-        }
+            switch (packet)
+            {
+                case "Consume":
+                    {
+                        behavior?.systems?.AssimilationCore?.TryAssimilate(player);
 
-        private void HandleAssimilation(IServerPlayer player) //Execute
-        {
-            var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-            behavior?.systems?.AssimilationCore?.TryAssimilate(player);
-        }
+
+                        break;
+                    }
+
+                case "Switch":
+                    {
+                        behavior?.systems.StatOutput?.StatSwitch();
+                        break;
+                    }
+            }
+        } 
     }
 }
