@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using zenith.Config;
 
@@ -40,23 +41,28 @@ namespace zenith.Core.NetWork
         public void StatSwitch() // Call with Keybind
         {
 
+            Log($"[FLOW] StatSwitch Called");
+
+#pragma warning disable IDE0019
+            var sapi = entity.World.Api as ICoreServerAPI;
+            if (sapi == null) return;
+#pragma warning restore IDE0019
+
+
+            SelectedStatIndex++;
+            Log($"[DATA] SSI : {SelectedStatIndex}");
+
             if (SelectedStatIndex >= statNames.Length)
             {
                 SelectedStatIndex = 0;
             }
 
-            var serverPlayer = Player.Api as IServerPlayer;
-
-            SelectedStatIndex++;
-
-            
             var selectedStat = MapArray(SelectedStatIndex);
 
-            serverPlayer.SendLocalisedMessage(2, $"{selectedStat}");
-            Log($"[DATA] SSI : {SelectedStatIndex}");
+            sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{selectedStat}", EnumChatType.Notification);
            
            
-            Log($"[DATA] SSI : {SelectedStatIndex} | Selected Stat : {statNames}");
+            Log($"[DATA] SSI : {SelectedStatIndex} | Selected Stat : {selectedStat}");
 
            
 
@@ -65,6 +71,9 @@ namespace zenith.Core.NetWork
 
         private string MapArray(int SSI)
         {
+
+            if (SSI < 0 || SSI >= statNames.Length) return "out of bounds";
+
             return statNames[SSI];
 
         }
