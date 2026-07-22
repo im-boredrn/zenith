@@ -1,5 +1,4 @@
 ﻿using Cairo;
-using HarmonyLib;
 using System;
 using System.Numerics;
 using Vintagestory.API.Client;
@@ -27,7 +26,6 @@ public class zenithCore : ModSystem
 
     public ZenithNetwork ZenithNetwork { get; private set; }
 
-    public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
  //   private readonly long tickListenerId;   
 
@@ -37,8 +35,6 @@ public class zenithCore : ModSystem
         Api = api;
         Logger = Mod.Logger;
         ModId = Mod.Info.ModID;
-        HarmonyInstance = new Harmony(ModId);
-        HarmonyInstance.PatchAll();
     }
     
     public override void Start(ICoreAPI api)
@@ -92,12 +88,6 @@ public class zenithCore : ModSystem
                 }
 
 
-
-                //if (!player.Entity.HasBehavior<Assimilation>())
-                //{
-                //    player.Entity.AddBehavior(new Assimilation(player.Entity));
-                //    api.Logger.Notification($"Assimilation Behavior attached to {player.PlayerName}");
-                //}
 
             }, "AttachBehaviors");
 
@@ -157,7 +147,7 @@ public class zenithCore : ModSystem
             var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
             if (zenithBehavior?.systems != null)
             {
-                zenithBehavior.systems.OnServerTick(dt); // changed from systems.AbilityFactory.Tick Pssives
+                zenithBehavior.systems.OnServerTick(dt); 
             }
         }
     }
@@ -166,16 +156,11 @@ public class zenithCore : ModSystem
 
     public override void Dispose()
     {
-        HarmonyInstance?.UnpatchSelf();
-        HarmonyInstance = null;
         Logger = null;
         ModId = null;
         Api = null;
         base.Dispose();
 
-       // if (tickListenerId > 0)
-        {
-      //      sapi.Event.UnregisterGameTickListener(tickListenerId);
-        }
+     
     }
 }

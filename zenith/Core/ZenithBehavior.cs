@@ -1,5 +1,4 @@
 ﻿using CompactExifLib;
-using HarmonyLib;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
