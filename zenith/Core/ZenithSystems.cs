@@ -48,9 +48,12 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity);
-            StatOutput = new StatOutput(entity);
-            TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
             
+                StatOutput = new StatOutput(entity, capi);
+           
+           
+            TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
+            TraitManager.Traits.ApplyTraits();
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
@@ -136,8 +139,13 @@ namespace zenith.Core
                 TraitManager.Traits.ApplyTraits();
                 // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
-            
-            
+
+            StatOutput.OnOutputChange += () =>
+            {
+                TraitManager.Traits.ApplyTraits();
+                ZenithGui?.BonusGUI.UpdateBonusStats();
+            };
+
         }
 
         public void ApplyAttack(DamageSource source, EntityAgent targetEntity)

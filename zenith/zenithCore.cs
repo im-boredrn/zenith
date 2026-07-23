@@ -87,6 +87,23 @@ public class zenithCore : ModSystem
         };
 
         Keybinds.WireKeybinds(api);
+
+     
+        api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("opendomain", comb =>
+        {
+            var player = api.World.Player?.Entity as EntityPlayer;
+            if (player == null) return false;
+
+            var behavior = player.GetBehavior<ZenithBehavior>();
+            if (behavior?.systems?.ZenithGui != null)
+            {
+                behavior.systems.ZenithGui.Toggle();
+                return true;
+            }
+            return false;
+        });
+
     }
 
     private void OnServerTick(float dt)

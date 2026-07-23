@@ -57,7 +57,7 @@ namespace zenith.Config
         //Assimilation
 
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
-        public static int ZAssimGlobalCreatureMaxLVL => Config?.GlobalCreatureMaxLVL ?? 30;
+        public static int ZAssimGlobalCreatureMaxLVL => Config?.GlobalCreatureMaxLVL ?? 100;
 
 
 

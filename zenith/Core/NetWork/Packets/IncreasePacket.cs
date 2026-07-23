@@ -10,6 +10,9 @@ namespace zenith.Core.NetWork.Packets
     public class IncreasePacket
     {
         [ProtoMember(1)]
-        public string KeybindIncrease { get; private set; }
+        public bool ShiftHeld { get; set; }
+
+        [ProtoMember(2)]
+        public bool AltHeld { get; set; }
     }
 }

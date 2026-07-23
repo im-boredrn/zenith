@@ -11,6 +11,9 @@ namespace zenith.Core.NetWork.Packets
     {
 
         [ProtoMember(1)]
-        public string KeybindDecrease { get; private set; }
+        public bool ShiftHeld { get; set; }
+
+        [ProtoMember(2)]
+        public bool AltHeld { get; set; }
     }
 }

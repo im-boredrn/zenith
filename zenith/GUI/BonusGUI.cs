@@ -51,10 +51,6 @@ namespace zenith.GUI
             var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
             var jHeight = zenith?.GetFloat("JHM", 0f);
-
-
-            var totals = assimilationCore.CalculateTotals();
-
           
            
 
@@ -72,7 +68,7 @@ namespace zenith.GUI
         }
 
 
-        private void UpdateBonusStats()
+        public void UpdateBonusStats()
         {
             if (!IsOpened()) return;
 
@@ -84,7 +80,7 @@ namespace zenith.GUI
             var dmg = zenith?.GetFloat("Dmg", 0f);
               var jHeight = zenith?.GetFloat("JHM" , 0f);
 
-
+            Log($"Raw Jump Height = {jHeight}");
 
 
             string newText = $"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n  +{jHeight:F0}% JumpHeight ";

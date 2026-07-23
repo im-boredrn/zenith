@@ -15,6 +15,7 @@ namespace zenith.Core.NetWork
 
         public void RegisterServer(ICoreServerAPI sapi)
         {
+
             ServerChannel = sapi.Network
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
@@ -25,20 +26,29 @@ namespace zenith.Core.NetWork
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
-                    Handle(player, "Consume"); // Once packet is requested this launches
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems?.AssimilationCore?.TryAssimilate(player);
                 })
                 .SetMessageHandler<SwitchPacket>((player, packet) =>
                 {
-                    Handle(player, "Switch");
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems.StatOutput?.StatSwitch();
+
                 })
                 .SetMessageHandler<IncreasePacket>((player, packet) =>
                 {
-                    Handle(player, "Increase");
-                }
-            )
+
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+
+                    behavior.systems.StatOutput.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
+                })
                 .SetMessageHandler<DecreasePacket>((player,packet) =>
                 {
-                    Handle(player, "Decrease");
+
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+
+
+                    behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld, packet.AltHeld, "Decrease");
                 });
 
         }
@@ -54,7 +64,7 @@ namespace zenith.Core.NetWork
         }
 
        
-        public void Request(GlKeys glKeys)
+        public void Request(GlKeys glKeys, bool shift, bool alt)
         {
 
             switch (glKeys)
@@ -71,52 +81,27 @@ namespace zenith.Core.NetWork
                         break;
                     }
 
-                case GlKeys.AltLeft:
+                case GlKeys.B :
                     {
-                        ClientChannel?.SendPacket(new IncreasePacket());
+                        ClientChannel?.SendPacket(new IncreasePacket()
+                        {
+                            ShiftHeld = shift,
+                            AltHeld = alt
+
+                        });
                         break;
                     }
 
-                case GlKeys.AltRight:
+                case GlKeys.N:
                     {
-                        ClientChannel?.SendPacket(new DecreasePacket());
+                        ClientChannel?.SendPacket(new DecreasePacket()
+                        {
+                            ShiftHeld = shift,
+                            AltHeld = alt
+                        });
                         break;
                     }
             }
         }
-
-        private void Handle (IServerPlayer player, string packet)
-        {
-            var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-
-            switch (packet)
-            {
-                case "Consume":
-                    {
-                        behavior?.systems?.AssimilationCore?.TryAssimilate(player);
-
-
-                        break;
-                    }
-
-                case "Switch":
-                    {
-                        behavior?.systems.StatOutput?.StatSwitch();
-                        break;
-                    }
-
-                case "Increase":
-                    {
-                        behavior?.systems?.StatOutput?.OutputChange("Increase"); // Could also pass down an int
-                        break;
-                    }
-
-                case "Decrease":
-                    {
-                        behavior?.systems?.StatOutput?.OutputChange("Decrease"); 
-                        break;
-                    }
-            }
-        } 
     }
 }
