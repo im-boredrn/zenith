@@ -256,17 +256,10 @@ namespace zenith.Core.Assimilation
                 var LVLkey = Definitions.Keys + "LVL";
 
                 trait.AssimLVL = watchedZenith.GetInt($"{key}LVL", 0);
-
-            }
-
-            foreach (var kvp in Definitions)
-            {
-                var key = kvp.Key;
-                var trait = kvp.Value;
-
+   
                 Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
-
             }
+          
         }
 
 

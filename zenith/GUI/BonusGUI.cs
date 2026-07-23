@@ -14,9 +14,6 @@ namespace zenith.GUI
 {
     public class BonusGUI : GuiDialog
     {
-        DomainEnum domain;  // <- the domain this GUI is showing
-        readonly DomainManager domainManager;
-        private readonly IDomainInfo domainInfo;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
         private readonly IStageProvider stageProvider;
         private readonly AssimilationCore assimilationCore;

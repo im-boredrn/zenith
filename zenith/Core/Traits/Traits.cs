@@ -43,11 +43,14 @@ namespace zenith.Core.Traits
         {
             var gTotals = new GUITotals();
             var totals = assimilationProvider.CalculateTotals();
-            float outputScale = StatOutput.OutputPercent ;
+            var gSpeedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed] ; // Ie. 80
+            var gStrengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength] ;
+            var gJumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump];
 
             float jumpBonus = totals.Jump + 0.49f;
-            gTotals.GDamage = totals.Damage * 100f;
-            gTotals.GJump = jumpBonus * outputScale;
+            gTotals.GDamage = totals.Damage * gStrengthOutput;
+            gTotals.GJump = jumpBonus * gJumpOutput;
+            gTotals.GSpeed = totals.Speed * gSpeedOutput; // Ie. 0.05 * 80 = 4 | 80% of 5 = 4
 
             return gTotals  ;
         }
@@ -55,18 +58,22 @@ namespace zenith.Core.Traits
         public void ApplyTraits()
         {
             Log("[FLOW] ApplyTraits Called");
+            var speedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed]/100f;
+            var strengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength]/100f;
+            var jumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump]/100f;
 
             var totals = assimilationProvider.CalculateTotals();
-            float finalSpeed = (totals.Speed * (StatOutput.OutputPercent / 100f));
-            float jumpBonus = totals.Jump + 0.49f;
+            float jumpBonus = totals.Jump + 0.30f ;
 
-            float finalJump = (jumpBonus * StatOutput.OutputPercent/100f);
-            float finalDamage = (totals.Damage * 100f);
+            float finalJump = (jumpBonus * jumpOutput);
+            float finalDamage = (totals.Damage * strengthOutput);
+            float finalSpeed = (totals.Speed * speedOutput);
+
 
             var entityPlayer = Player as EntityPlayer;
-            entityPlayer.Stats.Set("walkspeed", "zenith", totals.Speed, true); 
+            entityPlayer.Stats.Set("walkspeed", "zenith", finalSpeed, true); 
             entityPlayer.Stats.Set("jumpHeightMul", "zenith", finalJump, true);
-            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", totals.Damage, true);
+            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", finalDamage, true);
 
             SaveTraits();
         }
@@ -82,7 +89,7 @@ namespace zenith.Core.Traits
             watchedZenith.SetFloat("Dmg", gTotals.GDamage);
 
 
-           // Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");
+         //   Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }
