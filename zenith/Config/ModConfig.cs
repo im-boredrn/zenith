@@ -27,25 +27,21 @@ public class ModConfig
 
     public float RegenAmount { get; set; } = 0.25f;
 
-    //public float StageSpeed2 { get; set; } = 0.2f;
-    //public float StageSpeed3 { get; set; } = 0.3f;
-
-    //public float StageDamage2 { get; set; } = 0.5f;
-    //public float StageDamage3 { get; set; } = 1f;
-
     public float StageIgniteChanceMultipiler2 { get; set; } = 0.05f; // 15% Chance
     public float StageIgniteChanceMultipiler3 { get; set; } = 0.1f; // 20% chance
-
-    public float StageJumpHeightMultipiler { get; set; } = 0.2f;
 
     public float StageMiningSpeedMultipiler2 { get; set; } = 2.5f;
     public float StageMiningSpeedMultipiler3 { get; set; } = 3.2f;
 
-    //  public float StageArmorWSAMultipiler2 { get; set; } = -0.2f;
-    // public float StageArmorWSAMultipiler3 { get; set; } = -0.4f;
-
     public int AssimCreatureLVLMult { get; set; } = 1;
-    public int GlobalCreatureMaxLVL { get; set; } = 100;
+    public int DrifterCreatureMaxLVL { get; set; } = 100;
+    public int BearCreatureMaxLVL { get; set; } = 100;
+    public int HareCreatureMaxLVL { get; set; } = 100;
+    public int WolfCreatureMaxLVL { get; set; } = 100;
+    public int FoxCreatureMaxLVL { get; set; } = 100;
+    public int GoatCreatureMaxLVL { get; set; } = 100;
+    public int DeerCreatureMaxLVL { get; set; } = 100;
+
 
 
 
