@@ -7,7 +7,9 @@ using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
+using static zenith.Core.NetWork.StatOutput;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.GUI
@@ -18,14 +20,14 @@ namespace zenith.GUI
         private readonly IStageProvider stageProvider;
         private readonly AssimilationCore assimilationCore;
         public override string ToggleKeyCombinationCode => null;
+        private readonly StatOutput statOutput;
 
-
-        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore) : base(capi)
+        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore, StatOutput statOutput) : base(capi)
         {
 
             this.stageProvider = stageP;
             this.assimilationCore = assimilationCore;
-
+            this.statOutput = statOutput;
             stageProvider.OnStageUp += () =>
             {
 
@@ -48,13 +50,16 @@ namespace zenith.GUI
             var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
             var jHeight = zenith?.GetFloat("JHM", 0f);
-          
-           
+            var selectedStat = (StatType)zenith.GetInt("SelectedStat", 0);
+            var speedOutput = statOutput.OutputPercentages[StatType.Speed];
+            var damageOutput = statOutput.OutputPercentages[StatType.Strength];
+            var jumpOutput = statOutput.OutputPercentages[StatType.Jump];
 
             SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($" Bonuses", OnGuiClosed)
-                .AddDynamicText($"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n +{jHeight:F0}% JumpHeight ",
+                .AddDynamicText($"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Damage |" +
+                $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n Selected Stat : {selectedStat} ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
 
 
@@ -73,14 +78,20 @@ namespace zenith.GUI
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
             // Idk if any better methods exist
 
-            var speed = zenith?.GetFloat("Speed", 0f);
+            var speed = zenith?.GetFloat("SPD", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
               var jHeight = zenith?.GetFloat("JHM" , 0f);
+            var selectedStat = (StatType)zenith.GetInt("SelectedStat",0);
+
+             var speedOutput = zenith?.GetFloat($"Speed Output", 100f);
+            var damageOutput = zenith?.GetFloat($"Strength Output", 100f);
+            var jumpOutput = zenith?.GetFloat($"Jump Output", 100f);
 
             Log($"Raw Jump Height = {jHeight}");
 
 
-            string newText = $"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n  +{jHeight:F0}% JumpHeight ";
+            string newText = $"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Damage |" +
+                $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n Selected Stat : {selectedStat} ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");

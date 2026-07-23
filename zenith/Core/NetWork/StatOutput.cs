@@ -81,6 +81,7 @@ namespace zenith.Core.NetWork
                 selectedStat = StatType.Strength;
             }
 
+            OnOutputChange.Invoke();
 
             sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{selectedStat}", EnumChatType.Notification);
            
@@ -133,7 +134,7 @@ namespace zenith.Core.NetWork
                 var key = Stat.Key;
                 var value = Stat.Value;
 
-                watchedZenith.SetFloat($"{key}", value);
+                watchedZenith.SetFloat($"{key} Output", value);
 
                Log($"[SAVE]  {key} | Value : {value}");
             }
@@ -149,7 +150,7 @@ namespace zenith.Core.NetWork
             {
                 var key = Stat.Key;
 
-               float value = watchedZenith.GetFloat($"{key}", 100f);
+               float value = watchedZenith.GetFloat($"{key} Output", 100f);
 
                 OutputPercentages[key] = value;
 
