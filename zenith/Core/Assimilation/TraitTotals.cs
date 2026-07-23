@@ -9,5 +9,8 @@ namespace zenith.Core.Assimilation
        public float Damage;
         public float Speed;
         public float Jump;
+        public float Health;
+        public float ANLoot;
+        public float Harvesting;
     }
 }

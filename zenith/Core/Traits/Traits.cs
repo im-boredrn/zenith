@@ -74,7 +74,7 @@ namespace zenith.Core.Traits
             entityPlayer.Stats.Set("walkspeed", "zenith", finalSpeed, true); 
             entityPlayer.Stats.Set("jumpHeightMul", "zenith", finalJump, true);
             entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", finalDamage, true);
-
+            entityPlayer.Stats.Set("maxhealthExtraPoints", "zenith", 1f, true);
             SaveTraits();
         }
 

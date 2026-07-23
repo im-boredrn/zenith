@@ -13,5 +13,9 @@ namespace zenith.Core.Assimilation
         public float SpeedGain { get; set; }
         public float JumpGain { get; set; }
         public float DamageGain { get; set; }
+
+        public float HealthGain { get; set; }
+        public float ANLootGain { get; set; }
+        public float HarvestingGain { get; set; }
     }
 }

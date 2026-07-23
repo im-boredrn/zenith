@@ -35,7 +35,7 @@ namespace zenith.Core.Assimilation
             fox,
             goat,
             deer,
-            racoon,
+            raccoon,
             sheep,
             chicken,
             pig,
@@ -99,9 +99,9 @@ namespace zenith.Core.Assimilation
                      // Add SeekingGain
                  },
 
-                 //[CreatureType.racoon] = new AssimilationDefinition
+                 //[CreatureType.raccoon] = new AssimilationDefinition
                  //{
-                 //    EntityName = "racoon",
+                 //    EntityName = "raccoon",
                  //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
                  //    SpeedGain = 0.1f
                  //    // VesselGain
@@ -238,7 +238,7 @@ namespace zenith.Core.Assimilation
 
             if (code.Contains("deer")) return CreatureType.deer;
 
-            //if (code.Contains("racoon")) return CreatureType.racoon;
+            //if (code.Contains("raccoon")) return CreatureType.raccoon;
 
             //if (code.Contains("sheep")) return CreatureType.sheep;
 
