@@ -59,7 +59,7 @@ namespace zenith.GUI
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($" Bonuses", OnGuiClosed)
                 .AddDynamicText($"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Damage |" +
-                $" {damageOutput}% Output\n +{jHeight:F0}% JumpHeight | {jumpOutput}% Output\n Selected Stat : {selectedStat} ",
+                $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n Selected Stat : {selectedStat} ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
 
 
@@ -78,19 +78,20 @@ namespace zenith.GUI
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
             // Idk if any better methods exist
 
-            var speed = zenith?.GetFloat("Speed", 0f);
+            var speed = zenith?.GetFloat("SPD", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
               var jHeight = zenith?.GetFloat("JHM" , 0f);
             var selectedStat = (StatType)zenith.GetInt("SelectedStat",0);
-            var speedOutput = statOutput.OutputPercentages[StatType.Speed];
-            var damageOutput = statOutput.OutputPercentages[StatType.Strength];
-            var jumpOutput = statOutput.OutputPercentages[StatType.Jump];
+
+             var speedOutput = zenith?.GetFloat($"Speed Output", 100f);
+            var damageOutput = zenith?.GetFloat($"Strength Output", 100f);
+            var jumpOutput = zenith?.GetFloat($"Jump Output", 100f);
 
             Log($"Raw Jump Height = {jHeight}");
 
 
             string newText = $"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Damage |" +
-                $" {damageOutput}% Output\n +{jHeight:F0}% JumpHeight | {jumpOutput}% Output\n Selected Stat : {selectedStat} ";
+                $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n Selected Stat : {selectedStat} ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");

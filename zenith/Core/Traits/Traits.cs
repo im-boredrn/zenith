@@ -84,7 +84,7 @@ namespace zenith.Core.Traits
             var gTotals = GetGUITotals();
 
 
-            watchedZenith.SetFloat("Speed", gTotals.GSpeed);
+            watchedZenith.SetFloat("SPD", gTotals.GSpeed);
             watchedZenith.SetFloat("JHM", gTotals.GJump);
             watchedZenith.SetFloat("Dmg", gTotals.GDamage);
 
