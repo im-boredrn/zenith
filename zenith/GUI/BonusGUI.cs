@@ -14,9 +14,6 @@ namespace zenith.GUI
 {
     public class BonusGUI : GuiDialog
     {
-        DomainEnum domain;  // <- the domain this GUI is showing
-        readonly DomainManager domainManager;
-        private readonly IDomainInfo domainInfo;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
         private readonly IStageProvider stageProvider;
         private readonly AssimilationCore assimilationCore;
@@ -50,19 +47,14 @@ namespace zenith.GUI
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
             var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
-            var mSpeed = zenith?.GetFloat("MSM", 0f);
             var jHeight = zenith?.GetFloat("JHM", 0f);
-
-
-            var totals = assimilationCore.CalculateTotals();
-
           
            
 
             SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($" Bonuses", OnGuiClosed)
-                .AddDynamicText($"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n MiningSpeed : +{mSpeed}X\n  : +{jHeight:F0}% JumpHeight ",
+                .AddDynamicText($"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n +{jHeight:F0}% JumpHeight ",
                 CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
 
 
@@ -73,7 +65,7 @@ namespace zenith.GUI
         }
 
 
-        private void UpdateBonusStats()
+        public void UpdateBonusStats()
         {
             if (!IsOpened()) return;
 
@@ -83,18 +75,16 @@ namespace zenith.GUI
 
             var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
-            var mSpeed = zenith?.GetFloat("MSM", 0f);
               var jHeight = zenith?.GetFloat("JHM" , 0f);
 
+            Log($"Raw Jump Height = {jHeight}");
 
 
-
-            string newText = $"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n MiningSpeed : +{mSpeed}X\n  +{jHeight:F0}% JumpHeight ";
+            string newText = $"+{speed:F0}% Speed\n +{dmg:F0}% Damage\n  +{jHeight:F0}% JumpHeight ";
 
 
             Log($"[CLIENT CHECK] Stats directly from entity");
-            Log($"[FLOW] UpdateBonusStatsCalled! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $" Current Mining Speed : {mSpeed} ");
+            Log($"[FLOW] UpdateBonusStatsCalled! Current Speed : {speed} | Current Damage: {dmg} | ");
 
 
             if (SingleComposer != null)
@@ -102,8 +92,7 @@ namespace zenith.GUI
                 SingleComposer.GetDynamicText("Bonustext")
                     .SetNewText(newText, false, true, false);
             }
-            Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} |" +
-                $"Current Mining Speed : {mSpeed} | Current Jump Height {jHeight} ");
+            Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} | Current Jump Height {jHeight} ");
 
 
         }

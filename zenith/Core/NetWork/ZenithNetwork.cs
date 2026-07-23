@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
-using zenith.Core.Assimilation;
+using zenith.Core.NetWork.Packets;
 
 namespace zenith.Core.NetWork
 {
@@ -15,12 +15,40 @@ namespace zenith.Core.NetWork
 
         public void RegisterServer(ICoreServerAPI sapi)
         {
+
             ServerChannel = sapi.Network
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
+                .RegisterMessageType<SwitchPacket>()
+                .RegisterMessageType<IncreasePacket>()
+                .RegisterMessageType<DecreasePacket>()
+
+
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
-                    HandleAssimilation(player); // Once packet is requested this launches
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems?.AssimilationCore?.TryAssimilate(player);
+                })
+                .SetMessageHandler<SwitchPacket>((player, packet) =>
+                {
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems.StatOutput?.StatSwitch();
+
+                })
+                .SetMessageHandler<IncreasePacket>((player, packet) =>
+                {
+
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+
+                    behavior.systems.StatOutput.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
+                })
+                .SetMessageHandler<DecreasePacket>((player,packet) =>
+                {
+
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+
+
+                    behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld, packet.AltHeld, "Decrease");
                 });
 
         }
@@ -29,20 +57,51 @@ namespace zenith.Core.NetWork
         {
             ClientChannel = capi.Network
                 .RegisterChannel("zenith")
-                .RegisterMessageType<ConsumePacket>();
+                .RegisterMessageType<ConsumePacket>()
+                .RegisterMessageType<SwitchPacket>()
+                .RegisterMessageType<IncreasePacket>()
+                .RegisterMessageType<DecreasePacket>();
         }
 
-        public void RequestAssimilation() // keybind
+       
+        public void Request(GlKeys glKeys, bool shift, bool alt)
         {
-            ClientChannel?.SendPacket(new ConsumePacket());
-        }
 
+            switch (glKeys)
+            {
+                case GlKeys.Keypad9:
+                    {
+                        ClientChannel?.SendPacket(new SwitchPacket());
+                        break;
+                    }
 
+                case GlKeys.V:
+                    {
+                        ClientChannel?.SendPacket(new ConsumePacket());
+                        break;
+                    }
 
-        private void HandleAssimilation(IServerPlayer player) //Execute
-        {
-            var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-            behavior?.systems?.AssimilationCore?.TryAssimilate(player);
+                case GlKeys.B :
+                    {
+                        ClientChannel?.SendPacket(new IncreasePacket()
+                        {
+                            ShiftHeld = shift,
+                            AltHeld = alt
+
+                        });
+                        break;
+                    }
+
+                case GlKeys.N:
+                    {
+                        ClientChannel?.SendPacket(new DecreasePacket()
+                        {
+                            ShiftHeld = shift,
+                            AltHeld = alt
+                        });
+                        break;
+                    }
+            }
         }
     }
 }

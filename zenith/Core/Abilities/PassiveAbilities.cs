@@ -49,7 +49,6 @@ namespace zenith.Core.Abilities
         public void SaveStats()
         {
         
-            watchedZenith.SetFloat("MSM", stageProvider.GetMiningSpeedMultiplier());
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 

@@ -1,5 +1,4 @@
 ﻿using Cairo;
-using HarmonyLib;
 using System;
 using System.Numerics;
 using Vintagestory.API.Client;
@@ -26,8 +25,8 @@ public class zenithCore : ModSystem
     public ZenithGui ZenithGui;
 
     public ZenithNetwork ZenithNetwork { get; private set; }
+    public Keybinds Keybinds { get; private set; }
 
-    public static Harmony HarmonyInstance { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
  //   private readonly long tickListenerId;   
 
@@ -37,8 +36,6 @@ public class zenithCore : ModSystem
         Api = api;
         Logger = Mod.Logger;
         ModId = Mod.Info.ModID;
-        HarmonyInstance = new Harmony(ModId);
-        HarmonyInstance.PatchAll();
     }
     
     public override void Start(ICoreAPI api)
@@ -46,6 +43,8 @@ public class zenithCore : ModSystem
         base.Start(api);
 
         ZenithNetwork = new ZenithNetwork();
+
+        Keybinds = new Keybinds(ZenithNetwork);
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -62,22 +61,15 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     sapi.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
-
-
-                //if (!player.Entity.HasBehavior<Assimilation>())
-                //{
-                //    player.Entity.AddBehavior(new Assimilation(player.Entity));
-                //    sapi.Logger.Notification($"Assimilation Behavior attached to {player.PlayerName}");
-                //}
-
             }, "AttachBehaviors");
         };
         ZenithNetwork.RegisterServer(sapi);
-        // tickListenerId = api.Event.RegisterGameTickListener(OnServerTick, 1000);
     }
 
-    public override void StartClientSide(ICoreClientAPI api)
+    public override void StartClientSide(ICoreClientAPI api) // Eventually might register hotkeys in a method
     {
+#pragma warning disable IDE0019
+
         ZenithNetwork.RegisterClient(api);
 
         api.Event.PlayerJoin += (IClientPlayer player) =>
@@ -90,24 +82,13 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
-
-
-
-                //if (!player.Entity.HasBehavior<Assimilation>())
-                //{
-                //    player.Entity.AddBehavior(new Assimilation(player.Entity));
-                //    api.Logger.Notification($"Assimilation Behavior attached to {player.PlayerName}");
-                //}
-
             }, "AttachBehaviors");
-
-
-        
+ 
         };
 
+        Keybinds.WireKeybinds(api);
 
-
-        // Register hotkey once, at client start
+     
         api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
         api.Input.SetHotKeyHandler("opendomain", comb =>
         {
@@ -120,31 +101,10 @@ public class zenithCore : ModSystem
                 behavior.systems.ZenithGui.Toggle();
                 return true;
             }
-
             return false;
         });
 
-        api.Input.RegisterHotKey("assimilate", "Consume", GlKeys.V, HotkeyType.GUIOrOtherControls); // Use Znetwork
-        api.Input.SetHotKeyHandler("assimilate", comb =>
-        {
-
-            var player = api.World.Player?.Entity as EntityPlayer;
-            if (player == null) return false;
-
-            if (ZenithNetwork!= null)
-            {
-                ZenithNetwork.RequestAssimilation();
-
-                return true;
-            }
-
-            return false;
-        });
     }
-
-
-    
-    
 
     private void OnServerTick(float dt)
     {
@@ -157,25 +117,18 @@ public class zenithCore : ModSystem
             var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
             if (zenithBehavior?.systems != null)
             {
-                zenithBehavior.systems.OnServerTick(dt); // changed from systems.AbilityFactory.Tick Pssives
+                zenithBehavior.systems.OnServerTick(dt); 
             }
         }
     }
 
-    
-
     public override void Dispose()
     {
-        HarmonyInstance?.UnpatchSelf();
-        HarmonyInstance = null;
         Logger = null;
         ModId = null;
         Api = null;
         base.Dispose();
 
-       // if (tickListenerId > 0)
-        {
-      //      sapi.Event.UnregisterGameTickListener(tickListenerId);
-        }
+     
     }
 }

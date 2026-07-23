@@ -10,6 +10,7 @@ using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using zenith.Core.Traits;
 using zenith.GUI;
@@ -30,6 +31,7 @@ namespace zenith.Core
 
         public AssimilationCore AssimilationCore { get; }
         public TraitManager TraitManager { get; }
+        public StatOutput StatOutput { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
@@ -46,7 +48,12 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity);
-            TraitManager = new TraitManager(entity, AssimilationCore);
+            
+                StatOutput = new StatOutput(entity, capi);
+           
+           
+            TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
+            TraitManager.Traits.ApplyTraits();
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
@@ -66,9 +73,6 @@ namespace zenith.Core
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
-
-            //   bool isClient = capi != null;
-
 
         WireEvents();
             
@@ -135,8 +139,13 @@ namespace zenith.Core
                 TraitManager.Traits.ApplyTraits();
                 // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
-            
-            
+
+            StatOutput.OnOutputChange += () =>
+            {
+                TraitManager.Traits.ApplyTraits();
+                ZenithGui?.BonusGUI.UpdateBonusStats();
+            };
+
         }
 
         public void ApplyAttack(DamageSource source, EntityAgent targetEntity)

@@ -247,19 +247,19 @@ namespace zenith.Core.Assimilation
         public void LoadAssim()
         {
 
-            foreach (var trait in Definitions.Values)
+
+            foreach (var kvp in Definitions)
             {
+                var key = kvp.Key;
+                var trait = kvp.Value;
+
                 var LVLkey = Definitions.Keys + "LVL";
 
-                trait.AssimLVL = watchedZenith.GetInt(LVLkey, 0);
-
-            }
-
-            foreach (var trait in Definitions.Values)
-            {
+                trait.AssimLVL = watchedZenith.GetInt($"{key}LVL", 0);
+   
                 Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
-
             }
+          
         }
 
 

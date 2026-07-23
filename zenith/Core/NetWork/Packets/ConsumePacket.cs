@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zenith.Core.Assimilation
+namespace zenith.Core.NetWork.Packets
 {
     [ProtoContract]
     public class ConsumePacket

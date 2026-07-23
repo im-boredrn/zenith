@@ -7,7 +7,9 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
+using zenith.GUI;
 
 namespace zenith.Core.Traits
 {
@@ -15,16 +17,18 @@ namespace zenith.Core.Traits
     {
 
         private readonly TreeAttribute watchedZenith;
+        public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         private readonly Entity entity;
         private readonly IAssimilationProvider assimilationProvider;
         private EntityPlayer Player => entity as EntityPlayer;
-
+        private StatOutput StatOutput;
       
-        public Traits(Entity entity, IAssimilationProvider assimilationProvider)
+        public Traits(Entity entity, IAssimilationProvider assimilationProvider, StatOutput statOutput)
         {
             this.entity = entity;
             this.assimilationProvider = assimilationProvider;
+            this.StatOutput = statOutput;
             var entityPlayer = Player as EntityPlayer;
 
             watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
@@ -32,74 +36,68 @@ namespace zenith.Core.Traits
         }
 
 
-        //static public float GetSpeedMultiplier() // Possibly a fox, or wolf etc
-        //{
-        //    return 1.2f;
-        //}
-        // public float GetJumpHeightMultiplier( ) // Maybe A hare
-        //{
-
-        //    // TODO JHM ModConfig + Current Assim Level.
-        //    float finalVal = ZenithSettings.ZStageJumpHeightMultipiler; // get total speed bonus
-
-        //    // final val + TraitsTotal SpeedBonus
-        //    return finalVal;
-        //}
-
-        //static public float GetDamageMultiplier() // hostile entities like bear, drifter etc.
-        //{
-
-        //    return 1f;
-        //}
 
 
-        //public float[] GetMultValues()
-        //{
-        //    return new float[]
-        //    {
-        //        0f,
-        //        GetSpeedMultiplier(),//1
-        //        GetJumpHeightMultiplier(),//2
-        //        GetDamageMultiplier()
-        //    };
-        //}
+
+        private GUITotals GetGUITotals()
+        {
+            var gTotals = new GUITotals();
+            var totals = assimilationProvider.CalculateTotals();
+            var gSpeedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed] ; // Ie. 80
+            var gStrengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength] ;
+            var gJumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump];
+
+            float jumpBonus = totals.Jump + 0.49f;
+            gTotals.GDamage = totals.Damage * gStrengthOutput;
+            gTotals.GJump = jumpBonus * gJumpOutput;
+            gTotals.GSpeed = totals.Speed * gSpeedOutput; // Ie. 0.05 * 80 = 4 | 80% of 5 = 4
+
+            return gTotals  ;
+        }
 
         public void ApplyTraits()
         {
+            Log("[FLOW] ApplyTraits Called");
+            var speedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed]/100f;
+            var strengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength]/100f;
+            var jumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump]/100f;
 
             var totals = assimilationProvider.CalculateTotals();
+            float jumpBonus = totals.Jump + 0.30f ;
+
+            float finalJump = (jumpBonus * jumpOutput);
+            float finalDamage = (totals.Damage * strengthOutput);
+            float finalSpeed = (totals.Speed * speedOutput);
+
+
             var entityPlayer = Player as EntityPlayer;
-            entityPlayer.Stats.Set("walkspeed", "zenith", totals.Speed, true); 
-            entityPlayer.Stats.Set("jumpHeightMul", "zenith", totals.Jump, true);
-            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", totals.Damage, true);
+            entityPlayer.Stats.Set("walkspeed", "zenith", finalSpeed, true); 
+            entityPlayer.Stats.Set("jumpHeightMul", "zenith", finalJump, true);
+            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", finalDamage, true);
 
             SaveTraits();
         }
 
         public void SaveTraits()
         {
-            var totals = assimilationProvider.CalculateTotals();
 
-            float speedBonus = (totals.Speed * 100f);
-
-            float  jumpDamage = (totals.Jump * 100f);
-
-            float damageBonus = (totals.Damage * 100f);
-
-//            float mineSpeedBonus = (totals.Mine * 100f);
-            // Work on Mining speed it looks outta place in the GUI
-
-             
+            var gTotals = GetGUITotals();
 
 
+            watchedZenith.SetFloat("Speed", gTotals.GSpeed);
+            watchedZenith.SetFloat("JHM", gTotals.GJump);
+            watchedZenith.SetFloat("Dmg", gTotals.GDamage);
 
-            watchedZenith.SetFloat("Speed", speedBonus);
-            watchedZenith.SetFloat("JHM", jumpDamage);
-            watchedZenith.SetFloat("Dmg", damageBonus);
-            //watchedZenith.SetFloat("MSM", mineSpeedBonus);
 
-           // No need to load just saving for GUI retrieval
-              
+         //   Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");
+            entity.WatchedAttributes.MarkPathDirty("zenith");
+
+        }
+
+        private void Log(string message)
+        {
+            if (!DebugMode) return;
+            Player.World.Logger.Warning(message);
         }
     }
 }

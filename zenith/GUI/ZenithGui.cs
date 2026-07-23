@@ -18,7 +18,7 @@ namespace zenith.GUI
         private readonly IStageProvider stageProvider;
         private AssimilationCore AssimilationCore;
         DomainDetailsGUI DomainDetailsGUI;
-        BonusGUI BonusGUI;
+        public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore) : base(capi)

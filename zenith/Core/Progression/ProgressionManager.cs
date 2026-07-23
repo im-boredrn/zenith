@@ -60,6 +60,8 @@ namespace zenith.Core.Progression
         /// <param name="sponge">The DomainSponge instance representing the current domain state that triggered the event. Must not be null.</param>
         public void HandleDomainMaxed()
         {
+#pragma warning disable IDE0019
+
             Log("[FLOW] HandleDomainMaxed Called");
             var sapi = entity.World.Api as ICoreServerAPI;
             if (sapi == null)
@@ -181,8 +183,12 @@ namespace zenith.Core.Progression
         /// logs the event. The player must be connected to the server API for the notification to be sent.</remarks>
         private void OnStageUpSave()
         {
+#pragma warning disable IDE0019
+
             Log($"[EVENT] stage increased to {Stage}");
             var sapi = entity.World.Api as ICoreServerAPI;
+#pragma warning restore IDE0019
+
             if (sapi == null) return;
             var player = Player.Player;
 
