@@ -81,6 +81,7 @@ namespace zenith.Core.NetWork
                 selectedStat = StatType.Strength;
             }
 
+            OnOutputChange.Invoke();
 
             sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{selectedStat}", EnumChatType.Notification);
            

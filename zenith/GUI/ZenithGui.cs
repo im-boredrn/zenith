@@ -3,6 +3,7 @@ using Vintagestory.API.Client;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
 
@@ -20,12 +21,14 @@ namespace zenith.GUI
         DomainDetailsGUI DomainDetailsGUI;
         public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
+        private readonly StatOutput StatOutut;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
-        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore) : base(capi)
+        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput) : base(capi)
         {
             this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
+            this.StatOutut = statOutput;
             progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
 
@@ -180,7 +183,7 @@ namespace zenith.GUI
                 BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
 
-            BonusGUI = new BonusGUI(capi, stageProvider, AssimilationCore);
+            BonusGUI = new BonusGUI(capi, stageProvider, AssimilationCore, StatOutut);
             BonusGUI.TryOpen();
             Log("Bonus GUI Button Clicked:");
 

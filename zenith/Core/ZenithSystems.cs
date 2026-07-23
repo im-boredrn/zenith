@@ -61,7 +61,7 @@ namespace zenith.Core
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore ); 
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput ); 
             }
 
             Passives = Enum.GetValues<DomainEnum>()
