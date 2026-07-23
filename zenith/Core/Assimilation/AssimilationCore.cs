@@ -33,6 +33,13 @@ namespace zenith.Core.Assimilation
             hare,
             wolf,
             fox,
+            goat,
+            deer,
+            racoon,
+            sheep,
+            chicken,
+            pig,
+            hyena,
             unknown
         }
 
@@ -50,14 +57,15 @@ namespace zenith.Core.Assimilation
                  {
                      EntityName = "bear",
                      MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     DamageGain = 0.03f // TODO : Individual Animal Gain Values
+                     DamageGain = 0.15f // TODO : Individual Animal Gain Values
+                     // Add HealthGain = 0.1f
                  },
 
                    [CreatureType.hare] = new AssimilationDefinition
                    {
                        EntityName = "hare",
                        MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                       JumpGain = 0.01f
+                       JumpGain = 0.02f
                    },
                    
                    [CreatureType.wolf] = new AssimilationDefinition
@@ -72,8 +80,64 @@ namespace zenith.Core.Assimilation
                  {
                      EntityName = "fox",
                      MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     SpeedGain = 0.02f
+                     SpeedGain = 0.03f
                  },
+
+
+                 [CreatureType.goat] = new AssimilationDefinition
+                 {
+                     EntityName = "goat",
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                     JumpGain = 0.1f
+                 },
+
+                 [CreatureType.deer] = new AssimilationDefinition
+                 {
+                     EntityName = "deer",
+                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                     SpeedGain = 0.1f
+                     // Add SeekingGain
+                 },
+
+                 //[CreatureType.racoon] = new AssimilationDefinition
+                 //{
+                 //    EntityName = "racoon",
+                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                 //    SpeedGain = 0.1f
+                 //    // VesselGain
+                 //},
+
+                 //[CreatureType.sheep] = new AssimilationDefinition
+                 //{
+                 //    EntityName = "sheep",
+                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                 //    SpeedGain = 0.1f
+                 //    // hungerrateGain
+                 //},
+
+                 //[CreatureType.chicken] = new AssimilationDefinition
+                 //{
+                 //    EntityName = "chicken",
+                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                 //    //Add WildCropGain
+                 //},
+
+                 //[CreatureType.pig] = new AssimilationDefinition
+                 //{
+                 //    EntityName = "pig",
+                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                 //    //Add ForageGain = 0.1f
+                 //},
+
+                 //[CreatureType.hyena] = new AssimilationDefinition
+                 //{
+                 //    EntityName = "hyena",
+                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
+                 //    SpeedGain = 0.05f,
+                 //    DamageGain = 0.08f
+                 //    //Add HarvestingTimeGain
+                 //    // Add AnimalLootGain
+                 //},
 
                  [CreatureType.unknown] = new AssimilationDefinition
                  {
@@ -137,7 +201,7 @@ namespace zenith.Core.Assimilation
         {
             var es = Player?.EntitySelection?.Entity;
      
-         //   Log($"[DATA] Entity Name : {es.GetName()} | Entity Code : {es.Code} | Entity Code Path : {es.Code.Path}");
+            Log($"[DATA] Entity Name : {es.GetName()} | Entity Code : {es.Code} | Entity Code Path : {es.Code.Path}");
 
 
             var entityName = es.GetName();
@@ -169,6 +233,22 @@ namespace zenith.Core.Assimilation
             if (code.Contains("fox")) return CreatureType.fox;
 
             if (code.Contains("hare")) return CreatureType.hare;
+
+            if (code.Contains("goat")) return CreatureType.goat;
+
+            if (code.Contains("deer")) return CreatureType.deer;
+
+            //if (code.Contains("racoon")) return CreatureType.racoon;
+
+            //if (code.Contains("sheep")) return CreatureType.sheep;
+
+            //if (code.Contains("chicken")) return CreatureType.chicken;
+
+            //if (code.Contains("pig")) return CreatureType.pig;
+
+            //if (code.Contains("hyena")) return CreatureType.hyena;
+
+
 
 
             SendError(serverPlayer, "AssimError", "Unknown Entity!");
