@@ -48,6 +48,7 @@ namespace zenith.Config
         //Assimilation
 
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
+        public static float ZInitialJump => Config?.InitialJump ?? 0.3f;
         public static int ZDrifterCreatureMaxLVL => Config?.DrifterCreatureMaxLVL ?? 100;
         public static int ZBearCreatureMaxLVL => Config?.BearCreatureMaxLVL ?? 100;
         public static int ZHareCreatureMaxLVL => Config?.HareCreatureMaxLVL ?? 100;

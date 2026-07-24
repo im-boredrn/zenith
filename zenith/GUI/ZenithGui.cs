@@ -3,7 +3,6 @@ using Vintagestory.API.Client;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
-using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
 

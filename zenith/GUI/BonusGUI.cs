@@ -6,11 +6,12 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
-using zenith.Core.NetWork;
 using zenith.Core.Progression;
-using static zenith.Core.NetWork.StatOutput;
+using static zenith.Core.Assimilation.StatOutput;
+using static zenith.Core.Traits.Traits;
 using static zenith.Core.ZenithBehavior;
 
 namespace zenith.GUI
@@ -71,25 +72,25 @@ namespace zenith.GUI
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
             // Idk if any better methods exist
+            
+            var speed = zenith?.GetFloat(ZenithKeys.Speed, 0f);
+            var dmg = zenith?.GetFloat(ZenithKeys.Strength, 0f); // Clean Up Keys Man...
+            var jHeight = zenith?.GetFloat(ZenithKeys.Jump, 0f);
 
-            var speed = zenith?.GetFloat("SPD", 0f);
-            var dmg = zenith?.GetFloat("DMG", 0f); // Clean Up Keys Man...
-            var jHeight = zenith?.GetFloat("JHM", 0f);
-
-            var health = zenith?.GetFloat("MHP", 0f);
-            var aNLOOT = zenith?.GetFloat("ALD", 0f); // Clean Up Variables
-            var harvest = zenith?.GetFloat("AHT", 0f);
+            var health = zenith?.GetFloat(ZenithKeys.Health, 0f);
+            var aNLOOT = zenith?.GetFloat(ZenithKeys.AnimalLoot, 0f); // Clean Up Variables
+            var harvest = zenith?.GetFloat(ZenithKeys.Harvesting, 0f);
 
 
             var selectedStat = (StatType)zenith.GetInt("SelectedStat", 0);
 
-            var speedOutput = zenith?.GetFloat($"Speed Output", 100f);
-            var damageOutput = zenith?.GetFloat($"Strength Output", 100f);
-            var jumpOutput = zenith?.GetFloat($"Jump Output", 100f);
+            var speedOutput = zenith?.GetFloat(ZenithKeys.SpeedOutput, 100f);
+            var damageOutput = zenith?.GetFloat(ZenithKeys.Strength, 100f);
+            var jumpOutput = zenith?.GetFloat(ZenithKeys.JumpOutput, 100f);
 
-            var healthOutput = zenith?.GetFloat("Health Output", 100f);
-            var aNLootOutput = zenith?.GetFloat("ANLoot Output", 100f);
-            var harvestingOutput = zenith?.GetFloat("Harvesting Output", 100f);
+            var healthOutput = zenith?.GetFloat(ZenithKeys.HealthOutput, 100f);
+            var aNLootOutput = zenith?.GetFloat(ZenithKeys.AnimalLootOutput, 100f);
+            var harvestingOutput = zenith?.GetFloat(ZenithKeys.Harvesting, 100f);
 
             //  Log($"Raw Jump Height = {jHeight}");
 
@@ -99,13 +100,13 @@ namespace zenith.GUI
             //  Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} | Current Jump Height {jHeight} ");
 
 
-            return $"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Damage |" +
+            return $"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Strength |" +
                 $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n" +
                 $" +{health:F0}% Health | {healthOutput}% Output\n +{aNLOOT:F0}% ANLoot | {aNLootOutput}% Output\n" +
                 $"+{harvest:F0}% Harvest | {harvestingOutput}% Output\n Selected Stat : {selectedStat} ";
         }
+        //Turn Stats into clickable buttons | try to achieve with maybe foreach whatever : +{statkey:F0}% Speed | {statkeyOutput}% Output\n
 
-      
         public override void OnGuiOpened()
         {
 

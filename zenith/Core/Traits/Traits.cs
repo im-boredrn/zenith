@@ -7,7 +7,6 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
-using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using zenith.GUI;
 
@@ -20,11 +19,11 @@ namespace zenith.Core.Traits
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         private readonly Entity entity;
-        private readonly IAssimilationProvider assimilationProvider;
+        private readonly AssimilationCore assimilationProvider;
         private EntityPlayer Player => entity as EntityPlayer;
         private StatOutput StatOutput;
       
-        public Traits(Entity entity, IAssimilationProvider assimilationProvider, StatOutput statOutput)
+        public Traits(Entity entity, AssimilationCore assimilationProvider, StatOutput statOutput)
         {
             this.entity = entity;
             this.assimilationProvider = assimilationProvider;
@@ -35,15 +34,24 @@ namespace zenith.Core.Traits
             entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
         }
 
-        private static class ZenithKeys
+        public static class ZenithKeys
         {
             public const string Speed = "SPD";
-            public const string Damage = "DMG";
+            public const string Strength = "DMG";
             public const string Jump = "JHM";
 
             public const string Health = "MHP";
             public const string Harvesting = "AHT";
             public const string AnimalLoot = "ALD";
+
+            public const string SpeedOutput = "spdo";
+            public const string StrengthOutput = "dmgo";
+            public const string JumpOutput = "jhmo";
+
+            public const string HealthOutput = "mhpo";
+            public const string HarvestingOutput = "ahto";
+            public const string AnimalLootOutput = "aldo";
+
 
 
         }
@@ -52,23 +60,14 @@ namespace zenith.Core.Traits
         {
             var gTotals = new GUITotals();
             var totals = assimilationProvider.CalculateTotals();
-            var gSpeedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed] ; 
-            var gStrengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength] ;
-            var gJumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump];
-            var gHealthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Health];
-            var gANLootOutput = StatOutput.OutputPercentages[StatOutput.StatType.ANLoot];
-            var gHarvestingOutput = StatOutput.OutputPercentages[StatOutput.StatType.Harvesting];
-
-
-            float jumpBonus = totals.Jump + 0.49f;
-
-
-            gTotals.GDamage = totals.Damage * gStrengthOutput;
-            gTotals.GJump = jumpBonus * gJumpOutput;
-            gTotals.GSpeed = totals.Speed * gSpeedOutput; // Ie. 0.05 * 80 = 4 | 80% of 5 = 4
-            gTotals.GHealth = totals.Health * gHealthOutput;
-            gTotals.GANLoot = totals.ANLoot * gANLootOutput;
-            gTotals.GHarvesting = totals.Harvesting * gHarvestingOutput;
+    
+            foreach (var trait in assimilationProvider.Definitions.Values)
+            {
+                foreach (var gain in trait.Gains)
+                {
+                    gTotals.GUIStats[gain.Key] = totals[gain.Key] * StatOutput.OutputPercentages[gain.Key];
+                }
+            }
 
             return gTotals  ;
         }
@@ -76,40 +75,37 @@ namespace zenith.Core.Traits
         public void ApplyTraits()
         {
             Log("[FLOW] ApplyTraits Called");
-            var speedOutput = StatOutput.OutputPercentages[StatOutput.StatType.Speed]/100f;
-            var strengthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Strength]/100f;
-            var jumpOutput = StatOutput.OutputPercentages[StatOutput.StatType.Jump]/100f;
-            var healthOutput = StatOutput.OutputPercentages[StatOutput.StatType.Health]/ 100f;
-            var aNLootOutput = StatOutput.OutputPercentages[StatOutput.StatType.ANLoot]/ 100f;
-            var harvestingOutput = StatOutput.OutputPercentages[StatOutput.StatType.Harvesting]/ 100f;
 
 
             var totals = assimilationProvider.CalculateTotals();
-            float jumpBonus = totals.Jump + 0.30f ;
 
-            float finalJump = (jumpBonus * jumpOutput);
-            float finalDamage = (totals.Damage * strengthOutput);
-            float finalSpeed = (totals.Speed * speedOutput);
-            float finalHealth = (totals.Health * healthOutput);
-            float finalANLoot = (totals.ANLoot * aNLootOutput);
-            float finalHarvesting = -1f * (totals.Harvesting * harvestingOutput);
+            foreach (var trait in assimilationProvider.Definitions.Values)
+            {
+                foreach (var gain in trait.Gains)
+                {
+                    totals[gain.Key] = totals[gain.Key] * StatOutput.OutputPercentages[gain.Key]/100f;
+                }
+            }
+
+            float jumpBonus = totals[StatOutput.StatType.Jump] + ZenithSettings.ZInitialJump ; 
+
 
             var entityPlayer = Player as EntityPlayer;
 
             //Combat
-            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", finalDamage, true);
-            entityPlayer.Stats.Set("maxhealthExtraPoints", "zenith", finalHealth, true);
+            entityPlayer.Stats.Set("meleeWeaponsDamage", "zenith", totals[StatOutput.StatType.Strength], true);
+            entityPlayer.Stats.Set("maxhealthExtraPoints", "zenith", totals[StatOutput.StatType.Health], true);
 
 
             //Mobility
 
-            entityPlayer.Stats.Set("walkspeed", "zenith", finalSpeed, true);
-            entityPlayer.Stats.Set("jumpHeightMul", "zenith", finalJump, true);
+            entityPlayer.Stats.Set("walkspeed", "zenith", totals[StatOutput.StatType.Speed], true);
+            entityPlayer.Stats.Set("jumpHeightMul", "zenith", jumpBonus, true);
 
 
             //Utility
-            entityPlayer.Stats.Set("animalLootDropRate", "zenith", finalANLoot, true);
-            entityPlayer.Stats.Set("animalHarvestingTime", "zenith", finalHarvesting, true);
+            entityPlayer.Stats.Set("animalLootDropRate", "zenith", totals[StatOutput.StatType.ANLoot], true);
+            entityPlayer.Stats.Set("animalHarvestingTime", "zenith", totals[StatOutput.StatType.Harvesting] * -1, true);
 
             var healthBehavior = Player.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
@@ -127,17 +123,17 @@ namespace zenith.Core.Traits
             var gTotals = GetGUITotals();
 
             //Combat
-            watchedZenith.SetFloat(ZenithKeys.Damage, gTotals.GDamage);
-            watchedZenith.SetFloat(ZenithKeys.Health, gTotals.GHealth);
+            watchedZenith.SetFloat(ZenithKeys.Strength, gTotals.GUIStats[StatOutput.StatType.Strength]);
+            watchedZenith.SetFloat(ZenithKeys.Health, gTotals.GUIStats[StatOutput.StatType.Health]);
 
             //Mobility
 
-            watchedZenith.SetFloat(ZenithKeys.Speed, gTotals.GSpeed);
-            watchedZenith.SetFloat(ZenithKeys.Jump, gTotals.GJump);
+            watchedZenith.SetFloat(ZenithKeys.Speed, gTotals.GUIStats[StatOutput.StatType.Speed]);
+            watchedZenith.SetFloat(ZenithKeys.Jump, gTotals.GUIStats[StatOutput.StatType.Jump] + 0.30f);
 
             //Utility
-            watchedZenith.SetFloat(ZenithKeys.AnimalLoot, gTotals.GANLoot );
-            watchedZenith.SetFloat(ZenithKeys.Harvesting, gTotals.GHarvesting);
+            watchedZenith.SetFloat(ZenithKeys.AnimalLoot, gTotals.GUIStats[StatOutput.StatType.ANLoot]);
+            watchedZenith.SetFloat(ZenithKeys.Harvesting, gTotals.GUIStats[StatOutput.StatType.Harvesting]);
 
 
             //   Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");

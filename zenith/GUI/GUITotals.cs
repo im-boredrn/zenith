@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.GUI
 {
     public class GUITotals
     {
 
-        public float GDamage;
-        public float GSpeed;
-        public float GJump;
-        public float GHealth;
-        public float GANLoot;
-        public float GHarvesting;
+
+        public Dictionary<StatType, float> GUIStats { get; set; } = new();
+     
     }
 }

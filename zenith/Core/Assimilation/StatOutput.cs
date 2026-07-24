@@ -9,14 +9,13 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Assimilation;
 
-namespace zenith.Core.NetWork
+namespace zenith.Core.Assimilation
 {
     public class StatOutput
     {
 
-        private StatType selectedStat = StatType.Strength; // TODO : Bind to GUI
+        public StatType selectedStat = StatType.Strength; // TODO : Bind to GUI
         private readonly TreeAttribute watchedZenith;
 
         public Dictionary<StatType, float> OutputPercentages { get; private set; } = new()

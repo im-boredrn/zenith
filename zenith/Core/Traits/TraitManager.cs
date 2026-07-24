@@ -10,7 +10,6 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Assimilation;
-using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
@@ -26,8 +25,8 @@ namespace zenith.Core.Traits
 
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
-        private readonly IAssimilationProvider assimilationProvider;
-        public TraitManager(Entity entity, IAssimilationProvider assimilationProvider,StatOutput statOutput )
+        private readonly AssimilationCore assimilationProvider;
+        public TraitManager(Entity entity, AssimilationCore assimilationProvider,StatOutput statOutput )
         {
             this.assimilationProvider = assimilationProvider;
             this.entity = entity;
@@ -36,7 +35,7 @@ namespace zenith.Core.Traits
         }
 
       
-
+        // Useless Class delete and move Traits up into ZSystems
        
 
         private void Log(string message)

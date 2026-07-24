@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.Core.Assimilation
 {
     public class AssimilationDefinition
@@ -10,12 +10,11 @@ namespace zenith.Core.Assimilation
        public string EntityName { get; set; }
        public int AssimLVL { get; set; }
         public float MaxLVL { get; set; }
-        public float SpeedGain { get; set; }
-        public float JumpGain { get; set; }
-        public float DamageGain { get; set; }
 
-        public float HealthGain { get; set; }
-        public float ANLootGain { get; set; }
-        public float HarvestingGain { get; set; }
+
+        public Dictionary<StatType, float> Gains { get; set; } = new();
+
+       
+       
     }
 }

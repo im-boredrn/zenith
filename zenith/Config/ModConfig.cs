@@ -34,6 +34,8 @@ public class ModConfig
     public float StageMiningSpeedMultipiler3 { get; set; } = 3.2f;
 
     public int AssimCreatureLVLMult { get; set; } = 1;
+    public float InitialJump { get; set; } = 0.3f;
+
     public int DrifterCreatureMaxLVL { get; set; } = 100;
     public int BearCreatureMaxLVL { get; set; } = 100;
     public int HareCreatureMaxLVL { get; set; } = 100;
