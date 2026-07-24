@@ -57,8 +57,10 @@ namespace zenith.Core.Assimilation
                  {
                      EntityName = "bear",
                      MaxLVL = ZenithSettings.ZBearCreatureMaxLVL,
-                     DamageGain = 0.15f // TODO : Individual Animal Gain Values
-                     // Add HealthGain = 0.1f
+                     DamageGain = 0.15f, 
+                     HealthGain = 0.1f,
+                     ANLootGain = 0.1f
+
                  },
 
                    [CreatureType.hare] = new AssimilationDefinition
@@ -129,15 +131,15 @@ namespace zenith.Core.Assimilation
                  //    //Add ForageGain = 0.1f
                  //},
 
-                 //[CreatureType.hyena] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "hyena",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    SpeedGain = 0.05f,
-                 //    DamageGain = 0.08f
-                 //    //Add HarvestingTimeGain
-                 //    // Add AnimalLootGain
-                 //},
+                 [CreatureType.hyena] = new AssimilationDefinition
+                 {
+                     EntityName = "hyena",
+                     MaxLVL = ZenithSettings.ZHyenaCreatureMaxLVL,
+                     SpeedGain = 0.05f,
+                     DamageGain = 0.08f,
+                     HarvestingGain = 0.1f,
+                     ANLootGain = 0.1f
+                 },
 
                  [CreatureType.unknown] = new AssimilationDefinition
                  {
@@ -244,7 +246,7 @@ namespace zenith.Core.Assimilation
 
             //if (code.Contains("pig")) return CreatureType.pig;
 
-            //if (code.Contains("hyena")) return CreatureType.hyena;
+            if (code.Contains("hyena")) return CreatureType.hyena;
 
 
 
@@ -260,7 +262,7 @@ namespace zenith.Core.Assimilation
         private void Assimilate(string entityName, IServerPlayer player, CreatureType creatureType )
         {
 
-            if (Definitions[creatureType].AssimLVL >= ZenithSettings.ZAssimGlobalCreatureMaxLVL)
+            if (Definitions[creatureType].AssimLVL >= Definitions[creatureType].MaxLVL)
             {
                 SendError(player, "AssimError", "MaxLevelReached");
                 return;

@@ -10,5 +10,8 @@ namespace zenith.GUI
         public float GDamage;
         public float GSpeed;
         public float GJump;
+        public float GHealth;
+        public float GANLoot;
+        public float GHarvesting;
     }
 }
