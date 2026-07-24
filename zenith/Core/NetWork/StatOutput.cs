@@ -144,7 +144,7 @@ namespace zenith.Core.NetWork
 
                 watchedZenith.SetFloat($"{key} Output", value);
 
-               Log($"[SAVE]  {key} | Value : {value}");
+               Log($"[SAVE]  {key} Output | Value : {value}");
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
 

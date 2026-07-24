@@ -73,7 +73,7 @@ namespace zenith.GUI
             // Idk if any better methods exist
 
             var speed = zenith?.GetFloat("SPD", 0f);
-            var dmg = zenith?.GetFloat("Dmg", 0f); // Clean Up Keys Man...
+            var dmg = zenith?.GetFloat("DMG", 0f); // Clean Up Keys Man...
             var jHeight = zenith?.GetFloat("JHM", 0f);
 
             var health = zenith?.GetFloat("MHP", 0f);

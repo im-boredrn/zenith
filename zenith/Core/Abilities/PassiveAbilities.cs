@@ -39,8 +39,7 @@ namespace zenith.Core.Abilities
             entityPlayer.Properties.KnockbackResistance *= 2f;
             entityPlayer.Properties.FallDamage = false;
 
-            playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
-          //  playerStats.Set("armorWalkSpeedAffectedness", "zenith", stageProvider.GetArmorWSAMultiplier(), true); // Doesn't make a dif
+        //    playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
 
             SaveStats(); // So I can retrieve stats for GUI
             // could also mark dirty here if other method causes issues.
@@ -76,7 +75,7 @@ namespace zenith.Core.Abilities
         public void Apply(EntityPlayer entityPlayer)
         {
 
-            entityPlayer.Stats.Set("hungerrate", "zenith", -0.5f, true);
+       //     entityPlayer.Stats.Set("hungerrate", "zenith", -0.5f, true);
         
         }
 

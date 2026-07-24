@@ -35,6 +35,19 @@ namespace zenith.Core.Traits
             entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
         }
 
+        private static class ZenithKeys
+        {
+            public const string Speed = "SPD";
+            public const string Damage = "DMG";
+            public const string Jump = "JHM";
+
+            public const string Health = "MHP";
+            public const string Harvesting = "AHT";
+            public const string AnimalLoot = "ALD";
+
+
+        }
+
         private GUITotals GetGUITotals()
         {
             var gTotals = new GUITotals();
@@ -114,17 +127,17 @@ namespace zenith.Core.Traits
             var gTotals = GetGUITotals();
 
             //Combat
-            watchedZenith.SetFloat("Dmg", gTotals.GDamage);
-            watchedZenith.SetFloat("MHP", gTotals.GHealth);
+            watchedZenith.SetFloat(ZenithKeys.Damage, gTotals.GDamage);
+            watchedZenith.SetFloat(ZenithKeys.Health, gTotals.GHealth);
 
             //Mobility
 
-            watchedZenith.SetFloat("SPD", gTotals.GSpeed);
-            watchedZenith.SetFloat("JHM", gTotals.GJump);
+            watchedZenith.SetFloat(ZenithKeys.Speed, gTotals.GSpeed);
+            watchedZenith.SetFloat(ZenithKeys.Jump, gTotals.GJump);
 
             //Utility
-            watchedZenith.SetFloat("ALD",gTotals.GANLoot );
-            watchedZenith.SetFloat("AHT", gTotals.GHarvesting);
+            watchedZenith.SetFloat(ZenithKeys.AnimalLoot, gTotals.GANLoot );
+            watchedZenith.SetFloat(ZenithKeys.Harvesting, gTotals.GHarvesting);
 
 
             //   Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");

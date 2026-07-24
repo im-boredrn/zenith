@@ -224,32 +224,13 @@ namespace zenith.Core.Assimilation
         {
             var code = entity.Code.Path;
 
-            if (code.Contains("drifter")) return CreatureType.drifter;
-
-            if (code.Contains("bear")) return CreatureType.bear;
-
-            if (code.Contains("wolf")) return CreatureType.wolf;
-
-            if (code.Contains("fox")) return CreatureType.fox;
-
-            if (code.Contains("hare")) return CreatureType.hare;
-
-            if (code.Contains("goat")) return CreatureType.goat;
-
-            if (code.Contains("deer")) return CreatureType.deer;
-
-            //if (code.Contains("raccoon")) return CreatureType.raccoon;
-
-            //if (code.Contains("sheep")) return CreatureType.sheep;
-
-            //if (code.Contains("chicken")) return CreatureType.chicken;
-
-            //if (code.Contains("pig")) return CreatureType.pig;
-
-            if (code.Contains("hyena")) return CreatureType.hyena;
-
-
-
+            foreach (var kvp in Definitions)
+            {
+                if (code.Contains(kvp.Value.EntityName))
+                {
+                    return kvp.Key;
+                }
+            }
 
             SendError(serverPlayer, "AssimError", "Unknown Entity!");
             return CreatureType.unknown;
@@ -267,8 +248,9 @@ namespace zenith.Core.Assimilation
                 SendError(player, "AssimError", "MaxLevelReached");
                 return;
             }
-            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; // Foreach level apply whatever bonus the creature has
-             // I'll calc the trait gain in Trait Manager or whatever          
+            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; 
+
+
             var sapi = entity.World.Api as ICoreServerAPI;
 
 
