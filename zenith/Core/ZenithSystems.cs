@@ -10,7 +10,6 @@ using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
-using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using zenith.Core.Traits;
 using zenith.GUI;
@@ -132,6 +131,8 @@ namespace zenith.Core
                     if (CanUsePassive(domain))
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
+
+                ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>

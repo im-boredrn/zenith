@@ -11,6 +11,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 
 namespace zenith.Core.Assimilation
 {
@@ -35,7 +36,7 @@ namespace zenith.Core.Assimilation
             fox,
             goat,
             deer,
-            racoon,
+            raccoon,
             sheep,
             chicken,
             pig,
@@ -46,62 +47,90 @@ namespace zenith.Core.Assimilation
         public   Dictionary<CreatureType, AssimilationDefinition> Definitions { get; } =
              new Dictionary<CreatureType, AssimilationDefinition>() 
              {
+
                  [CreatureType.drifter] = new AssimilationDefinition
                  {
                      EntityName = "drifter",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     DamageGain =0.01f
+                     MaxLVL = ZenithSettings.ZDrifterCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Strength] = 0.01f
+                     }
                  },
 
                  [CreatureType.bear] = new AssimilationDefinition
                  {
                      EntityName = "bear",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     DamageGain = 0.15f // TODO : Individual Animal Gain Values
-                     // Add HealthGain = 0.1f
+                     MaxLVL = ZenithSettings.ZBearCreatureMaxLVL,
+
+                     Gains =
+                     {
+                         [StatType.Strength] = 0.15f,
+                         [StatType.Health] = 0.1f,
+                         [StatType.ANLoot] = 0.1f
+                     }
+
+
                  },
 
                    [CreatureType.hare] = new AssimilationDefinition
                    {
                        EntityName = "hare",
-                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                       JumpGain = 0.02f
+                       MaxLVL = ZenithSettings.ZHareCreatureMaxLVL,
+                       Gains =
+                       {
+                           [StatType.Jump] = 0.02f
+                       }
                    },
                    
                    [CreatureType.wolf] = new AssimilationDefinition
                    {
                        EntityName = "wolf",
-                       MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                       DamageGain = 0.02f,
-                       SpeedGain = 0.01f
+                       MaxLVL = ZenithSettings.ZWolfCreatureMaxLVL,
+                       Gains =
+                       {
+                           [StatType.Strength] = 0.02f,
+                           [StatType.Speed] = 0.01f
+                       }
+                  
                    },
 
                  [CreatureType.fox] = new AssimilationDefinition
                  {
                      EntityName = "fox",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     SpeedGain = 0.03f
+                     MaxLVL = ZenithSettings.ZFoxCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Speed] = 0.03f
+                         
+                     }
                  },
 
 
                  [CreatureType.goat] = new AssimilationDefinition
                  {
                      EntityName = "goat",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     JumpGain = 0.1f
+                     MaxLVL = ZenithSettings.ZGoatCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Jump] = 0.1f
+                     }
                  },
 
                  [CreatureType.deer] = new AssimilationDefinition
                  {
                      EntityName = "deer",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                     SpeedGain = 0.1f
-                     // Add SeekingGain
+                     MaxLVL = ZenithSettings.ZDeerCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Speed] = 0.1f
+                         //Add Seeking Gain - Dont forget to -1 the val in traits
+                     }
                  },
 
-                 //[CreatureType.racoon] = new AssimilationDefinition
+                 //[CreatureType.raccoon] = new AssimilationDefinition
                  //{
-                 //    EntityName = "racoon",
+                 //    EntityName = "raccoon",
                  //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
                  //    SpeedGain = 0.1f
                  //    // VesselGain
@@ -129,21 +158,24 @@ namespace zenith.Core.Assimilation
                  //    //Add ForageGain = 0.1f
                  //},
 
-                 //[CreatureType.hyena] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "hyena",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    SpeedGain = 0.05f,
-                 //    DamageGain = 0.08f
-                 //    //Add HarvestingTimeGain
-                 //    // Add AnimalLootGain
-                 //},
+                 [CreatureType.hyena] = new AssimilationDefinition
+                 {
+                     EntityName = "hyena",
+                     MaxLVL = ZenithSettings.ZHyenaCreatureMaxLVL,
+                    
+                     Gains =
+                     {
+                         [StatType.Speed] = 0.05f,
+                         [StatType.Strength] = 0.08f,
+                         [StatType.Harvesting] = 0.1f,
+                         [StatType.ANLoot] = 0.1f
+                     }
+
+                 },
 
                  [CreatureType.unknown] = new AssimilationDefinition
                  {
                      EntityName = "?",
-                     MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-
                  }
 
              };
@@ -211,7 +243,7 @@ namespace zenith.Core.Assimilation
             if (type == CreatureType.unknown) return;
 
             Assimilate(entityName, player, type);
-            es.WatchedAttributes.SetAttribute("consumed", null); // used to be behind Assimilate ,comment is here just incase of bug.
+            es.WatchedAttributes.SetAttribute("consumed", null); 
 
 
             foreach (var trait in Definitions.Values)
@@ -224,55 +256,34 @@ namespace zenith.Core.Assimilation
         {
             var code = entity.Code.Path;
 
-            if (code.Contains("drifter")) return CreatureType.drifter;
-
-            if (code.Contains("bear")) return CreatureType.bear;
-
-            if (code.Contains("wolf")) return CreatureType.wolf;
-
-            if (code.Contains("fox")) return CreatureType.fox;
-
-            if (code.Contains("hare")) return CreatureType.hare;
-
-            if (code.Contains("goat")) return CreatureType.goat;
-
-            if (code.Contains("deer")) return CreatureType.deer;
-
-            //if (code.Contains("racoon")) return CreatureType.racoon;
-
-            //if (code.Contains("sheep")) return CreatureType.sheep;
-
-            //if (code.Contains("chicken")) return CreatureType.chicken;
-
-            //if (code.Contains("pig")) return CreatureType.pig;
-
-            //if (code.Contains("hyena")) return CreatureType.hyena;
-
-
-
+            foreach (var kvp in Definitions)
+            {
+                if (code.Contains(kvp.Value.EntityName))
+                {
+                    return kvp.Key;
+                }
+            }
 
             SendError(serverPlayer, "AssimError", "Unknown Entity!");
             return CreatureType.unknown;
         }
-
-
-
  
 
         private void Assimilate(string entityName, IServerPlayer player, CreatureType creatureType )
         {
 
-            if (Definitions[creatureType].AssimLVL >= ZenithSettings.ZAssimGlobalCreatureMaxLVL)
+            if (Definitions[creatureType].AssimLVL >= Definitions[creatureType].MaxLVL)
             {
                 SendError(player, "AssimError", "MaxLevelReached");
                 return;
             }
-            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; // Foreach level apply whatever bonus the creature has
-             // I'll calc the trait gain in Trait Manager or whatever          
+
+
+            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; 
+
+
             var sapi = entity.World.Api as ICoreServerAPI;
-
-
-            
+  
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
             OnAssimChanged?.Invoke();
             SaveAssim();
@@ -288,13 +299,15 @@ namespace zenith.Core.Assimilation
         public TraitTotals CalculateTotals()
         {
             TraitTotals totals = new TraitTotals();
-
             foreach (var trait in Definitions.Values)
-            {
-                totals.Speed += trait.AssimLVL * trait.SpeedGain;
-                totals.Damage += trait.AssimLVL * trait.DamageGain;
-                totals.Jump += trait.AssimLVL * trait.JumpGain;
+            {   
+                foreach (var gain in trait.Gains)
+                {
+                    totals[gain.Key] += trait.AssimLVL * gain.Value;
+                }
             }
+
+           
             return totals;
         }
 
@@ -303,7 +316,6 @@ namespace zenith.Core.Assimilation
         {
             Log("[FLOW] SaveAssim Called");
 
-            var totals = CalculateTotals();
 
             foreach (var kvp in Definitions)
             {
@@ -312,14 +324,10 @@ namespace zenith.Core.Assimilation
                 var trait = kvp.Value;
 
                 watchedZenith.SetInt($"{key}LVL", trait.AssimLVL);
-                //watchedZenith.SetFloat($"{key}LVL", totals.Speed);
-                //watchedZenith.SetFloat($"{key}LVL", totals.Jump);
-                //watchedZenith.SetFloat($"{key}LVL", totals.Damage);
-
-                Log($"KEY : {key}");
+          
+                Log($"KEY : {key} LVL");
             }
 
-            
             entity.WatchedAttributes.MarkPathDirty("zenith");
             // Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
         }
@@ -332,8 +340,6 @@ namespace zenith.Core.Assimilation
             {
                 var key = kvp.Key;
                 var trait = kvp.Value;
-
-                var LVLkey = Definitions.Keys + "LVL";
 
                 trait.AssimLVL = watchedZenith.GetInt($"{key}LVL", 0);
    

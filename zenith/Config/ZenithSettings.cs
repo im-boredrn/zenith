@@ -36,28 +36,27 @@ namespace zenith.Config
         
         public static float ZRegenAmount => Config?.RegenAmount ?? 0.25f;
         
-        //public static float ZStageSpeed2 => Config?.StageSpeed2 ?? 0.2f;
-        //public static float ZStageSpeed3 => Config?.StageSpeed3 ?? 0.3f;
-        
-        //public static float ZStageDamage2 => Config?.StageDamage2 ?? 0.5f;
-        //public static float ZStageDamage3 => Config?.StageDamage3 ?? 1f;
-
+ 
         public static float ZStageIgniteChanceMultipiler2 => Config?.StageIgniteChanceMultipiler2 ?? 0.1f; // 25%
         public static float ZStageIgniteChanceMultipiler3 => Config?.StageIgniteChanceMultipiler3 ?? 0.2f; // 35%
 
-       // public static float ZStageJumpHeightMultipiler => Config?.StageJumpHeightMultipiler ?? 0.2f;
 
         public static float ZStageMiningSpeedMultipiler2 => Config?.StageMiningSpeedMultipiler2 ?? 2.5f;
         public static float ZStageMiningSpeedMultipiler3 => Config?.StageMiningSpeedMultipiler3 ?? 3.2f;
 
-        //  public static float ZStageArmorWSAMultipiler2 => Config?.StageArmorWSAMultipiler2 ?? -0.2f;
-        //  public static float ZStageArmorWSAMultipiler3 => Config?.StageArmorWSAMultipiler3 ?? -0.4f;
-
-
+    
         //Assimilation
 
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
-        public static int ZAssimGlobalCreatureMaxLVL => Config?.GlobalCreatureMaxLVL ?? 100;
+        public static float ZInitialJump => Config?.InitialJump ?? 0.3f;
+        public static int ZDrifterCreatureMaxLVL => Config?.DrifterCreatureMaxLVL ?? 100;
+        public static int ZBearCreatureMaxLVL => Config?.BearCreatureMaxLVL ?? 100;
+        public static int ZHareCreatureMaxLVL => Config?.HareCreatureMaxLVL ?? 100;
+        public static int ZWolfCreatureMaxLVL => Config?.WolfCreatureMaxLVL ?? 100;
+        public static int ZFoxCreatureMaxLVL => Config?.FoxCreatureMaxLVL ?? 100;
+        public static int ZGoatCreatureMaxLVL => Config?.GoatCreatureMaxLVL ?? 100;
+        public static int ZDeerCreatureMaxLVL => Config?.DeerCreatureMaxLVL ?? 100;
+        public static int ZHyenaCreatureMaxLVL => Config?.HyenaCreatureMaxLVL ?? 100;
 
 
 

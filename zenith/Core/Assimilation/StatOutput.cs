@@ -9,30 +9,42 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Assimilation;
 
-namespace zenith.Core.NetWork
+namespace zenith.Core.Assimilation
 {
     public class StatOutput
     {
 
-        private StatType selectedStat = StatType.Strength;
+        public StatType selectedStat = StatType.Strength; // TODO : Bind to GUI
         private readonly TreeAttribute watchedZenith;
 
         public Dictionary<StatType, float> OutputPercentages { get; private set; } = new()
         {
             {StatType.Strength, 100f },
             {StatType.Speed, 100f },
-            {StatType.Jump, 100f }
+            {StatType.Jump, 100f },
+            {StatType.Health, 100f },
+            {StatType.ANLoot, 100f },
+            {StatType.Harvesting, 100f }
         };
-    
+
+
+        public enum StatType
+        {
+            Strength,
+            Speed,
+            Jump,
+            Health,
+            ANLoot,
+            Harvesting
+        }
 
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
 
         private readonly Entity entity;
          private EntityPlayer Player => entity as EntityPlayer;
-        private ICoreClientAPI capi;
+        private readonly ICoreClientAPI capi;
 
         public StatOutput(Entity entity, ICoreClientAPI capi)
         {
@@ -53,12 +65,7 @@ namespace zenith.Core.NetWork
 
      
 
-        public enum StatType
-        {
-            Strength,
-            Speed,
-            Jump
-        }
+       
 
 
         public event Action OnOutputChange;
@@ -136,7 +143,7 @@ namespace zenith.Core.NetWork
 
                 watchedZenith.SetFloat($"{key} Output", value);
 
-               Log($"[SAVE]  {key} | Value : {value}");
+               Log($"[SAVE]  {key} Output | Value : {value}");
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
