@@ -132,6 +132,8 @@ namespace zenith.Core
                     if (CanUsePassive(domain))
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
+
+                ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>
