@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
@@ -52,14 +53,19 @@ namespace zenith.Core
            
            
             TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
-            TraitManager.Traits.ApplyTraits();
+
+            if (entity.World.Side == EnumAppSide.Server)
+            {
+                TraitManager.Traits.ApplyTraits();
+            }
+
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
           
 
             // GUI
-            if (capi != null)
+            if (capi != null && Player.Player as ICoreServerAPI == null)
             {
 
                 var modSystem = capi.ModLoader.GetModSystem<zenithCore>();

@@ -122,10 +122,21 @@ namespace zenith.Core.Assimilation
                 amount *= -1;
             }
 
-            OutputPercentages[selectedStat] += amount;
+          
 
-            OutputPercentages[selectedStat] = Math.Clamp(OutputPercentages[selectedStat], 0f, 100f);
-            OnOutputChange.Invoke();
+            float oldValue = OutputPercentages[selectedStat];
+
+            float newValue = oldValue + amount;
+
+            newValue = Math.Clamp(newValue, 0f, 100f);
+
+            if (oldValue == newValue)
+            {
+                return;
+            }
+
+            OutputPercentages[selectedStat] = newValue;
+            OnOutputChange?.Invoke();
             sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"Current Output: {OutputPercentages[selectedStat]}%", EnumChatType.Notification);
 
         }

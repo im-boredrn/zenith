@@ -101,8 +101,18 @@ namespace zenith.Core.Traits
 
         public void ApplyTraits()
         {
-            Log("[FLOW] ApplyTraits Called");
 
+
+            if (entity.World.Side != EnumAppSide.Server)
+            {
+
+                throw new InvalidOperationException(
+           "ApplyTraits called on client!");
+                Log("[ERROR] ApplyTraits called client side!");
+                return;
+
+            }
+            Log("[FLOW] ApplyTraits Called");
 
             var totals = assimilationProvider.CalculateTotals();
 
@@ -137,7 +147,6 @@ namespace zenith.Core.Traits
             if (healthBehavior != null)
             {
                 healthBehavior.MarkDirty();
-                healthBehavior.MaxHealth = healthBehavior.Health;
             }
             
             SaveTraits();
