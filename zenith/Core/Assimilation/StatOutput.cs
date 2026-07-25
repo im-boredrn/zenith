@@ -137,7 +137,7 @@ namespace zenith.Core.Assimilation
 
             OutputPercentages[selectedStat] = newValue;
             OnOutputChange?.Invoke();
-            sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"Current Output: {OutputPercentages[selectedStat]}%", EnumChatType.Notification);
+            sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{selectedStat} Output: {OutputPercentages[selectedStat]}%", EnumChatType.Notification);
 
         }
 
