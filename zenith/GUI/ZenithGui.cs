@@ -3,6 +3,7 @@ using Vintagestory.API.Client;
 using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
 
@@ -21,13 +22,15 @@ namespace zenith.GUI
         public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
         private readonly StatOutput StatOutut;
+        private readonly ZenithNetwork ZenithNetwork;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
-        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput) : base(capi)
+        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
         {
             this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
+            this.ZenithNetwork = zenithNetwork;
             progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
 
@@ -47,7 +50,6 @@ namespace zenith.GUI
             var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
-            string[] domainNames = domainManager.GetDomainNames();
 
             // Compute stage name based on the Stage int
 
@@ -55,11 +57,8 @@ namespace zenith.GUI
             int buttonHeight = 30;
             int padding = 10;
 
-            int totalButtons = domainManager.Domains.Count;
-            int totalWidth = totalButtons * (buttonWidth + padding) - padding;
 
             // Start X so the row is centered
-            int startX = (600 - totalWidth) / 2; // 600 = dialog width
             int buttonsPerRow = 2;
 
             int dialogHeight = 600; 
@@ -182,9 +181,8 @@ namespace zenith.GUI
                 BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
 
-            BonusGUI = new BonusGUI(capi, stageProvider, AssimilationCore, StatOutut);
+            BonusGUI = new BonusGUI(capi, stageProvider, AssimilationCore, StatOutut, ZenithNetwork);
             BonusGUI.TryOpen();
-            Log("Bonus GUI Button Clicked:");
 
             return true;
         }
@@ -207,9 +205,8 @@ namespace zenith.GUI
         public override void OnGuiOpened()
         {
             Log("Dialog opened");
-
+            base.OnGuiOpened();
             SingleComposer.Dispose();
-            Log("Disposing...");
             SetupDialog();   // rebuild UI from fresh data
             UpdateStats(); // Pull latest stage/domain values
             

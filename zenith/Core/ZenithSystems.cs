@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
@@ -52,15 +53,29 @@ namespace zenith.Core
            
            
             TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
-            TraitManager.Traits.ApplyTraits();
+
+            if (entity.World.Side == EnumAppSide.Server)
+            {
+                TraitManager.Traits.ApplyTraits();
+            }
+
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
-           
+          
+
             // GUI
-            if (capi != null)
+            if (capi != null && Player.Player as ICoreServerAPI == null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput ); 
+
+                var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
+
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
+
+                capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
+                {
+                    ZenithGui?.BonusGUI?.UpdateBonusStats();
+                });
             }
 
             Passives = Enum.GetValues<DomainEnum>()
@@ -132,20 +147,22 @@ namespace zenith.Core
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
 
-                ZenithGui?.BonusGUI.UpdateBonusStats();
+               // ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>
             {
                 TraitManager.Traits.ApplyTraits();
-                // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
 
             StatOutput.OnOutputChange += () =>
             {
+                ZenithGui?.BonusGUI?.UpdateBonusStats();
                 TraitManager.Traits.ApplyTraits();
-                ZenithGui?.BonusGUI.UpdateBonusStats();
+                Log("[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
+
+            
 
         }
 

@@ -253,7 +253,7 @@ namespace zenith.Core.Progression
             {
                 1 => "Adapting Organism",
                 2 => "Hyper-Adaptive Organism",
-                3 => "Paragon of Seraphs",
+                3 => "Paragon",
                 _ => "Unknown"
             };
         }

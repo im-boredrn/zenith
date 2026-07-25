@@ -9,11 +9,12 @@ using zenith.Config;
 using zenith.Core;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.Assimilation.StatOutput;
 using static zenith.Core.Traits.Traits;
 using static zenith.Core.ZenithBehavior;
-
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.GUI
 {
     public class BonusGUI : GuiDialog
@@ -23,89 +24,103 @@ namespace zenith.GUI
         private readonly AssimilationCore assimilationCore;
         public override string ToggleKeyCombinationCode => null;
         private readonly StatOutput statOutput;
-
-        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore, StatOutput statOutput) : base(capi)
+        private readonly ZenithNetwork zenithNetwork;
+        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
         {
 
             this.stageProvider = stageP;
             this.assimilationCore = assimilationCore;
             this.statOutput = statOutput;
-          
+            this.zenithNetwork = zenithNetwork; 
             SetupDialog();
+
+            Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
         }
 
         public void SetupDialog()
         {
 
             ElementBounds dialogBounds =
-    ElementBounds.Fixed(0, 0, 300, 300)
-    .WithAlignment(EnumDialogArea.CenterMiddle);
+    ElementBounds.Fixed(0, 0, 450, 300)
+    .WithAlignment(EnumDialogArea.RightTop);
 
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-            SingleComposer = capi.Gui.CreateCompo("Bonuses", bounds)
+            SingleComposer = capi.Gui.CreateCompo("Bonuses", dialogBounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
-                .AddDialogTitleBar($" Bonuses", OnGuiClosed)
-                .AddDynamicText(BuildBonusText(),
-                CairoFont.WhiteSmallishText(), ElementBounds.Fixed(20, 50, 300, 300), "Bonustext")
-                .Compose();
+                .AddDialogTitleBar($"", OnGuiClosed);
+         
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
+
+            int i = 0;
+            int spacing = 50;
+      
+
+            foreach (StatType stat in Enum.GetValues<StatType>())
+            {
+
+                var y = i * spacing;
+                ElementBounds buttonBounds =
+                                   ElementBounds.Fixed(10,y, 120, 30)
+                                   .WithAlignment(EnumDialogArea.LeftTop);
+
+                var textBounds = ElementBounds.Fixed(100, y + 5, 200, 30)
+                    .WithAlignment(EnumDialogArea.CenterTop);
+
+               
+
+                SingleComposer.AddButton($"{stat}", () => OnSelectStat(stat), buttonBounds, EnumButtonStyle.Small)
+                    
+                    .AddDynamicText(BuildBonusText(stat), CairoFont.WhiteSmallishText(),textBounds, $"{stat} text" );
+                i++;
+
+            }
+
+            SingleComposer.Compose();
 
         }
 
         public void UpdateBonusStats()
         {
+            Log("[FLOW] BONUS GUI UPDATE CALLED");
+            Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
+
             if (!IsOpened()) return;
 
-            if (SingleComposer != null)
-            {
-                SingleComposer.GetDynamicText("Bonustext")
-                    .SetNewText(BuildBonusText(), false, true, false);
-            }
+            
+            
+
+                foreach (StatType stat in Enum.GetValues<StatType>())
+                {
+                Log($"[DATA {stat} Updating");
+                    SingleComposer.GetDynamicText($"{stat} text")?
+                    .SetNewText(BuildBonusText(stat), false, true, false);
+                }
+                
+            
+        }
+
+        private bool OnSelectStat(StatType statType)
+        {
+            zenithNetwork.RequestStat(statType);
+            return true;
         }
 
 
 
 
 
-        private string BuildBonusText()
+        private string BuildBonusText(StatType stat)
         {
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
-            // Idk if any better methods exist
-            
-            var speed = zenith?.GetFloat(ZenithKeys.Speed, 0f);
-            var dmg = zenith?.GetFloat(ZenithKeys.Strength, 0f); // Clean Up Keys Man...
-            var jHeight = zenith?.GetFloat(ZenithKeys.Jump, 0f);
-
-            var health = zenith?.GetFloat(ZenithKeys.Health, 0f);
-            var aNLOOT = zenith?.GetFloat(ZenithKeys.AnimalLoot, 0f); // Clean Up Variables
-            var harvest = zenith?.GetFloat(ZenithKeys.Harvesting, 0f);
+                                                                                                // Idk if any better methods exist
+            var guiValue = zenith?.GetFloat(ZenithKeys.GUIKeys[stat], 0f);
+            var guiOutput = zenith?.GetFloat(ZenithKeys.GOutputKeys[stat], 100f);
 
 
-            var selectedStat = (StatType)zenith.GetInt("SelectedStat", 0);
-
-            var speedOutput = zenith?.GetFloat(ZenithKeys.SpeedOutput, 100f);
-            var damageOutput = zenith?.GetFloat(ZenithKeys.Strength, 100f);
-            var jumpOutput = zenith?.GetFloat(ZenithKeys.JumpOutput, 100f);
-
-            var healthOutput = zenith?.GetFloat(ZenithKeys.HealthOutput, 100f);
-            var aNLootOutput = zenith?.GetFloat(ZenithKeys.AnimalLootOutput, 100f);
-            var harvestingOutput = zenith?.GetFloat(ZenithKeys.Harvesting, 100f);
-
-            //  Log($"Raw Jump Height = {jHeight}");
-
-            //  Log($"[CLIENT CHECK] Stats directly from entity");
-            //   Log($"[FLOW] UpdateBonusStatsCalled! Current Speed : {speed} | Current Damage: {dmg} | ");
-
-            //  Log($"[DomainGUI] UpdateBonusStatsFinished! Current Speed : {speed} | Current Damage: {dmg} | Current Jump Height {jHeight} ");
-
-
-            return $"+{speed:F0}% Speed | {speedOutput}% Output\n +{dmg:F0}% Strength |" +
-                $" {damageOutput}% Output\n +{jHeight:F0}% Jump | {jumpOutput}% Output\n" +
-                $" +{health:F0}% Health | {healthOutput}% Output\n +{aNLOOT:F0}% ANLoot | {aNLootOutput}% Output\n" +
-                $"+{harvest:F0}% Harvest | {harvestingOutput}% Output\n Selected Stat : {selectedStat} ";
+            return $"+{guiValue:F0}%| {guiOutput:F0}% Output";
         }
-        //Turn Stats into clickable buttons | try to achieve with maybe foreach whatever : +{statkey:F0}% Speed | {statkeyOutput}% Output\n
 
         public override void OnGuiOpened()
         {

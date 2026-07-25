@@ -35,14 +35,6 @@ namespace zenith.Core.NetWork
                 return true; // returning false causes double firing.
             });
 
-            api.Input.RegisterHotKey("statselect", "Switch Stat", GlKeys.Keypad9, HotkeyType.GUIOrOtherControls);
-            api.Input.SetHotKeyHandler("statselect", comb =>
-            {
-                ZenithNetwork.Request(GlKeys.Keypad9, false, false );
-                return true;
-
-            });
-
             api.Input.RegisterHotKey("increaseoutput", "Increase Stat", GlKeys.B, HotkeyType.GUIOrOtherControls);
             api.Input.SetHotKeyHandler("increaseoutput", comb =>
             {
