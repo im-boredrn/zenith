@@ -9,7 +9,7 @@ using zenith.Config;
 using zenith.Core.Assimilation;
 using zenith.Core.Progression;
 using zenith.GUI;
-
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.Core.Traits
 {
     public class Traits
@@ -36,6 +36,33 @@ namespace zenith.Core.Traits
 
         public static class ZenithKeys
         {
+
+            static public Dictionary<StatType, string> GUIKeys { get; } = new Dictionary<StatType, string>()
+            {
+
+                [StatType.Speed] = Speed,
+                [StatType.Strength] = Strength,
+                [StatType.Jump] = Jump,
+
+                [StatType.Health] = Health,
+                [StatType.Harvesting] = Harvesting,
+                [StatType.AnimalLoot] = AnimalLoot
+
+            };
+
+            static public Dictionary<StatType, string> GOutputKeys { get; } = new Dictionary<StatType, string>()
+            {
+
+                [StatType.Speed] = SpeedOutput,
+                [StatType.Strength] = StrengthOutput,
+                [StatType.Jump] = JumpOutput,
+
+                [StatType.Health] = HealthOutput,
+                [StatType.Harvesting] = HarvestingOutput,
+                [StatType.AnimalLoot] = AnimalLootOutput
+
+            };
+
             public const string Speed = "SPD";
             public const string Strength = "DMG";
             public const string Jump = "JHM";
@@ -61,12 +88,12 @@ namespace zenith.Core.Traits
             var gTotals = new GUITotals();
             var totals = assimilationProvider.CalculateTotals();
     
-            foreach (var trait in assimilationProvider.Definitions.Values)
+      
+
+            foreach (StatType stat in Enum.GetValues<StatType>())
             {
-                foreach (var gain in trait.Gains)
-                {
-                    gTotals.GUIStats[gain.Key] = totals[gain.Key] * StatOutput.OutputPercentages[gain.Key];
-                }
+                gTotals.GUIStats[stat] = totals[stat] * StatOutput.OutputPercentages[stat];
+
             }
 
             return gTotals  ;
@@ -79,12 +106,12 @@ namespace zenith.Core.Traits
 
             var totals = assimilationProvider.CalculateTotals();
 
-            foreach (var trait in assimilationProvider.Definitions.Values)
+          
+
+            foreach (StatType stat in Enum.GetValues<StatType>())
             {
-                foreach (var gain in trait.Gains)
-                {
-                    totals[gain.Key] = totals[gain.Key] * StatOutput.OutputPercentages[gain.Key]/100f;
-                }
+                totals[stat] = totals[stat] * StatOutput.OutputPercentages[stat] / 100f;
+
             }
 
             float jumpBonus = totals[StatOutput.StatType.Jump] + ZenithSettings.ZInitialJump ; 
@@ -102,9 +129,8 @@ namespace zenith.Core.Traits
             entityPlayer.Stats.Set("walkspeed", "zenith", totals[StatOutput.StatType.Speed], true);
             entityPlayer.Stats.Set("jumpHeightMul", "zenith", jumpBonus, true);
 
-
             //Utility
-            entityPlayer.Stats.Set("animalLootDropRate", "zenith", totals[StatOutput.StatType.ANLoot], true);
+            entityPlayer.Stats.Set("animalLootDropRate", "zenith", totals[StatOutput.StatType.AnimalLoot], true);
             entityPlayer.Stats.Set("animalHarvestingTime", "zenith", totals[StatOutput.StatType.Harvesting] * -1, true);
 
             var healthBehavior = Player.GetBehavior<EntityBehaviorHealth>();
@@ -122,22 +148,17 @@ namespace zenith.Core.Traits
 
             var gTotals = GetGUITotals();
 
-            //Combat
-            watchedZenith.SetFloat(ZenithKeys.Strength, gTotals.GUIStats[StatOutput.StatType.Strength]);
-            watchedZenith.SetFloat(ZenithKeys.Health, gTotals.GUIStats[StatOutput.StatType.Health]);
-
-            //Mobility
-
-            watchedZenith.SetFloat(ZenithKeys.Speed, gTotals.GUIStats[StatOutput.StatType.Speed]);
-            watchedZenith.SetFloat(ZenithKeys.Jump, gTotals.GUIStats[StatOutput.StatType.Jump] + 0.30f);
-
-            //Utility
-            watchedZenith.SetFloat(ZenithKeys.AnimalLoot, gTotals.GUIStats[StatOutput.StatType.ANLoot]);
-            watchedZenith.SetFloat(ZenithKeys.Harvesting, gTotals.GUIStats[StatOutput.StatType.Harvesting]);
 
 
-            //   Log($"[SAVE]  | GJump : {gTotals.GJump}\n Damage : {gTotals.GDamage}\n Speed : {gTotals.GSpeed} | NOTE: Output percent behind by 10% ");
+            foreach (var stat in gTotals.GUIStats) 
+            {
+                watchedZenith.SetFloat(ZenithKeys.GUIKeys[stat.Key], stat.Value);
 
+                watchedZenith.SetFloat(ZenithKeys.GOutputKeys[stat.Key], StatOutput.OutputPercentages[stat.Key]);
+                Log($"[SAVETRAITS]Key : {stat.Key} | Value {stat.Value} | Output {StatOutput.OutputPercentages[stat.Key]}%  ");
+            }
+
+            
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 

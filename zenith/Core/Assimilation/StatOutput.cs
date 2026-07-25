@@ -24,7 +24,7 @@ namespace zenith.Core.Assimilation
             {StatType.Speed, 100f },
             {StatType.Jump, 100f },
             {StatType.Health, 100f },
-            {StatType.ANLoot, 100f },
+            {StatType.AnimalLoot, 100f },
             {StatType.Harvesting, 100f }
         };
 
@@ -35,7 +35,7 @@ namespace zenith.Core.Assimilation
             Speed,
             Jump,
             Health,
-            ANLoot,
+            AnimalLoot,
             Harvesting
         }
 
@@ -69,7 +69,7 @@ namespace zenith.Core.Assimilation
 
 
         public event Action OnOutputChange;
-        public void StatSwitch() // Call with Keybind
+        public void StatSwitch(StatType statType) // Call with Keybind
         {
 
             Log($"[FLOW] StatSwitch Called");
@@ -80,8 +80,9 @@ namespace zenith.Core.Assimilation
 #pragma warning restore IDE0019
 
 
-            selectedStat++;
-            // Log($"[DATA] SSI : {SelectedStatIndex}");
+            selectedStat = statType;
+
+            Log($"[DATA] SSI : {selectedStat}");
 
             if (!Enum.IsDefined(typeof(StatType), selectedStat))
             {
@@ -90,10 +91,8 @@ namespace zenith.Core.Assimilation
 
             OnOutputChange.Invoke();
 
+
             sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{selectedStat}", EnumChatType.Notification);
-           
-           
-            //Log($"[DATA] SSI : {selectedStat} | Selected Stat : {selectedStat}");
 
         }
 
@@ -143,7 +142,7 @@ namespace zenith.Core.Assimilation
 
                 watchedZenith.SetFloat($"{key} Output", value);
 
-               Log($"[SAVE]  {key} Output | Value : {value}");
+        //       Log($"[SAVE]  {key} Output | Value : {value}");
             }
             entity.WatchedAttributes.MarkPathDirty("zenith");
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
+using zenith.Core.Assimilation;
 using zenith.Core.NetWork.Packets;
 
 namespace zenith.Core.NetWork
@@ -19,21 +20,14 @@ namespace zenith.Core.NetWork
             ServerChannel = sapi.Network
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
-                .RegisterMessageType<SwitchPacket>()
                 .RegisterMessageType<IncreasePacket>()
                 .RegisterMessageType<DecreasePacket>()
-
+                .RegisterMessageType<SelectedStatPacket>()
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
                     var behavior = player.Entity.GetBehavior<ZenithBehavior>();
                     behavior?.systems?.AssimilationCore?.TryAssimilate(player);
-                })
-                .SetMessageHandler<SwitchPacket>((player, packet) =>
-                {
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                    behavior?.systems.StatOutput?.StatSwitch();
-
                 })
                 .SetMessageHandler<IncreasePacket>((player, packet) =>
                 {
@@ -49,6 +43,11 @@ namespace zenith.Core.NetWork
 
 
                     behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld, packet.AltHeld, "Decrease");
+                })
+                .SetMessageHandler<SelectedStatPacket>((player,packet) =>
+                {
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems?.StatOutput?.StatSwitch((StatOutput.StatType)packet.SelectedStat);
                 });
 
         }
@@ -58,22 +57,28 @@ namespace zenith.Core.NetWork
             ClientChannel = capi.Network
                 .RegisterChannel("zenith")
                 .RegisterMessageType<ConsumePacket>()
-                .RegisterMessageType<SwitchPacket>()
                 .RegisterMessageType<IncreasePacket>()
-                .RegisterMessageType<DecreasePacket>();
+                .RegisterMessageType<DecreasePacket>()
+                .RegisterMessageType<SelectedStatPacket>();
         }
 
-       
+        public void RequestStat(StatOutput.StatType stat)
+        {
+            ClientChannel?.SendPacket(new SelectedStatPacket()
+            {
+                SelectedStat = (int)stat
+            });
+             
+
+        }
+
+
         public void Request(GlKeys glKeys, bool shift, bool alt)
         {
 
             switch (glKeys)
             {
-                case GlKeys.Keypad9:
-                    {
-                        ClientChannel?.SendPacket(new SwitchPacket());
-                        break;
-                    }
+               
 
                 case GlKeys.V:
                     {

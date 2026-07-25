@@ -56,11 +56,20 @@ namespace zenith.Core
             DomainManager = new DomainManager(entity, modConfig);
             DomainManager.LoadDomains();
             RefreshStats();
-           
+          
+
             // GUI
             if (capi != null)
             {
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput ); 
+
+                var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
+
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
+
+                capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
+                {
+                    ZenithGui?.BonusGUI?.UpdateBonusStats();
+                });
             }
 
             Passives = Enum.GetValues<DomainEnum>()
@@ -132,20 +141,22 @@ namespace zenith.Core
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
 
-                ZenithGui?.BonusGUI.UpdateBonusStats();
+               // ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>
             {
                 TraitManager.Traits.ApplyTraits();
-                // Eventually Refresh stats though may be pointless due to OnAssimChanged
             };
 
             StatOutput.OnOutputChange += () =>
             {
+                ZenithGui?.BonusGUI?.UpdateBonusStats();
                 TraitManager.Traits.ApplyTraits();
-                ZenithGui?.BonusGUI.UpdateBonusStats();
+                Log("[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
+
+            
 
         }
 

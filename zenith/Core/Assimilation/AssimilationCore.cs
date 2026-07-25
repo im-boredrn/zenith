@@ -67,7 +67,7 @@ namespace zenith.Core.Assimilation
                      {
                          [StatType.Strength] = 0.15f,
                          [StatType.Health] = 0.1f,
-                         [StatType.ANLoot] = 0.1f
+                         [StatType.AnimalLoot] = 0.1f
                      }
 
 
@@ -168,7 +168,7 @@ namespace zenith.Core.Assimilation
                          [StatType.Speed] = 0.05f,
                          [StatType.Strength] = 0.08f,
                          [StatType.Harvesting] = 0.1f,
-                         [StatType.ANLoot] = 0.1f
+                         [StatType.AnimalLoot] = 0.1f
                      }
 
                  },
@@ -289,12 +289,7 @@ namespace zenith.Core.Assimilation
             SaveAssim();
         }
 
-        public float GetCreatureLevel(CreatureType creatureType)
-        {
-            return Definitions[creatureType].AssimLVL;
-        }
-
-      
+       
 
         public TraitTotals CalculateTotals()
         {
@@ -348,7 +343,12 @@ namespace zenith.Core.Assimilation
           
         }
 
+ public float GetCreatureLevel(CreatureType creatureType)
+        {
+            return Definitions[creatureType].AssimLVL;
+        }
 
+      
         private void Log(string message)
         {
             if (!DebugMode) return;
