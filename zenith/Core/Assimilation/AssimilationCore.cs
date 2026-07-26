@@ -140,16 +140,19 @@ namespace zenith.Core.Assimilation
                  //{
                  //    EntityName = "sheep",
                  //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    SpeedGain = 0.1f
                  //    // hungerrateGain
                  //},
 
-                 //[CreatureType.chicken] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "chicken",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    //Add WildCropGain
-                 //},
+                 [CreatureType.chicken] = new AssimilationDefinition
+                 {
+                     EntityName = "chicken",
+                     MaxLVL = ZenithSettings.ZChickenCreatureMaxLVL,
+                     Gains =
+                     {
+                     [StatType.Speed] = 0.03f,
+                     [StatType.CropRate] = 0.05f
+                     }
+                 },
 
                  [CreatureType.pig] = new AssimilationDefinition
                  {
