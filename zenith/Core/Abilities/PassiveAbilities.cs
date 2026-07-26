@@ -20,6 +20,8 @@ namespace zenith.Core.Abilities
         private readonly TreeAttribute watchedZenith;
         private readonly IStageProvider stageProvider;
         private readonly EntityPlayer entity;
+        public static bool DebugMode => ZenithSettings.ZDebugMode;
+
         public KineticPassive(EntityPlayer entityPlayer, IStageProvider stageProvider)
         {
          
@@ -47,11 +49,31 @@ namespace zenith.Core.Abilities
 
         public void SaveStats()
         {
-        
 
+            foreach (var key in watchedZenith.Keys)
+            {
+                var attr = watchedZenith[key];
+
+                Log($"KEY={key}");
+
+                if (attr == null)
+                {
+                    Log($"NULL ATTRIBUTE: {key}");
+                }
+                else
+                {
+                    Log($"TYPE={attr.GetType().Name}");
+                }
+            }
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
 
+        }
+
+        private void Log(string message)
+        {
+            if (!DebugMode) return;
+            entity.World.Logger.Warning(message);
         }
 
         public  void Tick(EntityPlayer entityPlayer)

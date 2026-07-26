@@ -44,7 +44,7 @@ public class ModConfig
     public int GoatCreatureMaxLVL { get; set; } = 100;
     public int DeerCreatureMaxLVL { get; set; } = 100;
     public int HyenaCreatureMaxLVL { get; set; } = 100;
-
+    public int PigCreatureMaxLVL { get; set; } = 100;
 
 
 

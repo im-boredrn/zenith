@@ -57,7 +57,7 @@ namespace zenith.Config
         public static int ZGoatCreatureMaxLVL => Config?.GoatCreatureMaxLVL ?? 100;
         public static int ZDeerCreatureMaxLVL => Config?.DeerCreatureMaxLVL ?? 100;
         public static int ZHyenaCreatureMaxLVL => Config?.HyenaCreatureMaxLVL ?? 100;
-
+        public static int ZPigCreatureMaxLVL => Config?.PigCreatureMaxLVL ?? 100;
 
 
 

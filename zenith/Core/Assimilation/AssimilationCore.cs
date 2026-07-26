@@ -123,8 +123,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZDeerCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Speed] = 0.1f
-                         //Add Seeking Gain - Dont forget to -1 the val in traits
+                         [StatType.Speed] = 0.1f,
+                         [StatType.Stealth] = 0.08f
                      }
                  },
 
@@ -151,12 +151,15 @@ namespace zenith.Core.Assimilation
                  //    //Add WildCropGain
                  //},
 
-                 //[CreatureType.pig] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "pig",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    //Add ForageGain = 0.1f
-                 //},
+                 [CreatureType.pig] = new AssimilationDefinition
+                 {
+                     EntityName = "pig",
+                     MaxLVL = ZenithSettings.ZPigCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Forage] = 0.05f
+                     }
+                 },
 
                  [CreatureType.hyena] = new AssimilationDefinition
                  {
@@ -217,7 +220,7 @@ namespace zenith.Core.Assimilation
                 Log($"[DATA] Does not have EntityBehaviorHarvestable");
                 return;
             }
-            if (es.WatchedAttributes.HasAttribute("consumed") ) // may not persist - due to it not being loaded
+            if (es.WatchedAttributes.GetBool("consumed") ) // may not persist - due to it not being loaded
                 // its likely only saved on world but not retrieved on next load
                 // untested as of implementation of ZenithNetwork
             {
@@ -243,7 +246,7 @@ namespace zenith.Core.Assimilation
             if (type == CreatureType.unknown) return;
 
             Assimilate(entityName, player, type);
-            es.WatchedAttributes.SetAttribute("consumed", null); 
+            es.WatchedAttributes.SetBool("consumed", true); 
 
 
             foreach (var trait in Definitions.Values)
@@ -301,8 +304,7 @@ namespace zenith.Core.Assimilation
                     totals[gain.Key] += trait.AssimLVL * gain.Value;
                 }
             }
-
-           
+  
             return totals;
         }
 
@@ -322,6 +324,21 @@ namespace zenith.Core.Assimilation
           
                 Log($"KEY : {key} LVL");
             }
+            //foreach (var key in watchedZenith.Keys)
+            //{
+            //    var attr = watchedZenith[key];
+
+            //    Log($"KEY={key}");
+
+            //    if (attr == null)
+            //    {
+            //        Log($"NULL ATTRIBUTE: {key}");
+            //    }
+            //    else
+            //    {
+            //        Log($"TYPE={attr.GetType().Name}");
+            //    }
+            //}
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
             // Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 

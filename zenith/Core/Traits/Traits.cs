@@ -46,8 +46,10 @@ namespace zenith.Core.Traits
 
                 [StatType.Health] = Health,
                 [StatType.Harvesting] = Harvesting,
-                [StatType.AnimalLoot] = AnimalLoot
+                [StatType.AnimalLoot] = AnimalLoot,
 
+                [StatType.Forage] = Forage,
+                [StatType.Stealth] = Stealth
             };
 
             static public Dictionary<StatType, string> GOutputKeys { get; } = new Dictionary<StatType, string>()
@@ -59,8 +61,10 @@ namespace zenith.Core.Traits
 
                 [StatType.Health] = HealthOutput,
                 [StatType.Harvesting] = HarvestingOutput,
-                [StatType.AnimalLoot] = AnimalLootOutput
+                [StatType.AnimalLoot] = AnimalLootOutput,
 
+                [StatType.Forage] = ForageOutput,
+                [StatType.Stealth] = StealthOutput
             };
 
             public const string Speed = "SPD";
@@ -71,6 +75,10 @@ namespace zenith.Core.Traits
             public const string Harvesting = "AHT";
             public const string AnimalLoot = "ALD";
 
+            public const string Forage = "FDR";
+            public const string Stealth = "ASR";
+
+
             public const string SpeedOutput = "spdo";
             public const string StrengthOutput = "dmgo";
             public const string JumpOutput = "jhmo";
@@ -78,6 +86,9 @@ namespace zenith.Core.Traits
             public const string HealthOutput = "mhpo";
             public const string HarvestingOutput = "ahto";
             public const string AnimalLootOutput = "aldo";
+
+            public const string ForageOutput = "fdro";
+            public const string StealthOutput = "asro";
 
 
 
@@ -106,8 +117,7 @@ namespace zenith.Core.Traits
             if (entity.World.Side != EnumAppSide.Server)
             {
 
-                throw new InvalidOperationException(
-           "ApplyTraits called on client!");
+              
                 Log("[ERROR] ApplyTraits called client side!");
                 return;
 
@@ -142,7 +152,8 @@ namespace zenith.Core.Traits
             //Utility
             entityPlayer.Stats.Set("animalLootDropRate", "zenith", totals[StatOutput.StatType.AnimalLoot], true);
             entityPlayer.Stats.Set("animalHarvestingTime", "zenith", totals[StatOutput.StatType.Harvesting] * -1, true);
-
+            entityPlayer.Stats.Set("forageDropRate", "zenith", totals[StatOutput.StatType.Forage], true);
+            entityPlayer.Stats.Set("animalSeekingRange", "zenith", totals[StatType.Stealth] * -1, true);
             var healthBehavior = Player.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
             {
@@ -168,7 +179,21 @@ namespace zenith.Core.Traits
             }
 
             
+            //foreach (var key in watchedZenith.Keys)
+            //{
+            //    var attr = watchedZenith[key];
 
+            //    Log($"KEY={key}");
+
+            //    if (attr == null)
+            //    {
+            //        Log($"NULL ATTRIBUTE: {key}");
+            //    }
+            //    else
+            //    {
+            //        Log($"TYPE={attr.GetType().Name}");
+            //    }
+            //}
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }

@@ -41,7 +41,7 @@ namespace zenith.GUI
         {
 
             ElementBounds dialogBounds =
-    ElementBounds.Fixed(0, 0, 450, 300)
+    ElementBounds.Fixed(0, 0, 450, 500)
     .WithAlignment(EnumDialogArea.RightTop);
 
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);

@@ -148,6 +148,22 @@ namespace zenith.Core.Domains
 
 
             }
+            //foreach (var key in watchedZenith.Keys)
+            //{
+            //    var attr = watchedZenith[key];
+
+            //    Log($"KEY={key}");
+
+            //    if (attr == null)
+            //    {
+            //        Log($"NULL ATTRIBUTE: {key}");
+            //    }
+            //    else
+            //    {
+            //        Log($"TYPE={attr.GetType().Name}");
+            //    }
+            //}
+
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 

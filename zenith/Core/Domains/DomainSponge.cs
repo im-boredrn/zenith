@@ -152,6 +152,8 @@ namespace zenith.Core.Domains
         {
             OnDomainChanged?.Invoke();
             // Also mark zenith dirty so GUI updates can trigger
+
+
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
