@@ -49,7 +49,8 @@ namespace zenith.Core.Traits
                 [StatType.AnimalLoot] = AnimalLoot,
 
                 [StatType.Forage] = Forage,
-                [StatType.Stealth] = Stealth
+                [StatType.Stealth] = Stealth,
+                [StatType.CropRate] = CropRate
             };
 
             static public Dictionary<StatType, string> GOutputKeys { get; } = new Dictionary<StatType, string>()
@@ -64,7 +65,8 @@ namespace zenith.Core.Traits
                 [StatType.AnimalLoot] = AnimalLootOutput,
 
                 [StatType.Forage] = ForageOutput,
-                [StatType.Stealth] = StealthOutput
+                [StatType.Stealth] = StealthOutput,
+                [StatType.CropRate] = CropRateOutput
             };
 
             public const string Speed = "SPD";
@@ -77,6 +79,7 @@ namespace zenith.Core.Traits
 
             public const string Forage = "FDR";
             public const string Stealth = "ASR";
+            public const string CropRate = "CDR";
 
 
             public const string SpeedOutput = "spdo";
@@ -89,6 +92,7 @@ namespace zenith.Core.Traits
 
             public const string ForageOutput = "fdro";
             public const string StealthOutput = "asro";
+            public const string CropRateOutput = "cdro";
 
 
 
@@ -154,6 +158,8 @@ namespace zenith.Core.Traits
             entityPlayer.Stats.Set("animalHarvestingTime", "zenith", totals[StatOutput.StatType.Harvesting] * -1, true);
             entityPlayer.Stats.Set("forageDropRate", "zenith", totals[StatOutput.StatType.Forage], true);
             entityPlayer.Stats.Set("animalSeekingRange", "zenith", totals[StatType.Stealth] * -1, true);
+            entityPlayer.Stats.Set("wildCropDropRate", "zenith", totals[StatType.CropRate], true);
+
             var healthBehavior = Player.GetBehavior<EntityBehaviorHealth>();
             if (healthBehavior != null)
             {
@@ -178,22 +184,7 @@ namespace zenith.Core.Traits
                 Log($"[SAVETRAITS]Key : {stat.Key} | Value {stat.Value} | Output {StatOutput.OutputPercentages[stat.Key]}%  ");
             }
 
-            
-            //foreach (var key in watchedZenith.Keys)
-            //{
-            //    var attr = watchedZenith[key];
-
-            //    Log($"KEY={key}");
-
-            //    if (attr == null)
-            //    {
-            //        Log($"NULL ATTRIBUTE: {key}");
-            //    }
-            //    else
-            //    {
-            //        Log($"TYPE={attr.GetType().Name}");
-            //    }
-            //}
+           
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }

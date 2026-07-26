@@ -27,7 +27,8 @@ namespace zenith.Core.Assimilation
             {StatType.AnimalLoot, 100f },
             {StatType.Harvesting, 100f },
             {StatType.Forage, 100f },
-            {StatType.Stealth , 100f }
+            {StatType.Stealth , 100f },
+            {StatType.CropRate, 100f }
         };
 
 
@@ -40,7 +41,8 @@ namespace zenith.Core.Assimilation
             AnimalLoot,
             Harvesting,
             Forage,
-            Stealth
+            Stealth,
+            CropRate
         }
 
         static public bool DebugMode => ZenithSettings.ZDebugMode;

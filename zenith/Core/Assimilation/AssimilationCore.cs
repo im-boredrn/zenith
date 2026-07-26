@@ -30,6 +30,7 @@ namespace zenith.Core.Assimilation
         public enum CreatureType
         {
             drifter,
+            bowtorn,
             bear,
             hare,
             wolf,
@@ -55,6 +56,16 @@ namespace zenith.Core.Assimilation
                      Gains =
                      {
                          [StatType.Strength] = 0.01f
+                     }
+                 },
+
+                 [CreatureType.bowtorn] = new AssimilationDefinition
+                 {
+                     EntityName = "bowtorn",
+                     MaxLVL = ZenithSettings.ZBowtornCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Strength] = 0.03f,
                      }
                  },
 
@@ -128,28 +139,33 @@ namespace zenith.Core.Assimilation
                      }
                  },
 
-                 //[CreatureType.raccoon] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "raccoon",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    SpeedGain = 0.1f
-                 //    // VesselGain
-                 //},
+                 [CreatureType.raccoon] = new AssimilationDefinition
+                 {
+                     EntityName = "raccoon",
+                     MaxLVL = ZenithSettings.ZRaccoonCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Speed] = 0.02f
+                     }
+                 },
 
-                 //[CreatureType.sheep] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "sheep",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    SpeedGain = 0.1f
-                 //    // hungerrateGain
-                 //},
+                 [CreatureType.sheep] = new AssimilationDefinition
+                 {
+                     EntityName = "sheep",
+                     MaxLVL = ZenithSettings.ZSheepCreatureMaxLVL,
+                     // hungerrateGain
+                 },
 
-                 //[CreatureType.chicken] = new AssimilationDefinition
-                 //{
-                 //    EntityName = "chicken",
-                 //    MaxLVL = ZenithSettings.ZAssimGlobalCreatureMaxLVL,
-                 //    //Add WildCropGain
-                 //},
+                 [CreatureType.chicken] = new AssimilationDefinition
+                 {
+                     EntityName = "chicken",
+                     MaxLVL = ZenithSettings.ZChickenCreatureMaxLVL,
+                     Gains =
+                     {
+                     [StatType.Speed] = 0.03f,
+                     [StatType.CropRate] = 0.05f
+                     }
+                 },
 
                  [CreatureType.pig] = new AssimilationDefinition
                  {
