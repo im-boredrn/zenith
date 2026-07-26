@@ -25,7 +25,9 @@ namespace zenith.Core.Assimilation
             {StatType.Jump, 100f },
             {StatType.Health, 100f },
             {StatType.AnimalLoot, 100f },
-            {StatType.Harvesting, 100f }
+            {StatType.Harvesting, 100f },
+            {StatType.Forage, 100f },
+            {StatType.Stealth , 100f }
         };
 
 
@@ -36,7 +38,9 @@ namespace zenith.Core.Assimilation
             Jump,
             Health,
             AnimalLoot,
-            Harvesting
+            Harvesting,
+            Forage,
+            Stealth
         }
 
         static public bool DebugMode => ZenithSettings.ZDebugMode;
@@ -155,6 +159,9 @@ namespace zenith.Core.Assimilation
 
         //       Log($"[SAVE]  {key} Output | Value : {value}");
             }
+
+            
+
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }
@@ -176,6 +183,23 @@ namespace zenith.Core.Assimilation
 
 
             Log($"Selected stat {selectedStat}");
+
+            //foreach (var key in watchedZenith.Keys)
+            //{
+            //    var attr = watchedZenith[key];
+
+            //    Log($"KEY={key}");
+
+            //    if (attr == null)
+            //    {
+            //        Log($"NULL ATTRIBUTE: {key}");
+            //    }
+            //    else
+            //    {
+            //        Log($"TYPE={attr.GetType().Name}");
+            //    }
+            //}
+
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }

@@ -34,7 +34,7 @@ namespace zenith.Core.NetWork
 
                     var behavior = player.Entity.GetBehavior<ZenithBehavior>();
 
-                    behavior.systems.StatOutput.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
+                    behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
                 })
                 .SetMessageHandler<DecreasePacket>((player,packet) =>
                 {
