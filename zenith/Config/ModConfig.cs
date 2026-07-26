@@ -37,6 +37,7 @@ public class ModConfig
     public float InitialJump { get; set; } = 0.3f;
 
     public int DrifterCreatureMaxLVL { get; set; } = 100;
+    public int BowtornCreatureMaxLVL { get; set; } = 100;
     public int BearCreatureMaxLVL { get; set; } = 100;
     public int HareCreatureMaxLVL { get; set; } = 100;
     public int WolfCreatureMaxLVL { get; set; } = 100;
@@ -46,6 +47,8 @@ public class ModConfig
     public int HyenaCreatureMaxLVL { get; set; } = 100;
     public int PigCreatureMaxLVL { get; set; } = 100;
     public int ChickenCreatureMaxLVL { get; set; } = 100;
+    public int SheepCreatureMaxLVL { get; set; } = 100;
+    public int RaccoonCreatureMaxLVL { get; set; } = 100;
 
 
 

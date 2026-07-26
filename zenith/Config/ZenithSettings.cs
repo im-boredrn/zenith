@@ -50,6 +50,7 @@ namespace zenith.Config
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
         public static float ZInitialJump => Config?.InitialJump ?? 0.3f;
         public static int ZDrifterCreatureMaxLVL => Config?.DrifterCreatureMaxLVL ?? 100;
+        public static int ZBowtornCreatureMaxLVL => Config?.BowtornCreatureMaxLVL ?? 100;
         public static int ZBearCreatureMaxLVL => Config?.BearCreatureMaxLVL ?? 100;
         public static int ZHareCreatureMaxLVL => Config?.HareCreatureMaxLVL ?? 100;
         public static int ZWolfCreatureMaxLVL => Config?.WolfCreatureMaxLVL ?? 100;
@@ -59,6 +60,8 @@ namespace zenith.Config
         public static int ZHyenaCreatureMaxLVL => Config?.HyenaCreatureMaxLVL ?? 100;
         public static int ZPigCreatureMaxLVL => Config?.PigCreatureMaxLVL ?? 100;
         public static int ZChickenCreatureMaxLVL => Config?.ChickenCreatureMaxLVL ?? 100;
+        public static int ZSheepCreatureMaxLVL => Config?.SheepCreatureMaxLVL ?? 100;
+        public static int ZRaccoonCreatureMaxLVL => Config?.RaccoonCreatureMaxLVL ?? 100;
 
 
 
