@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using zenith.Core.Assimilation;
@@ -46,8 +47,8 @@ namespace zenith.GUI
                 .AddDialogTitleBar($" Assimilation Levels", OnGuiClosed);
 
             int i = 0;
-            int spacing = 20; 
-                foreach (var kvp in assimilationCore.Definitions)
+            int spacing = 20;
+            foreach (var kvp in assimilationCore.Definitions.Where(kvp => !kvp.Value.IsUnknown))
             {
                 var key = kvp.Key;
                 var trait = kvp.Value;
@@ -72,7 +73,7 @@ namespace zenith.GUI
             if (!IsOpened()) return;
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
 
-            foreach (var kvp in assimilationCore.Definitions)
+            foreach (var kvp in assimilationCore.Definitions.Where(kvp => !kvp.Value.IsUnknown))
             {
 
                 var key = kvp.Key;

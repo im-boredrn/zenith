@@ -16,9 +16,7 @@ using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.Core.Assimilation
 {
 
-    // Planned Features
-    // Eating Mobs to gain traits ie. bunny for higher jumps and foxes for quicker movement.
-
+   
 
     public class AssimilationCore : EntityBehavior, IAssimilationProvider
     {
@@ -31,6 +29,7 @@ namespace zenith.Core.Assimilation
         {
             drifter,
             bowtorn,
+            shiver,
             bear,
             hare,
             wolf,
@@ -55,7 +54,7 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZDrifterCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Strength] = 0.01f
+                         [StatType.Strength] = 0.03f
                      }
                  },
 
@@ -69,6 +68,17 @@ namespace zenith.Core.Assimilation
                      }
                  },
 
+                 [CreatureType.shiver] = new AssimilationDefinition
+                 {
+                     EntityName = "shiver",
+                     MaxLVL = ZenithSettings.ZShiverCreatureMaxLVL,
+                     Gains =
+                     {
+                         [StatType.Strength] = 0.03f,
+                         [StatType.Speed] = 0.01f
+                     }
+                 },
+
                  [CreatureType.bear] = new AssimilationDefinition
                  {
                      EntityName = "bear",
@@ -76,7 +86,7 @@ namespace zenith.Core.Assimilation
 
                      Gains =
                      {
-                         [StatType.Strength] = 0.15f,
+                         [StatType.Strength] = 0.1f,
                          [StatType.Health] = 0.1f,
                          [StatType.AnimalLoot] = 0.1f
                      }
@@ -90,7 +100,8 @@ namespace zenith.Core.Assimilation
                        MaxLVL = ZenithSettings.ZHareCreatureMaxLVL,
                        Gains =
                        {
-                           [StatType.Jump] = 0.02f
+                           [StatType.Jump] = 0.02f,
+                           [StatType.CropRate] = 0.04f
                        }
                    },
                    
@@ -101,7 +112,8 @@ namespace zenith.Core.Assimilation
                        Gains =
                        {
                            [StatType.Strength] = 0.02f,
-                           [StatType.Speed] = 0.01f
+                           [StatType.Speed] = 0.01f,
+                           [StatType.Harvesting] = 0.03f
                        }
                   
                    },
@@ -112,8 +124,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZFoxCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Speed] = 0.03f
-                         
+                         [StatType.Speed] = 0.03f,
+                         [StatType.Stealth] = 0.01f
                      }
                  },
 
@@ -124,7 +136,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZGoatCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Jump] = 0.1f
+                         [StatType.Jump] = 0.1f,
+                         [StatType.Harvesting] = 0.08f
                      }
                  },
 
@@ -134,8 +147,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZDeerCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Speed] = 0.1f,
-                         [StatType.Stealth] = 0.08f
+                         [StatType.Speed] = 0.08f,
+                         [StatType.Stealth] = 0.04f
                      }
                  },
 
@@ -145,7 +158,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZRaccoonCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Speed] = 0.02f
+                         [StatType.Speed] = 0.02f,
+                         [StatType.Forage] = 0.05f
                      }
                  },
 
@@ -153,7 +167,11 @@ namespace zenith.Core.Assimilation
                  {
                      EntityName = "sheep",
                      MaxLVL = ZenithSettings.ZSheepCreatureMaxLVL,
-                     // hungerrateGain
+                     Gains =
+                     {
+                         [StatType.Harvesting] = 0.03f,
+                         [StatType.Forage] = 0.04f
+                     }
                  },
 
                  [CreatureType.chicken] = new AssimilationDefinition
@@ -162,7 +180,7 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZChickenCreatureMaxLVL,
                      Gains =
                      {
-                     [StatType.Speed] = 0.03f,
+                     [StatType.Speed] = 0.01f,
                      [StatType.CropRate] = 0.05f
                      }
                  },
@@ -173,7 +191,8 @@ namespace zenith.Core.Assimilation
                      MaxLVL = ZenithSettings.ZPigCreatureMaxLVL,
                      Gains =
                      {
-                         [StatType.Forage] = 0.05f
+                         [StatType.Forage] = 0.05f,
+                         [StatType.Strength] = 0.01f
                      }
                  },
 
@@ -185,9 +204,9 @@ namespace zenith.Core.Assimilation
                      Gains =
                      {
                          [StatType.Speed] = 0.05f,
-                         [StatType.Strength] = 0.08f,
-                         [StatType.Harvesting] = 0.1f,
-                         [StatType.AnimalLoot] = 0.1f
+                         [StatType.Strength] = 0.06f,
+                         [StatType.Harvesting] = 0.05f,
+                         [StatType.AnimalLoot] = 0.05f
                      }
 
                  },
@@ -195,6 +214,7 @@ namespace zenith.Core.Assimilation
                  [CreatureType.unknown] = new AssimilationDefinition
                  {
                      EntityName = "?",
+                     IsUnknown = true
                  }
 
              };
@@ -211,7 +231,7 @@ namespace zenith.Core.Assimilation
             
         }
       public  event Action  OnAssimChanged;
-      
+        public event Action<CreatureType> AssimilationSuccess;
         public void TryAssimilate(IServerPlayer player)
         {
             var es = Player?.EntitySelection?.Entity;
@@ -265,11 +285,15 @@ namespace zenith.Core.Assimilation
             es.WatchedAttributes.SetBool("consumed", true); 
 
 
+
             foreach (var trait in Definitions.Values)
             {
-                Log($"[DATA] Progress : {trait.AssimLVL}/{trait.MaxLVL}");
+              //  Log($"[DATA] Progress : {trait.AssimLVL}/{trait.MaxLVL}");
             }
         }
+
+      
+
 
         private CreatureType CreatureClass(Entity entity, IServerPlayer serverPlayer)
         {
@@ -302,8 +326,10 @@ namespace zenith.Core.Assimilation
 
 
             var sapi = entity.World.Api as ICoreServerAPI;
-  
+
+
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
+            AssimilationSuccess?.Invoke(creatureType);
             OnAssimChanged?.Invoke();
             SaveAssim();
         }
@@ -324,6 +350,29 @@ namespace zenith.Core.Assimilation
             return totals;
         }
 
+        //public override WorldInteraction[] GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
+        //{
+
+        //    if (!es.Entity.Alive)
+        //    {
+        //        return new WorldInteraction[]
+        //        {
+        //            new WorldInteraction
+        //            {
+        //                ActionLangCode = "zenith:Assimilate",
+        //                RequireFreeHand = false,
+        //                HotKeyCode = "V"
+
+        //            }
+        //        };
+
+
+        //    }
+
+
+        //    return base.GetInteractionHelp(world, es, player, ref handled);
+        //}
+
 
         private void SaveAssim()
         {
@@ -338,7 +387,7 @@ namespace zenith.Core.Assimilation
 
                 watchedZenith.SetInt($"{key}LVL", trait.AssimLVL);
           
-                Log($"KEY : {key} LVL");
+             //   Log($"KEY : {key} LVL");
             }
             //foreach (var key in watchedZenith.Keys)
             //{

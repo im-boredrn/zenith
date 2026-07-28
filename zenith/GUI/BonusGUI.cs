@@ -1,6 +1,7 @@
 ﻿using Cairo;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using Vintagestory.API.Client;
@@ -34,7 +35,7 @@ namespace zenith.GUI
             this.zenithNetwork = zenithNetwork; 
             SetupDialog();
 
-            Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
+           // Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
         }
 
         public void SetupDialog()
@@ -82,8 +83,8 @@ namespace zenith.GUI
 
         public void UpdateBonusStats()
         {
-            Log("[FLOW] BONUS GUI UPDATE CALLED");
-            Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
+         //   Log("[FLOW] BONUS GUI UPDATE CALLED");
+          //  Log($"[BONUS-DATA]BONUS GUI CREATED {this.GetHashCode()}");
 
             if (!IsOpened()) return;
 
@@ -92,7 +93,7 @@ namespace zenith.GUI
 
                 foreach (StatType stat in Enum.GetValues<StatType>())
                 {
-                Log($"[DATA {stat} Updating");
+            //    Log($"[DATA {stat} Updating");
                     SingleComposer.GetDynamicText($"{stat} text")?
                     .SetNewText(BuildBonusText(stat), false, true, false);
                 }

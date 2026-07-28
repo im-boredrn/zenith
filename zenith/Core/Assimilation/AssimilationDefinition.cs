@@ -10,7 +10,7 @@ namespace zenith.Core.Assimilation
        public string EntityName { get; set; }
        public int AssimLVL { get; set; }
         public float MaxLVL { get; set; }
-
+        public bool IsUnknown { get; set; }
 
         public Dictionary<StatType, float> Gains { get; set; } = new();
 

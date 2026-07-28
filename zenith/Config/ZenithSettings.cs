@@ -49,19 +49,23 @@ namespace zenith.Config
 
         public static int ZAssimCreatureLVLMult => Config?.AssimCreatureLVLMult ?? 1;
         public static float ZInitialJump => Config?.InitialJump ?? 0.3f;
-        public static int ZDrifterCreatureMaxLVL => Config?.DrifterCreatureMaxLVL ?? 100;
-        public static int ZBowtornCreatureMaxLVL => Config?.BowtornCreatureMaxLVL ?? 100;
-        public static int ZBearCreatureMaxLVL => Config?.BearCreatureMaxLVL ?? 100;
-        public static int ZHareCreatureMaxLVL => Config?.HareCreatureMaxLVL ?? 100;
-        public static int ZWolfCreatureMaxLVL => Config?.WolfCreatureMaxLVL ?? 100;
-        public static int ZFoxCreatureMaxLVL => Config?.FoxCreatureMaxLVL ?? 100;
-        public static int ZGoatCreatureMaxLVL => Config?.GoatCreatureMaxLVL ?? 100;
-        public static int ZDeerCreatureMaxLVL => Config?.DeerCreatureMaxLVL ?? 100;
-        public static int ZHyenaCreatureMaxLVL => Config?.HyenaCreatureMaxLVL ?? 100;
-        public static int ZPigCreatureMaxLVL => Config?.PigCreatureMaxLVL ?? 100;
-        public static int ZChickenCreatureMaxLVL => Config?.ChickenCreatureMaxLVL ?? 100;
-        public static int ZSheepCreatureMaxLVL => Config?.SheepCreatureMaxLVL ?? 100;
-        public static int ZRaccoonCreatureMaxLVL => Config?.RaccoonCreatureMaxLVL ?? 100;
+        public static int ZDrifterCreatureMaxLVL => Config?.DrifterCreatureMaxLVL ?? 5;
+        public static int ZBowtornCreatureMaxLVL => Config?.BowtornCreatureMaxLVL ?? 10;
+        public static int ZShiverCreatureMaxLVL => Config?.ShiverCreatureMaxLVL ?? 10;
+
+        public static int ZBearCreatureMaxLVL => Config?.BearCreatureMaxLVL ?? 10;
+        public static int ZHareCreatureMaxLVL => Config?.HareCreatureMaxLVL ?? 20;
+        public static int ZWolfCreatureMaxLVL => Config?.WolfCreatureMaxLVL ?? 20;
+
+        public static int ZFoxCreatureMaxLVL => Config?.FoxCreatureMaxLVL ?? 30;
+        public static int ZGoatCreatureMaxLVL => Config?.GoatCreatureMaxLVL ?? 20;
+        public static int ZDeerCreatureMaxLVL => Config?.DeerCreatureMaxLVL ?? 10;
+
+        public static int ZHyenaCreatureMaxLVL => Config?.HyenaCreatureMaxLVL ?? 10;
+        public static int ZPigCreatureMaxLVL => Config?.PigCreatureMaxLVL ?? 15;
+        public static int ZChickenCreatureMaxLVL => Config?.ChickenCreatureMaxLVL ?? 15;
+        public static int ZSheepCreatureMaxLVL => Config?.SheepCreatureMaxLVL ?? 10;
+        public static int ZRaccoonCreatureMaxLVL => Config?.RaccoonCreatureMaxLVL ?? 15;
 
 
 
