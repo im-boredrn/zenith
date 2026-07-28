@@ -6,9 +6,10 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using zenith.Config;
+using zenith.Core.Adaptations;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 
-namespace zenith.Core.Assimilation.Adaptations
+namespace zenith.Core.Adaptations
 {
     public class CreatureAdaptations : EntityBehavior
     {
@@ -44,7 +45,8 @@ namespace zenith.Core.Assimilation.Adaptations
                 Counter = 0,
                 HasAdaptation = true,
                 Threshold = 4,
-                NutritionVal = 10f
+                NutritionVal = 5f,
+                Adaptation = new BearAdaptation()
             },
 
             [CreatureType.wolf] = new CreatureDefinition()
@@ -52,7 +54,28 @@ namespace zenith.Core.Assimilation.Adaptations
                 Counter = 0,
                 HasAdaptation = true,
                 Threshold = 5,
-                NutritionVal = 5f
+                NutritionVal = 2.5f,
+                Adaptation =  new  WolfAdaptation()
+
+            },
+
+            [CreatureType.sheep] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 3.5f,
+
+            },
+
+            [CreatureType.pig] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 4.5f,
+ 
+
             },
 
             [CreatureType.unknown] = new CreatureDefinition()
@@ -97,20 +120,28 @@ namespace zenith.Core.Assimilation.Adaptations
         {
             return CreatureDefinitions[creatureType].AdaptAchieved;
         }
-        public void CheckFood(CreatureType creatureType) // Move to Wolf Adapt
+
+        //public void GiveAdaptation(CreatureType creatureType)
+        //{
+        //    if (AdaptAchieved(creatureType))
+        //    {
+        //        CreatureDefinitions[creatureType].Adaptation.(Player);
+        //    }
+        //}
+        public void AssimilateLink(CreatureType creatureType) 
         {
-            Log("[CA-FLOW] Check Food Called");
+            Log("[CA-FLOW] AssimilateLink Called");
+            var def = CreatureDefinitions[creatureType];
 
-            float Sat;
-                Sat = CreatureDefinitions[creatureType].NutritionVal * 100f;
-
-            
-            Player.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
+            foreach (var creature in CreatureDefinitions.Where(kvp => kvp.Value.Adaptation != null))
+            {
+                creature.Value.Adaptation.OnAssimilate(entity, def, CreatureDefinitions);
+            }
         }
 
-       
-        
-        
+
+
+
 
 
         private void Log(string message)

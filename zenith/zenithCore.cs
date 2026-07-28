@@ -11,7 +11,7 @@ using zenith.Config;
 using zenith.Core;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
-using zenith.Core.Assimilation.Adaptations;
+using zenith.Core.Adaptations;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
 using zenith.GUI;

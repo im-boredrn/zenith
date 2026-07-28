@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
-namespace zenith.Core.Assimilation.Adaptations
+namespace zenith.Core.Adaptations
 {
     public class CreatureDefinition
     {
@@ -18,7 +18,9 @@ namespace zenith.Core.Assimilation.Adaptations
         public float NutritionVal { get; set; }
         public bool IsUnknown { get; set; }
 
-        IAdaptation Adaptation { get; }
+
+        public Adaptation Adaptation { get; set; }
+     //  public IAdaptation Adaptation { get; set; }
 
         public override string ToString()
         {

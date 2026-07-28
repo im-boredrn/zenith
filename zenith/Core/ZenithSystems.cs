@@ -9,8 +9,8 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Adaptations;
 using zenith.Core.Assimilation;
-using zenith.Core.Assimilation.Adaptations;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
 using zenith.Core.Traits;
@@ -160,10 +160,10 @@ namespace zenith.Core
                 TraitManager.Traits.ApplyTraits();
             };
 
-            AssimilationCore.AssimilationSuccess += (creature) =>
+            AssimilationCore.AssimilationSuccess += (creatureT ) =>
             {
-                CreatureAdaptations?.CheckAdaptation(creature);
-                CreatureAdaptations?.CheckFood(creature);
+                CreatureAdaptations?.CheckAdaptation(creatureT);
+                CreatureAdaptations?.AssimilateLink(creatureT);
             };
 
             StatOutput.OnOutputChange += () =>

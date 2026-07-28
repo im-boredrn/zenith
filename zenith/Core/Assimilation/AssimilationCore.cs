@@ -11,6 +11,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Adaptations;
 using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 
 namespace zenith.Core.Assimilation

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Common.Entities;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
-namespace zenith.Core.Assimilation.Adaptations
+namespace zenith.Core.Adaptations
 {
     public interface IAdaptation
     {
@@ -11,7 +11,7 @@ namespace zenith.Core.Assimilation.Adaptations
 
         void ApplyAdaptation(Entity entity);
 
-        void OnAssimilate(Entity entity);
+        void OnAssimilate(Entity entity, CreatureDefinition creatureDefinition, IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef );
 
     }
 }

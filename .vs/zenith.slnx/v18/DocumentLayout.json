@@ -3,28 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\Tomar\\source\\repos\\zenith\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\assimilation\\adaptations\\creatureadaptations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\assimilation\\adaptations\\creatureadaptations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\zenithsystems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\zenithsystems.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\assimilation\\adaptations\\creaturedefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\assimilation\\adaptations\\creaturedefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\zenithcore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\zenithcore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\adaptations\\creatureadaptations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\adaptations\\creatureadaptations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\assimilation\\assimilationcore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\assimilation\\assimilationcore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\adaptations\\wolfadaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\adaptations\\wolfadaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\adaptations\\adaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\adaptations\\adaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\adaptations\\creaturedefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\adaptations\\creaturedefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|c:\\users\\tomar\\source\\repos\\zenith\\zenith\\core\\adaptations\\iadaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BBA6CFD7-7E77-CB07-707F-B848DE13CBBF}|zenith\\zenith.csproj|solutionrelative:zenith\\core\\adaptations\\iadaptation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,8 +38,34 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "zenithCore.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\zenithCore.cs",
+              "RelativeDocumentMoniker": "zenith\\zenithCore.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\zenithCore.cs",
+              "RelativeToolTip": "zenith\\zenithCore.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T22:24:15.162Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CreatureDefinition.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\CreatureDefinition.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\CreatureDefinition.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\CreatureDefinition.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\CreatureDefinition.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T22:20:44.566Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -50,80 +80,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ZenithBehavior.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithBehavior.cs",
-              "RelativeDocumentMoniker": "zenith\\Core\\ZenithBehavior.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithBehavior.cs",
-              "RelativeToolTip": "zenith\\Core\\ZenithBehavior.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAowHcAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-28T17:03:51.279Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "zenithCore.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\zenithCore.cs",
-              "RelativeDocumentMoniker": "zenith\\zenithCore.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\zenithCore.cs",
-              "RelativeToolTip": "zenith\\zenithCore.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAASwFkAAAAPAAAAAAAAAA==",
+              "Title": "Adaptation.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\Adaptation.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\Adaptation.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\Adaptation.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\Adaptation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-28T16:18:43.021Z",
+              "WhenOpened": "2026-07-28T22:11:36.443Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CreatureDefinition.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\Adaptations\\CreatureDefinition.cs",
-              "RelativeDocumentMoniker": "zenith\\Core\\Assimilation\\Adaptations\\CreatureDefinition.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\Adaptations\\CreatureDefinition.cs",
-              "RelativeToolTip": "zenith\\Core\\Assimilation\\Adaptations\\CreatureDefinition.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAgwBsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "IAdaptation.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\IAdaptation.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\IAdaptation.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\IAdaptation.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\IAdaptation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-28T14:59:16.738Z",
+              "WhenOpened": "2026-07-28T20:41:43.782Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ZenithSystems.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithSystems.cs",
-              "RelativeDocumentMoniker": "zenith\\Core\\ZenithSystems.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\ZenithSystems.cs",
-              "RelativeToolTip": "zenith\\Core\\ZenithSystems.cs",
-              "ViewState": "AgIAANYAAAAAAAAAAAAiwAMBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-28T12:06:36.075Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CreatureAdaptations.cs",
-              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\Adaptations\\CreatureAdaptations.cs",
-              "RelativeDocumentMoniker": "zenith\\Core\\Assimilation\\Adaptations\\CreatureAdaptations.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\Adaptations\\CreatureAdaptations.cs",
-              "RelativeToolTip": "zenith\\Core\\Assimilation\\Adaptations\\CreatureAdaptations.cs",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAqwGUAAABNAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\CreatureAdaptations.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\CreatureAdaptations.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\CreatureAdaptations.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\CreatureAdaptations.cs",
+              "ViewState": "AgIAAGgAAAAAAAAAAIAwwIEAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-28T01:47:58.919Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
+              "Title": "WolfAdaptation.cs",
+              "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\WolfAdaptation.cs",
+              "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\WolfAdaptation.cs",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\WolfAdaptation.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\WolfAdaptation.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBEAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T17:59:35.734Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AssimilationCore.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\AssimilationCore.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Assimilation\\AssimilationCore.cs",
               "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Assimilation\\AssimilationCore.cs",
               "RelativeToolTip": "zenith\\Core\\Assimilation\\AssimilationCore.cs",
-              "ViewState": "AgIAAA4BAAAAAAAAAAAIwH0BAAAPAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-26T03:57:15.177Z",
+              "WhenOpened": "2026-07-28T19:54:03.285Z",
               "EditorCaption": ""
             }
           ]
