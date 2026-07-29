@@ -181,7 +181,7 @@ namespace zenith.Core.Traits
                 watchedZenith.SetFloat(ZenithKeys.GUIKeys[stat.Key], stat.Value);
 
                 watchedZenith.SetFloat(ZenithKeys.GOutputKeys[stat.Key], StatOutput.OutputPercentages[stat.Key]);
-                Log($"[SAVETRAITS]Key : {stat.Key} | Value {stat.Value} | Output {StatOutput.OutputPercentages[stat.Key]}%  ");
+                //Log($"[SAVETRAITS]Key : {stat.Key} | Value {stat.Value} | Output {StatOutput.OutputPercentages[stat.Key]}%  ");
             }
 
            

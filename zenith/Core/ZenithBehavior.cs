@@ -174,9 +174,8 @@ namespace zenith.Core
             
         }
 
+       
  
-
-    
 
         private void Log(string message)
         {

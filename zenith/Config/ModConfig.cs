@@ -36,19 +36,23 @@ public class ModConfig
     public int AssimCreatureLVLMult { get; set; } = 1;
     public float InitialJump { get; set; } = 0.3f;
 
-    public int DrifterCreatureMaxLVL { get; set; } = 100;
-    public int BowtornCreatureMaxLVL { get; set; } = 100;
-    public int BearCreatureMaxLVL { get; set; } = 100;
-    public int HareCreatureMaxLVL { get; set; } = 100;
-    public int WolfCreatureMaxLVL { get; set; } = 100;
-    public int FoxCreatureMaxLVL { get; set; } = 100;
-    public int GoatCreatureMaxLVL { get; set; } = 100;
-    public int DeerCreatureMaxLVL { get; set; } = 100;
-    public int HyenaCreatureMaxLVL { get; set; } = 100;
-    public int PigCreatureMaxLVL { get; set; } = 100;
-    public int ChickenCreatureMaxLVL { get; set; } = 100;
-    public int SheepCreatureMaxLVL { get; set; } = 100;
-    public int RaccoonCreatureMaxLVL { get; set; } = 100;
+    public int DrifterCreatureMaxLVL { get; set; } = 10;
+    public int BowtornCreatureMaxLVL { get; set; } = 10;
+    public int ShiverCreatureMaxLVL { get; set; } = 10;
+
+    public int BearCreatureMaxLVL { get; set; } = 10;
+    public int HareCreatureMaxLVL { get; set; } = 20;
+    public int WolfCreatureMaxLVL { get; set; } = 20;
+
+    public int FoxCreatureMaxLVL { get; set; } = 30;
+    public int GoatCreatureMaxLVL { get; set; } = 10;
+    public int DeerCreatureMaxLVL { get; set; } = 10;
+
+    public int HyenaCreatureMaxLVL { get; set; } = 10;
+    public int PigCreatureMaxLVL { get; set; } = 15;
+    public int ChickenCreatureMaxLVL { get; set; } = 15;
+    public int SheepCreatureMaxLVL { get; set; } = 10;
+    public int RaccoonCreatureMaxLVL { get; set; } = 15;
 
 
 

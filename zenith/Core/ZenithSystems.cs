@@ -9,6 +9,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Abilities;
+using zenith.Core.Adaptations;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
@@ -30,6 +31,7 @@ namespace zenith.Core
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
         public AssimilationCore AssimilationCore { get; }
+        public CreatureAdaptations CreatureAdaptations { get; }
         public TraitManager TraitManager { get; }
         public StatOutput StatOutput { get; }
 
@@ -48,11 +50,12 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity);
-            
+            CreatureAdaptations = new CreatureAdaptations(entity);
                 StatOutput = new StatOutput(entity, capi);
            
            
             TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
+
 
             if (entity.World.Side == EnumAppSide.Server)
             {
@@ -69,6 +72,8 @@ namespace zenith.Core
             {
 
                 var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
+
+
 
                 ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
 
@@ -94,9 +99,9 @@ namespace zenith.Core
 
 
         bool eventsWired = false;
-            void WireEvents()
-            {
-            if (eventsWired) 
+        void WireEvents()
+        {
+            if (eventsWired)
             {
                 Log("[FLOW] Events Already Wired Returning...");
                 return;
@@ -104,7 +109,7 @@ namespace zenith.Core
             eventsWired = true;
 
 
-            foreach ( var domain in DomainManager.Domains.Values) // per domain instance wire domain maxed event
+            foreach (var domain in DomainManager.Domains.Values) // per domain instance wire domain maxed event
             {
                 domain.DomainMaxed += ProgressionManager.HandleDomainMaxed;
                 domain.DomainMaxed += () =>
@@ -147,12 +152,18 @@ namespace zenith.Core
                         AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
 
-               // ZenithGui?.BonusGUI.UpdateBonusStats();
+                // ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>
             {
                 TraitManager.Traits.ApplyTraits();
+            };
+
+            AssimilationCore.AssimilationSuccess += (creatureT ) =>
+            {
+                CreatureAdaptations?.CheckAdaptation(creatureT);
+                CreatureAdaptations?.AssimilateLink(creatureT);
             };
 
             StatOutput.OnOutputChange += () =>

@@ -11,6 +11,7 @@ using zenith.Config;
 using zenith.Core;
 using zenith.Core.Abilities;
 using zenith.Core.Assimilation;
+using zenith.Core.Adaptations;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
 using zenith.GUI;
@@ -45,11 +46,12 @@ public class zenithCore : ModSystem
         ZenithNetwork = new ZenithNetwork();
 
         Keybinds = new Keybinds(ZenithNetwork);
+
+        
     }
 
     public override void StartServerSide(ICoreServerAPI api)
     {
-        // Always fix VintageStory Console Warnings before debugging code. Invisible Entities was not the fault of Zenith
         sapi = api;
         api.Event.PlayerNowPlaying += (IServerPlayer player) =>
         {
@@ -61,12 +63,14 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     sapi.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
+
             }, "AttachBehaviors");
         };
+
         ZenithNetwork.RegisterServer(sapi);
     }
 
-    public override void StartClientSide(ICoreClientAPI api) // Eventually might register hotkeys in a method
+    public override void StartClientSide(ICoreClientAPI api) 
     {
 #pragma warning disable IDE0019
 
@@ -82,6 +86,9 @@ public class zenithCore : ModSystem
                     player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
                     api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
+
+               
+
             }, "AttachBehaviors");
  
         };
