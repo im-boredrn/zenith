@@ -19,7 +19,7 @@ namespace zenith.Core.Adaptations
         public bool IsUnknown { get; set; }
 
 
-        public Adaptation Adaptation { get; set; }
+        public Type AdaptationType { get; set; }
      //  public IAdaptation Adaptation { get; set; }
 
         public override string ToString()

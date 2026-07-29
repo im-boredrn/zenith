@@ -50,7 +50,7 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity);
-            CreatureAdaptations = new CreatureAdaptations(entity);
+            CreatureAdaptations = new CreatureAdaptations(entity, capi);
                 StatOutput = new StatOutput(entity, capi);
            
            
