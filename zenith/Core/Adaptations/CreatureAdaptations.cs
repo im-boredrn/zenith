@@ -5,7 +5,9 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Adaptations;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
@@ -85,19 +87,30 @@ namespace zenith.Core.Adaptations
             },
         };
 
-        private Dictionary<Type, Func<Adaptation>> adaptationProducer { get; } = new Dictionary<Type, Func<Adaptation>>();
-      
+        private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new Dictionary<Type, Func<Adaptation>>();
+        private readonly List<Adaptation> ActiveAdaptations;
 
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly TreeAttribute watchedZenith;
-        private readonly ICoreClientAPI capi;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
 
-        public CreatureAdaptations(Entity entity, ICoreClientAPI capi) : base(entity)
+        public CreatureAdaptations(Entity entity) : base(entity)
         {
-            this.capi = capi;
+           // this.core = coreAPI;
 
+            AdaptationProducer = new Dictionary<Type, Func<Adaptation>>()
+            {
+                [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World,entity),
+                [typeof(BearAdaptation)] = () => new BearAdaptation(entity.World, entity as EntityPlayer)
+
+
+            };
+
+            ActiveAdaptations = new List<Adaptation>()
+            {
+
+            };
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
@@ -107,34 +120,47 @@ namespace zenith.Core.Adaptations
         public Adaptation CreateAdaption(CreatureDefinition creatureDefinition)
         {
 
-            var adaptProd = new adaptatio
-            if (creatureDefinition.AdaptationType == typeof(BearAdaptation))
+            if (AdaptationProducer.TryGetValue(creatureDefinition.AdaptationType, out var factory))
             {
-                return new BearAdaptation(capi.World);
+                return  factory( );
             }
             return null;
         }
 
         public void CheckAdaptation(CreatureType creatureType)
         {
-         
 
+            var def = CreatureDefinitions[creatureType];
+            var sapi = entity.World.Api as ICoreServerAPI;
+
+            def.Counter += 1;
+
+            if (def.Counter == def.Threshold &&
+                def.HasAdaptation && !def.AdaptAchieved == true)
             {
-                CreatureDefinitions[creatureType].Counter += 1;
+                def.AdaptAchieved = true;
+                var adaptation = CreateAdaption(def);
 
-                if (CreatureDefinitions[creatureType].Counter == CreatureDefinitions[creatureType].Threshold &&
-                    CreatureDefinitions[creatureType].HasAdaptation == true)
+                sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{creatureType.ToString()} Adaptation Successfully Assimilated", EnumChatType.Notification);
+
+
+
+                if (adaptation != null)
                 {
-                    CreatureDefinitions[creatureType].AdaptAchieved = true;
+                    ActiveAdaptations.Add(adaptation);
                 }
 
-                foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown ))
-                {
-
-                    Log($"[CA] {creature.ToString()}");
-                    
-                }
             }
+
+
+
+            foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
+            {
+
+                Log($"[CA] {creature.ToString()}");
+
+            }
+
         }
 
         public bool AdaptAchieved(CreatureType creatureType)
@@ -153,21 +179,16 @@ namespace zenith.Core.Adaptations
         {
             Log("[CA-FLOW] AssimilateLink Called");
             var def = CreatureDefinitions[creatureType];
-
-            foreach (var creature in CreatureDefinitions.Where(kvp => kvp.Value.Adaptation != null))
+            float dt = 30;
+            foreach (var adaptation in ActiveAdaptations)
             {
-                creature.Value.Adaptation.OnAssimilate(entity, def, CreatureDefinitions);
-                creature.Value?.Adaptation?.GetDistance(capi);
+                adaptation.Tick(dt);
+                adaptation.OnAssimilate(entity, def, CreatureDefinitions);
             }
 
 
 
         }
-
-
-
-
-
 
         private void Log(string message)
         {

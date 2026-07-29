@@ -15,14 +15,15 @@ namespace zenith.Core.Adaptations
 {
     public class WolfAdaptation : Adaptation // Corpse Consumption
     {
-        private readonly Entity entity;
+        private readonly Entity Entity;
         private readonly IWorldAccessor world;
-        EntityPlayer Player => entity as EntityPlayer;
+        EntityPlayer Player => Entity as EntityPlayer;
       public  CreatureType SourceCreature { get; }
 
 
-        public WolfAdaptation(IWorldAccessor world) : base(world)
+        public WolfAdaptation(IWorldAccessor world, Entity entity) : base(world,entity)
         {
+            this.Entity = entity;
             this.world = world;
         }
 
@@ -45,32 +46,39 @@ namespace zenith.Core.Adaptations
 
     public class BearAdaptation : Adaptation
     {
-        private readonly Entity entity;
 
-        private readonly ICoreAPI coreAPI;
     private readonly IWorldAccessor world;
+        private readonly Entity Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
 
-        EntityPlayer Player => entity as EntityPlayer;
-        // public CreatureType SourceCreature { get; }
-
-
-        public BearAdaptation(IWorldAccessor world) : base(world)
+        public BearAdaptation(IWorldAccessor world, Entity entity) : base(world, entity)
         {
+            this.Player = entity;
             this.world = world;
         }
-        public  void GetDistance(ICoreClientAPI capi)
+
+        public override void Tick(float dt)
         {
-            Vec3d direction = entity.Pos.XYZ - Player.Pos.XYZ;
+            
+            if ( Player == null) return;
 
-            double distance = direction.Length();
-            var entities = capi.World.GetNearestEntity(direction, 30, 20);
 
-            var en = capi.World.GetEntitiesAround(Player.Pos.XYZ, 30, 20);
 
-            Log($"{en}, Nearest Entity: {entities}");
+            var nearest = world.GetNearestEntity(Player.Pos.XYZ, 30, 20);
+
+            var entities = world.GetEntitiesAround(Player.Pos.XYZ, 30, 20);
+
+            foreach (var entity in entities)
+            {
+                double distance = entity.Pos.DistanceTo(Player.Pos.XYZ);
+
+                Log($"{entity.Code} - {distance:F1}m");
+
+            }
+
         }
+
 
 
                  private void Log(string message)
