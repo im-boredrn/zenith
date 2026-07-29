@@ -88,7 +88,7 @@ namespace zenith.Core
     .Where(d => d != DomainEnum.None) // skip None
     .ToDictionary(d => d, d => AbilityFactory.CreatePassives(d));
 
-            Attack = Enum.GetValues(typeof(DomainEnum))
+            Attack = Enum.GetValues<DomainEnum>()
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));

@@ -12,7 +12,6 @@ namespace zenith.Core.Adaptations
 
         public string EntityName => Type.ToString();
         public bool HasAdaptation { get; set; }
-        public bool AdaptAchieved { get; set; }
         public int Threshold { get; set; }
         public int Counter { get; set; }
         public float NutritionVal { get; set; }
@@ -24,7 +23,7 @@ namespace zenith.Core.Adaptations
 
         public override string ToString()
         {
-            return $"Adapted: {AdaptAchieved} | Counter: {Counter}/{Threshold} | Nutrition: {NutritionVal}";
+            return $"Adapted: {HasAdaptation} | Counter: {Counter}/{Threshold} | Nutrition: {NutritionVal}";
         }
 
     }

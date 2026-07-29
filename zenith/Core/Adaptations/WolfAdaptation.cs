@@ -20,7 +20,6 @@ namespace zenith.Core.Adaptations
         private readonly Entity Entity;
         private readonly IWorldAccessor world;
         EntityPlayer Player => Entity as EntityPlayer;
-      public  CreatureType SourceCreature { get; }
 
 
         public WolfAdaptation(IWorldAccessor world, Entity entity) : base(world,entity)
@@ -33,7 +32,6 @@ namespace zenith.Core.Adaptations
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef)
         {
 
-            if (!creatureDef[CreatureType.wolf].AdaptAchieved) return;
 
 
             float Sat;
@@ -43,6 +41,8 @@ namespace zenith.Core.Adaptations
             
             player.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
         }
+
+        public override CreatureType SourceCreature => CreatureType.wolf;
 
     }
 
@@ -74,15 +74,17 @@ namespace zenith.Core.Adaptations
 
             foreach (var nearbyEntity in entities)
             {
-                double distance = entity.Pos.DistanceTo(Player.Pos.XYZ);
+                double distance = nearbyEntity.Pos.DistanceTo(Player.Pos.XYZ);
 
                 sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
-                    $"{entity.Code} - {distance:F1}m ", EnumChatType.Notification);
+                    $"{nearbyEntity.Code} - {distance:F1}m ", EnumChatType.Notification);
             //    Log($"{entity.Code} - {distance:F1}m");
 
             }
 
         }
+
+        public override CreatureType SourceCreature => CreatureType.bear;
 
 
 

@@ -87,7 +87,7 @@ namespace zenith.Core.Adaptations
             },
         };
 
-        private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new Dictionary<Type, Func<Adaptation>>();
+        private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new();
         private readonly List<Adaptation> ActiveAdaptations;
 
         private EntityPlayer Player => entity as EntityPlayer;
@@ -107,23 +107,25 @@ namespace zenith.Core.Adaptations
 
             };
 
-            ActiveAdaptations = new List<Adaptation>()
-            {
-
-            };
+            ActiveAdaptations = new List<Adaptation>();
+            
             watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
             entity.WatchedAttributes["zenith"] = watchedZenith;
 
+            LoadCAdapt();
+
+
         }
 
-        
-        public Adaptation CreateAdaption(CreatureDefinition creatureDefinition)
+        public Adaptation CreateAdaption(CreatureType creatureType)
         {
+            var type = CreatureDefinitions[creatureType].AdaptationType;
 
-            if (AdaptationProducer.TryGetValue(creatureDefinition.AdaptationType, out var factory))
+            if (type != null && AdaptationProducer.TryGetValue(type, out var factory))
             {
-                return  factory( );
+                return factory();
             }
+
             return null;
         }
 
@@ -135,11 +137,18 @@ namespace zenith.Core.Adaptations
 
             def.Counter += 1;
 
-            if (def.Counter == def.Threshold &&
-                def.HasAdaptation && !def.AdaptAchieved == true)
+            if (def.Counter > def.Threshold)
             {
-                def.AdaptAchieved = true;
-                var adaptation = CreateAdaption(def);
+                def.Counter = def.Threshold;
+            }
+
+
+       
+
+            if (def.Counter == def.Threshold &&
+                def.HasAdaptation )
+            {
+                var adaptation = CreateAdaption(creatureType);
 
                 sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{creatureType.ToString()} Adaptation Successfully Assimilated", EnumChatType.Notification);
 
@@ -148,33 +157,23 @@ namespace zenith.Core.Adaptations
                 if (adaptation != null)
                 {
                     ActiveAdaptations.Add(adaptation);
+
+                    
                 }
 
             }
 
-
-
+            SaveCAdapt();
             foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
             {
-
+                
                 Log($"[CA] {creature.ToString()}");
 
             }
 
         }
 
-        public bool AdaptAchieved(CreatureType creatureType)
-        {
-            return CreatureDefinitions[creatureType].AdaptAchieved;
-        }
-
-        //public void GiveAdaptation(CreatureType creatureType)
-        //{
-        //    if (AdaptAchieved(creatureType))
-        //    {
-        //        CreatureDefinitions[creatureType].Adaptation.(Player);
-        //    }
-        //}
+   
         public void AssimilateLink(CreatureType creatureType) 
         {
             Log("[CA-FLOW] AssimilateLink Called");
@@ -188,6 +187,50 @@ namespace zenith.Core.Adaptations
 
 
 
+        }
+        public void SaveCAdapt()
+        {
+            foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
+            {
+                watchedZenith.SetInt($"{creature.Key} CA-Counter", creature.Value.Counter) ;
+            }
+
+            var adaptationTree = new TreeAttribute();
+
+            for (int i = 0; i < ActiveAdaptations.Count; i++)
+            {
+                adaptationTree.SetString(i.ToString(), ActiveAdaptations[i].SourceCreature.ToString());
+            }
+
+            watchedZenith["adaptations"] = adaptationTree;
+        }
+
+        public void LoadCAdapt()
+        {
+
+            var adaptationTree = watchedZenith.GetTreeAttribute("adaptations");
+
+            if (adaptationTree != null)
+            {
+                foreach (var key in adaptationTree)
+                {
+                    var creatureType = Enum.Parse<CreatureType>(adaptationTree.GetString(key.Key));
+
+                    var def = CreatureDefinitions[creatureType];
+
+                    var adaptation = CreateAdaption(creatureType); 
+
+                    if (adaptation != null)
+                    {
+                        ActiveAdaptations.Add(adaptation);
+                    }
+                }
+            }
+
+            foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
+            {
+                creature.Value.Counter = watchedZenith.GetInt($"{creature.Key} CA-Counter", 0);
+            }
         }
 
         private void Log(string message)

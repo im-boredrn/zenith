@@ -237,7 +237,7 @@ namespace zenith.Core.Assimilation
         {
             var es = Player?.EntitySelection?.Entity;
 
-            Log($"[FLOW] Try Assimilate Called!");
+           // Log($"[FLOW] Try Assimilate Called!");
 
             if (es == null)
             {
@@ -377,7 +377,7 @@ namespace zenith.Core.Assimilation
 
         private void SaveAssim()
         {
-            Log("[FLOW] SaveAssim Called");
+           // Log("[FLOW] SaveAssim Called");
 
 
             foreach (var kvp in Definitions)
