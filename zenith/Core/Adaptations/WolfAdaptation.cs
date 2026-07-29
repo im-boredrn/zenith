@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using zenith.Config;
@@ -48,11 +50,11 @@ namespace zenith.Core.Adaptations
     {
 
     private readonly IWorldAccessor world;
-        private readonly Entity Player;
+        private readonly EntityPlayer Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
 
-        public BearAdaptation(IWorldAccessor world, Entity entity) : base(world, entity)
+        public BearAdaptation(IWorldAccessor world, EntityPlayer entity) : base(world, entity) // Bear Sense, Pack Mule
         {
             this.Player = entity;
             this.world = world;
@@ -62,6 +64,7 @@ namespace zenith.Core.Adaptations
         {
             
             if ( Player == null) return;
+            var sapi = entity.World.Api as ICoreServerAPI;
 
 
 
@@ -69,11 +72,13 @@ namespace zenith.Core.Adaptations
 
             var entities = world.GetEntitiesAround(Player.Pos.XYZ, 30, 20);
 
-            foreach (var entity in entities)
+            foreach (var nearbyEntity in entities)
             {
                 double distance = entity.Pos.DistanceTo(Player.Pos.XYZ);
 
-                Log($"{entity.Code} - {distance:F1}m");
+                sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
+                    $"{entity.Code} - {distance:F1}m ", EnumChatType.Notification);
+            //    Log($"{entity.Code} - {distance:F1}m");
 
             }
 
