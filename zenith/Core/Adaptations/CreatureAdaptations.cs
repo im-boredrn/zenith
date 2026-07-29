@@ -100,12 +100,15 @@ namespace zenith.Core.Adaptations
         {
          
             {
+                        var sapi = entity.World.Api as ICoreServerAPI;
+
                 CreatureDefinitions[creatureType].Counter += 1;
 
                 if (CreatureDefinitions[creatureType].Counter == CreatureDefinitions[creatureType].Threshold &&
                     CreatureDefinitions[creatureType].HasAdaptation == true)
                 {
                     CreatureDefinitions[creatureType].AdaptAchieved = true;
+                    sapi.SendMessage(Player.Player,GlobalConstants.AllChatGroups, $"Corpse Consumption Adaptation Successfully Assimilated", EnumChatType.Notification);
                 }
 
                 foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown ))
