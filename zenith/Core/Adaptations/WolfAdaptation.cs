@@ -46,56 +46,6 @@ namespace zenith.Core.Adaptations
 
     }
 
-    public class BearAdaptation : Adaptation
-    {
-
-    private readonly IWorldAccessor world;
-        private readonly EntityPlayer Player;
-        static public bool DebugMode => ZenithSettings.ZDebugMode;
-
-
-        public BearAdaptation(IWorldAccessor world, EntityPlayer entity) : base(world, entity) // Bear Sense, Pack Mule
-        {
-            this.Player = entity;
-            this.world = world;
-        }
-
-        public override void Tick(float dt)
-        {
-            
-            if ( Player == null) return;
-            var sapi = entity.World.Api as ICoreServerAPI;
-
-
-
-            var nearest = world.GetNearestEntity(Player.Pos.XYZ, 30, 20);
-
-            var entities = world.GetEntitiesAround(Player.Pos.XYZ, 30, 20);
-
-            foreach (var nearbyEntity in entities)
-            {
-                double distance = nearbyEntity.Pos.DistanceTo(Player.Pos.XYZ);
-
-                sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
-                    $"{nearbyEntity.Code} - {distance:F1}m ", EnumChatType.Notification);
-            //    Log($"{entity.Code} - {distance:F1}m");
-
-            }
-
-        }
-
-        public override CreatureType SourceCreature => CreatureType.bear;
-
-
-
-                 private void Log(string message)
-        {
-            if (!DebugMode) return;
-            Player.World.Logger.Warning(message);
-        }
-
-    }
-
 
 }
 

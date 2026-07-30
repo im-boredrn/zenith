@@ -49,7 +49,7 @@ namespace zenith.Core.Adaptations
                 HasAdaptation = true,
                 Threshold = 4,
                 NutritionVal = 5f,
-                AdaptationType = typeof (BearAdaptation)
+                AdaptationType = typeof (BearSenses)
             },
 
             [CreatureType.wolf] = new CreatureDefinition()
@@ -97,12 +97,17 @@ namespace zenith.Core.Adaptations
 
         public CreatureAdaptations(Entity entity) : base(entity)
         {
-           // this.core = coreAPI;
+            // this.core = coreAPI;
+            if (Player == null)
+            {
+                throw new Exception("CreatureAdaptations attached to non-player entity");
+            }
+
 
             AdaptationProducer = new Dictionary<Type, Func<Adaptation>>()
             {
                 [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World,entity),
-                [typeof(BearAdaptation)] = () => new BearAdaptation(entity.World, entity as EntityPlayer)
+                [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer)
 
 
             };
@@ -143,8 +148,6 @@ namespace zenith.Core.Adaptations
             }
 
 
-       
-
             if (def.Counter == def.Threshold &&
                 def.HasAdaptation )
             {
@@ -170,7 +173,14 @@ namespace zenith.Core.Adaptations
                 Log($"[CA] {creature.ToString()}");
 
             }
+        }
 
+        public void Tick(float dt)
+        {
+            foreach (var adaptation in ActiveAdaptations)
+            {
+                adaptation.Tick(dt);
+            }
         }
 
    
@@ -178,15 +188,10 @@ namespace zenith.Core.Adaptations
         {
             Log("[CA-FLOW] AssimilateLink Called");
             var def = CreatureDefinitions[creatureType];
-            float dt = 30;
             foreach (var adaptation in ActiveAdaptations)
             {
-                adaptation.Tick(dt);
                 adaptation.OnAssimilate(entity, def, CreatureDefinitions);
             }
-
-
-
         }
         public void SaveCAdapt()
         {

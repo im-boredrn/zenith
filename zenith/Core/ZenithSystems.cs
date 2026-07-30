@@ -200,7 +200,7 @@ namespace zenith.Core
 
                 if (CanUsePassive(domain))
                 AbilityFactory?.TickPassives(domain.GetDomain());
-
+                CreatureAdaptations?.Tick(dt);
             }
             //   Log($"[DATA] Current Side is {player.World.Side}");
         }
