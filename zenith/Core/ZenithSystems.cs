@@ -13,6 +13,7 @@ using zenith.Core.Adaptations;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
+using zenith.Core.Renderers;
 using zenith.Core.Traits;
 using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
@@ -28,6 +29,7 @@ namespace zenith.Core
             public ProgressionManager ProgressionManager { get; }
         public AbilityFactory AbilityFactory { get; }
         public ZenithGui ZenithGui { get; }
+        public BearSenseRenderer BearSenseRenderer { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
         public AssimilationCore AssimilationCore { get; }
@@ -73,6 +75,8 @@ namespace zenith.Core
 
                 var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
 
+                 
+                BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
 
 
                 ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
@@ -202,6 +206,17 @@ namespace zenith.Core
                 AbilityFactory?.TickPassives(domain.GetDomain());
                 CreatureAdaptations?.Tick(dt);
             }
+             //Log($"[DATA] Current Side is {player.World.Side}");
+        }
+
+        public void OnClientTick(float dt)
+        {
+            var player = entity as EntityPlayer;
+            if (player == null) return;
+            //      Log($"[FLOW] OnClientTick Called");
+
+            CreatureAdaptations?.Tick(dt);
+
             //   Log($"[DATA] Current Side is {player.World.Side}");
         }
 

@@ -89,6 +89,7 @@ namespace zenith.Core.Adaptations
 
         private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new();
         private readonly List<Adaptation> ActiveAdaptations;
+        public BearSenses BearSenses { get; private set; }
 
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly TreeAttribute watchedZenith;
@@ -128,7 +129,11 @@ namespace zenith.Core.Adaptations
 
             if (type != null && AdaptationProducer.TryGetValue(type, out var factory))
             {
-                return factory();
+                var adaptation = factory();
+
+                Log($"Created {adaptation.GetType().Name} {adaptation.GetHashCode()}");
+
+                return adaptation;
             }
 
             return null;
@@ -151,6 +156,9 @@ namespace zenith.Core.Adaptations
             if (def.Counter == def.Threshold &&
                 def.HasAdaptation )
             {
+
+                Log("[LOAD] Creating adaptation");
+
                 var adaptation = CreateAdaption(creatureType);
 
                 sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{creatureType.ToString()} Adaptation Successfully Assimilated", EnumChatType.Notification);
@@ -159,7 +167,7 @@ namespace zenith.Core.Adaptations
 
                 if (adaptation != null)
                 {
-                    ActiveAdaptations.Add(adaptation);
+                    RegisterAdaptation(adaptation);
 
                     
                 }
@@ -173,6 +181,25 @@ namespace zenith.Core.Adaptations
                 Log($"[CA] {creature.ToString()}");
 
             }
+        }
+
+        private void RegisterAdaptation(Adaptation adaptation)
+        {
+
+            if (ActiveAdaptations.Any(a => a.SourceCreature == adaptation.SourceCreature))
+            {
+                Log($"Duplicate prevented {adaptation.SourceCreature}");
+                return;
+            }
+
+
+            if (adaptation is BearSenses bear)
+            {
+                if (BearSenses != null) return;
+                BearSenses = bear;
+            }
+
+            ActiveAdaptations.Add(adaptation);
         }
 
         public void Tick(float dt)
@@ -195,6 +222,14 @@ namespace zenith.Core.Adaptations
         }
         public void SaveCAdapt()
         {
+
+            Log($"Saving {ActiveAdaptations.Count} adaptations");
+
+            foreach (var adadpt in ActiveAdaptations)
+            {
+                Log($"SAVE {adadpt.SourceCreature} {adadpt.GetHashCode()}");
+
+            }
             foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
             {
                 watchedZenith.SetInt($"{creature.Key} CA-Counter", creature.Value.Counter) ;
@@ -222,8 +257,15 @@ namespace zenith.Core.Adaptations
                     var creatureType = Enum.Parse<CreatureType>(adaptationTree.GetString(key.Key));
 
                     var def = CreatureDefinitions[creatureType];
+                    def.HasAdaptation = true;
 
+                    Log("[LOAD] Creating adaptation");
                     var adaptation = CreateAdaption(creatureType); 
+
+                    if (adaptation is BearSenses bear)
+                    {
+                        BearSenses = bear;
+                    }
 
                     if (adaptation != null)
                     {
