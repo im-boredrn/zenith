@@ -29,14 +29,6 @@
           "SelectedChildIndex": 5,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "CreatureAdaptations.cs",
@@ -49,6 +41,14 @@
               "WhenOpened": "2026-07-29T01:47:31.873Z",
               "IsPinned": true,
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
             {
               "$type": "Document",
@@ -69,8 +69,8 @@
               "Title": "BearSenseRenderer.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Renderers\\BearSenseRenderer.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Renderers\\BearSenseRenderer.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Renderers\\BearSenseRenderer.cs*",
-              "RelativeToolTip": "zenith\\Core\\Renderers\\BearSenseRenderer.cs*",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Renderers\\BearSenseRenderer.cs",
+              "RelativeToolTip": "zenith\\Core\\Renderers\\BearSenseRenderer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-30T23:55:36.558Z",
@@ -82,9 +82,9 @@
               "Title": "BearSenses.cs",
               "DocumentMoniker": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\BearSenses.cs",
               "RelativeDocumentMoniker": "zenith\\Core\\Adaptations\\BearSenses.cs",
-              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\BearSenses.cs*",
-              "RelativeToolTip": "zenith\\Core\\Adaptations\\BearSenses.cs*",
-              "ViewState": "AgIAAGgAAAAAAAAAAAAUwH8AAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\Tomar\\source\\repos\\zenith\\zenith\\Core\\Adaptations\\BearSenses.cs",
+              "RelativeToolTip": "zenith\\Core\\Adaptations\\BearSenses.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAowG8AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-30T21:59:15.269Z",
               "EditorCaption": ""

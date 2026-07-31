@@ -75,23 +75,58 @@ namespace zenith.Core.Renderers
                     bool behind = screenPos.Z <= 0;
                         
 
+                  
                     float margin = 32;
 
                     float x = (float)screenPos.X;
                     float rawy = (float)screenPos.Y;
                     float y = capi.Render.FrameHeight - (float)screenPos.Y;
+                    int width = capi.Render.FrameWidth;
+                    int height = capi.Render.FrameHeight;
+                    bool offscreen = screenPos.X < 0 || screenPos.X > capi.Render.FrameWidth
+                        || screenPos.Y < 0 || screenPos.Y > capi.Render.FrameHeight
+                        || screenPos.Z <= 0;
 
-                    //if (behind)
-                    //{
-                    //    x = capi.Render.FrameWidth/2;
+                    if (screenPos.Z <= 0)
+                    {
+                        x = width - x;
+                        y = height - y;
+                    }
 
-                    //}
+                    if (offscreen)
+                    {
 
-                      x = Math.Clamp(x, margin, capi.Render.FrameWidth - margin);
+                        float centerX = capi.Render.FrameWidth / 2f;
+                        float centerY = capi.Render.FrameHeight / 2f;
 
-                    y = Math.Clamp(y, margin, capi.Render.FrameHeight - margin);
+                        float dX = x - centerX;
+                        float dY = y - centerY;
 
-                    capi.Render.GlPushMatrix();
+
+                        float distance = MathF.Max(Math.Abs(dX) / (centerX - margin),
+                            Math.Abs(dY) / (centerY - margin));
+
+
+                        if (distance > 1)
+                        {
+                            dX /= distance;
+                            dY /= distance;
+
+                            x = centerX + dX ;
+                            y = centerY + dY ;
+                        }
+                    }
+
+             
+
+
+
+
+
+                    x = Math.Clamp(x, margin, capi.Render.FrameWidth - margin);
+
+                   y = Math.Clamp(y, margin, capi.Render.FrameHeight - margin);
+
                 //    capi.Render.GlTranslate(x, y, 0);
 
                    float pulse = 1f + 0.25f * GameMath.Sin((float)capi.ElapsedMilliseconds / 150f);
@@ -100,22 +135,11 @@ namespace zenith.Core.Renderers
 
                    
 
-
-
-                    
-                    
-                     //  capi.Render.GlScale(pulse, pulse, 1f);
-
                         capi.Render.BindTexture2d(senseTextureID);
                       capi.Render.Render2DTexture(senseTextureID, x - size/2, y - size/2, size,size);
-                    capi.Logger.Notification(
-    $"WorldY: {sensed.WorldPosition.Y} ScreenY: {screenPos.Y}"
-);
+                    capi.Logger.Notification($"WorldY: {sensed.WorldPosition.Y} ScreenY: {screenPos.Y}");
                     //        capi.Logger.Notification($"Marker: {x}, {y}, Z:{screenPos.Z}");
 
-
-
-                    capi.Render.GlPopMatrix();
                     
 
                 }

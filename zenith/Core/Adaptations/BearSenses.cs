@@ -53,7 +53,7 @@ namespace zenith.Core.Adaptations
             SensedEntities.RemoveAll(s => s.Timer <= 0);
             SenseTimer += dt;
             DebugTimer += dt;
-            if (SenseTimer > 0.5f)
+            if (SenseTimer > 0.1f)
             {
                 UpdateSense();
 
@@ -103,7 +103,7 @@ namespace zenith.Core.Adaptations
                 Vec3d relative = entity.Pos.XYZ - Player.Pos.XYZ;
                 Vec3d direction = relative.Clone().Normalize();
                 Vec3d worldPos = entity.Pos.XYZ.AddCopy(0, entity.SelectionBox.Y2, 0);
-
+                double side = lookDir.Cross(direction).Y;
                 double dot = direction.Dot(lookDir);
 
                 if (existing != null)
@@ -113,6 +113,7 @@ namespace zenith.Core.Adaptations
                     existing.Direction = direction;
                     existing.Dot = dot;
                     existing.Distance = distance;
+                    existing.Side = side;
                 }
                 else
                 {
@@ -125,7 +126,8 @@ namespace zenith.Core.Adaptations
                         WorldPosition = worldPos,
                         Distance = distance,
                         Dot = dot,
-                        Timer = 5f
+                        Timer = 5f,
+                        Side = side
                         
 
                     });
@@ -167,6 +169,7 @@ namespace zenith.Core.Adaptations
 
             public double Distance;
             public double Dot;
+            public double Side;
 
             public float Timer = 5f;
         }
