@@ -16,8 +16,7 @@ namespace zenith.Core.Assimilation
     {
 
         public StatType selectedStat = StatType.Strength; // TODO : Bind to GUI
-        private readonly TreeAttribute watchedZenith;
-
+        private readonly ZenithData zenithData;
         public Dictionary<StatType, float> OutputPercentages { get; private set; } = new()
         {
             {StatType.Strength, 100f },
@@ -52,14 +51,13 @@ namespace zenith.Core.Assimilation
          private EntityPlayer Player => entity as EntityPlayer;
         private readonly ICoreClientAPI capi;
 
-        public StatOutput(Entity entity, ICoreClientAPI capi)
+        public StatOutput(Entity entity, ICoreClientAPI capi, ZenithData zenithData)
         {
             this.entity = entity;
             this.capi = capi;
+            this.zenithData = zenithData;
             var entityPlayer = Player as EntityPlayer;
 
-            watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
 
             LoadStatOutput();
 
@@ -150,14 +148,14 @@ namespace zenith.Core.Assimilation
         private void SaveStatOutput()
         {
 
-            watchedZenith.SetInt("SelectedStat",(int)selectedStat);
+            zenithData.Tree.SetInt("SelectedStat",(int)selectedStat);
 
             foreach (var Stat in OutputPercentages)
             {
                 var key = Stat.Key;
                 var value = Stat.Value;
 
-                watchedZenith.SetFloat($"{key} Output", value);
+                zenithData.Tree.SetFloat($"{key} Output", value);
 
         //       Log($"[SAVE]  {key} Output | Value : {value}");
             }
@@ -170,13 +168,13 @@ namespace zenith.Core.Assimilation
 
         private void LoadStatOutput()
         {
-          selectedStat = (StatType)watchedZenith.GetInt("SelectedStat", (int)selectedStat);
+          selectedStat = (StatType)zenithData.Tree.GetInt("SelectedStat", (int)selectedStat);
 
             foreach (var Stat in OutputPercentages)
             {
                 var key = Stat.Key;
 
-               float value = watchedZenith.GetFloat($"{key} Output", 100f);
+               float value = zenithData.Tree.GetFloat($"{key} Output", 100f);
 
                 OutputPercentages[key] = value;
 

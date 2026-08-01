@@ -12,6 +12,7 @@ namespace zenith.Core.Adaptations
 
         public string EntityName => Type.ToString();
         public bool HasAdaptation { get; set; }
+        public bool IsLocked { get; set; } = false;
         public int Threshold { get; set; }
         public int Counter { get; set; }
         public float NutritionVal { get; set; }
@@ -19,11 +20,9 @@ namespace zenith.Core.Adaptations
 
 
         public Type AdaptationType { get; set; }
-     //  public IAdaptation Adaptation { get; set; }
-
         public override string ToString()
         {
-            return $"Adapted: {HasAdaptation} | Counter: {Counter}/{Threshold} | Nutrition: {NutritionVal}";
+            return $"Adapted: {IsLocked} | Counter: {Counter}/{Threshold} | Nutrition: {NutritionVal}";
         }
 
     }

@@ -8,13 +8,16 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 using zenith.Config;
 using static zenith.Core.Assimilation.AssimilationCore;
 
 namespace zenith.Core.Adaptations
 {
-    public class BearSenses : Adaptation
+    public class BearSenses  : Adaptation 
     {
+
+       
         private readonly IWorldAccessor world;
         private readonly EntityPlayer Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
@@ -84,7 +87,7 @@ namespace zenith.Core.Adaptations
             foreach (var entity in entities)
             {
 
-                if ($"{entity.Code}".Contains("player")) continue;
+                if ($"{entity.Code}".Contains("player") || entity.Code.ToString().Contains("item")) continue;
                 if (!entity.Alive) continue;
 
                 SensedEntity existing = null;
@@ -105,7 +108,7 @@ namespace zenith.Core.Adaptations
                 Vec3d worldPos = entity.Pos.XYZ.AddCopy(0, entity.SelectionBox.Y2, 0);
                 double side = lookDir.Cross(direction).Y;
                 double dot = direction.Dot(lookDir);
-
+                bool hostile = IsPredator(entity);
                 if (existing != null)
                 {
                     existing.Timer = 5f;
@@ -114,6 +117,7 @@ namespace zenith.Core.Adaptations
                     existing.Dot = dot;
                     existing.Distance = distance;
                     existing.Side = side;
+                    existing.Hostile = hostile;
                 }
                 else
                 {
@@ -127,7 +131,8 @@ namespace zenith.Core.Adaptations
                         Distance = distance,
                         Dot = dot,
                         Timer = 5f,
-                        Side = side
+                        Side = side,
+                        Hostile = hostile
                         
 
                     });
@@ -172,6 +177,7 @@ namespace zenith.Core.Adaptations
             public double Side;
 
             public float Timer = 5f;
+            public bool Hostile;
         }
   string GetDirection(double dot)
         {
@@ -187,6 +193,28 @@ namespace zenith.Core.Adaptations
             {
                 return ("SIDE");
             }
+        }
+
+        bool IsPredator(Entity entity)
+        {
+
+
+            if (entity is EntityAgent)
+            {
+                if (entity.Code.ToString().Contains("bear") || entity.Code.ToString().Contains("wolf") ||
+                    entity.Code.ToString().Contains("hyena") ||
+                    entity.Code.ToString().Contains("drifter") ||
+                    entity.Code.ToString().Contains("bowtorn") ||
+                    entity.Code.ToString().Contains("shiver"))
+                {
+                    return true;
+                }
+
+                
+                    
+                
+            }
+            return false;
         }
         public override CreatureType SourceCreature => CreatureType.bear;
 

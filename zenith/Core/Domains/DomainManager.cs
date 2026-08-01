@@ -27,15 +27,16 @@ namespace zenith.Core.Domains
         //#REF Dictionary Creation
         public Dictionary<DomainEnum, IDomainInfo> Domains { get; private set; }
 
-        //#REF TreeAttribute Usage
-        public TreeAttribute watchedZenith;
 
-        public DomainManager(Entity entity, ModConfig config)
+        private readonly ZenithData zenithData;
+
+
+
+        public DomainManager(Entity entity, ModConfig config, ZenithData Data)
         {
             this.entity = entity;
-
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+            this.zenithData = Data;
+          
 
             Domains = new Dictionary<DomainEnum, IDomainInfo>();
 
@@ -128,11 +129,10 @@ namespace zenith.Core.Domains
         public void SaveDomains() // Not saving correctly
         {
             Log($"[FLOW] Calling SaveDomains");
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+           
             foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
+                var domainTree = zenithData.Tree[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
 
                
@@ -142,40 +142,21 @@ namespace zenith.Core.Domains
                 domainTree.SetBool("Maxed", domain.IsDMaxed());
 
 
-                watchedZenith[domain.GetDomainName()] = domainTree;
+                zenithData.Tree[domain.GetDomainName()] = domainTree;
 
               //  Log($"[DATA] Domain : {domain.GetDomainName()} | Counter : {domainTree.GetFloat("Counter")} | Tier : {domainTree.GetInt("Tier")} | Maxed? : {domainTree.GetBool("Maxed")}");
 
-
             }
-            //foreach (var key in watchedZenith.Keys)
-            //{
-            //    var attr = watchedZenith[key];
-
-            //    Log($"KEY={key}");
-
-            //    if (attr == null)
-            //    {
-            //        Log($"NULL ATTRIBUTE: {key}");
-            //    }
-            //    else
-            //    {
-            //        Log($"TYPE={attr.GetType().Name}");
-            //    }
-            //}
-
             entity.WatchedAttributes.MarkPathDirty("zenith");
         }
 
         public void LoadDomains() 
         {
          
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
 
             foreach (var domain in Domains.Values)
             {
-                var domainTree = watchedZenith[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
+                var domainTree = zenithData.Tree[domain.GetDomainName()] as TreeAttribute ?? new TreeAttribute();
 
 
                 domain.LoadState(

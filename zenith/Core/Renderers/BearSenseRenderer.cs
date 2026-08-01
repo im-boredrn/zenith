@@ -14,8 +14,9 @@ namespace zenith.Core.Renderers
 
         private readonly ICoreClientAPI capi;
         private readonly CreatureAdaptations adaptations;
-        private int senseTextureID;
-
+        private int predatorSenseTextureID;
+        private int preySenseTextureID;
+        private int testTex;
 
         private MeshData mesh;
         private MeshRef meshRef;
@@ -25,11 +26,12 @@ namespace zenith.Core.Renderers
             this.capi = capi;
             this.adaptations = adaptations;
 
-            //  capi.Logger.Warning($"[RENDERER] GOT {bearSense.GetHashCode()}");
+              capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
             //  capi.Logger.Warning($"BearSense count: {bearSense?.sensedEntities.Count}");
 
-            senseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/sense.png"));
-          
+            predatorSenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/predatorSenseS.png"));
+            preySenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/preySenseD.png"));
+            testTex = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/sense.png"));
             float x = capi.Render.FrameWidth / 2f;
             float y = capi.Render.FrameHeight / 2f;
             capi.Event.RegisterRenderer(this, EnumRenderStage.Ortho); // NEVER FORGET RENDER STAGE
@@ -44,6 +46,7 @@ namespace zenith.Core.Renderers
 
 
             var bearSense = adaptations?.BearSenses;
+          //  capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
 
             if (bearSense == null) return;
 
@@ -83,8 +86,8 @@ namespace zenith.Core.Renderers
                     float y = capi.Render.FrameHeight - (float)screenPos.Y;
                     int width = capi.Render.FrameWidth;
                     int height = capi.Render.FrameHeight;
-                    bool offscreen = screenPos.X < 0 || screenPos.X > capi.Render.FrameWidth
-                        || screenPos.Y < 0 || screenPos.Y > capi.Render.FrameHeight
+                    bool offscreen = screenPos.X < 0 || screenPos.X > width
+                        || screenPos.Y < 0 || screenPos.Y > height
                         || screenPos.Z <= 0;
 
                     if (screenPos.Z <= 0)
@@ -113,11 +116,11 @@ namespace zenith.Core.Renderers
                             dY /= distance;
 
                             x = centerX + dX ;
-                            y = centerY + dY ;
+                            y = centerY + dY;
                         }
                     }
 
-             
+
 
 
 
@@ -133,11 +136,17 @@ namespace zenith.Core.Renderers
 
                    float size = 32 * pulse;
 
-                   
+                   if (sensed.Hostile)
+                    {
+                        capi.Render.Render2DTexture(predatorSenseTextureID, x - size / 2, y - size / 2, size, size);
+                    }
+                   else
+                    {
+                        capi.Render.Render2DTexture(preySenseTextureID, x - size / 2, y - size / 2, size, size);
+                    }
 
-                        capi.Render.BindTexture2d(senseTextureID);
-                      capi.Render.Render2DTexture(senseTextureID, x - size/2, y - size/2, size,size);
-                    capi.Logger.Notification($"WorldY: {sensed.WorldPosition.Y} ScreenY: {screenPos.Y}");
+                       
+                  //  capi.Logger.Notification($"WorldY: {sensed.WorldPosition.Y} ScreenY: {screenPos.Y}");
                     //        capi.Logger.Notification($"Marker: {x}, {y}, Z:{screenPos.Z}");
 
                     
