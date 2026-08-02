@@ -27,7 +27,7 @@ namespace zenith.Core.Adaptations
         {
             this.Player = entity;
             this.world = world;
-            Log($"[BEAR] Created {this.GetHashCode()}");
+            //Log($"[BEAR] Created {this.GetHashCode()}");
             Log($"Side: {entity.World.Side}");
 
 
@@ -60,7 +60,7 @@ namespace zenith.Core.Adaptations
             {
                 UpdateSense();
 
-                Log($"[BEAR] Sensed count after update: {sensedEntities.Count}");
+              //  Log($"[BEAR] Sensed count after update: {sensedEntities.Count}");
                 SenseTimer = 0;
             }
 
@@ -155,10 +155,10 @@ namespace zenith.Core.Adaptations
 
 
                 double angle = Math.Acos(sensed.Dot) * GameMath.RAD2DEG;
-                senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
+            //    senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
 
             }
-            Log(senseOutput.ToString());
+            //Log(senseOutput.ToString());
             //sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
             //     senseOutput.ToString(), EnumChatType.Notification);
         }
@@ -198,7 +198,6 @@ namespace zenith.Core.Adaptations
         bool IsPredator(Entity entity)
         {
 
-
             if (entity is EntityAgent)
             {
                 if (entity.Code.ToString().Contains("bear") || entity.Code.ToString().Contains("wolf") ||
@@ -209,11 +208,12 @@ namespace zenith.Core.Adaptations
                 {
                     return true;
                 }
-
-                
-                    
-                
+                else
+                {
+                    return false;
+                }
             }
+
             return false;
         }
         public override CreatureType SourceCreature => CreatureType.bear;

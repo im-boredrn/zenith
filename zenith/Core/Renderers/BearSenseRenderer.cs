@@ -21,6 +21,8 @@ namespace zenith.Core.Renderers
         private MeshData mesh;
         private MeshRef meshRef;
 
+        public bool BearSenseEnabled { get; set; }
+
         public BearSenseRenderer(ICoreClientAPI capi, CreatureAdaptations adaptations)
         { 
             this.capi = capi;
@@ -29,11 +31,11 @@ namespace zenith.Core.Renderers
               capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
             //  capi.Logger.Warning($"BearSense count: {bearSense?.sensedEntities.Count}");
 
-            predatorSenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/predatorSenseS.png"));
-            preySenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/preySenseD.png"));
+            predatorSenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/pred.png"));
+            preySenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/prey.png"));
             testTex = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/sense.png"));
-            float x = capi.Render.FrameWidth / 2f;
-            float y = capi.Render.FrameHeight / 2f;
+
+          
             capi.Event.RegisterRenderer(this, EnumRenderStage.Ortho); // NEVER FORGET RENDER STAGE
 
             CreateMesh();
@@ -44,6 +46,7 @@ namespace zenith.Core.Renderers
 
             //     capi.Logger.Notification($"[RENDERER]  Entities: {bearSense.sensedEntities.Count}");
 
+            if (!BearSenseEnabled) return;
 
             var bearSense = adaptations?.BearSenses;
           //  capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
@@ -122,10 +125,6 @@ namespace zenith.Core.Renderers
 
 
 
-
-
-
-
                     x = Math.Clamp(x, margin, capi.Render.FrameWidth - margin);
 
                    y = Math.Clamp(y, margin, capi.Render.FrameHeight - margin);
@@ -159,6 +158,11 @@ namespace zenith.Core.Renderers
             }
 
 
+        }
+
+        public void ToggleBearSense()
+        {
+            BearSenseEnabled = !BearSenseEnabled;
         }
 
         private void CreateMesh()

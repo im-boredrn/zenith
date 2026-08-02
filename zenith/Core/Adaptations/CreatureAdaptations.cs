@@ -172,8 +172,8 @@ namespace zenith.Core.Adaptations
                 Log("[LOAD] Creating adaptation");
 
                 var adaptation = CreateAdaption(creatureType);
-
-                sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups, $"{creatureType.ToString()} Adaptation Successfully Assimilated", EnumChatType.Notification);
+                var player = entity as IServerPlayer;
+                sapi.SendIngameDiscovery(player, "Adaptation", $"{creatureType.ToString().ToUpper()} Adaptation Successfully Assimilated");
 
 
 
@@ -228,7 +228,7 @@ namespace zenith.Core.Adaptations
 
         public void Tick(float dt)
         {
-            Log($"Client COUNT AFTER ADD: {ActiveAdaptations.Count}");
+       //     Log($"Client COUNT AFTER ADD: {ActiveAdaptations.Count}");
 
             foreach (var adaptation in ActiveAdaptations)
             {
@@ -306,7 +306,7 @@ namespace zenith.Core.Adaptations
                     var def = CreatureDefinitions[creatureType];
                     def.IsLocked = true;
 
-                    Log("[LOAD] Creating adaptation");
+             //       Log("[LOAD] Creating adaptation");
                     var adaptation = CreateAdaption(creatureType); 
 
                     if (adaptation is BearSenses bear)

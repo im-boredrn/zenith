@@ -76,22 +76,45 @@ public class zenithCore : ModSystem
 
         ZenithNetwork.RegisterClient(api);
 
-        api.Event.PlayerJoin += (IClientPlayer player) =>
-        {
-            api.Event.EnqueueMainThreadTask(() =>
-            {
-                if (!player.Entity.HasBehavior<ZenithBehavior>())
+
+       
+        
+            api.Event.PlayerJoin += (IClientPlayer player) =>
+            { // Apparently Causes Crash, Might not be My mod though | Could be null player.
+                api.Event.EnqueueMainThreadTask(() =>
                 {
-                    // Pass capi here so GUI can be initialized
-                    player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
-                    api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
-                }
+                    try
+                    {
+                        api.Logger.Notification("AttachBehaviors task started");
 
-               
+                        if (player.Entity == null)
+                        {
+                            api.Logger.Error("Player entity was null!");
+                            return;
+                        }
 
-            }, "AttachBehaviors");
- 
-        };
+                        if (!player.Entity.HasBehavior<ZenithBehavior>())
+                        {
+                            // Pass capi here so GUI can be initialized
+                            player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
+                            api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Start Client Side EnqueueMainThreadTask Threw {e}");
+                    }
+
+                   
+
+
+                }, "AttachBehaviors");
+
+            };
+
+        
+       
 
 
         Keybinds.WireKeybinds(api);
@@ -111,6 +134,22 @@ public class zenithCore : ModSystem
             }
             return false;
         });
+
+        api.Input.RegisterHotKey("togglesense", "Toggle Bear Senses", GlKeys.I, HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("togglesense", comb =>
+        {
+            var player = api.World.Player?.Entity as EntityPlayer;
+            if (player == null) return false;
+
+            var behavior = player.GetBehavior<ZenithBehavior>();
+            if (behavior?.systems?.BearSenseRenderer != null)
+            {
+                behavior.systems.BearSenseRenderer.ToggleBearSense();
+                return true;
+            }
+            return false;
+        });
+
 
     }
 
