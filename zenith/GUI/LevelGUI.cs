@@ -54,7 +54,7 @@ namespace zenith.GUI
                 var trait = kvp.Value;
 
                 var assimLevel = zenith?.GetInt($"{key}LVL", 0);
-                string text = $"{trait.EntityName} lvl: {assimLevel}";
+                string text = $"{trait.EntityName} lvl: {assimLevel}/{trait.MaxLVL}";
                 string textID = $"Creature{trait.EntityName}";
 
                 SingleComposer.AddDynamicText(text,
