@@ -52,6 +52,15 @@ namespace zenith.Core.Adaptations
                 AdaptationType = typeof (BearSenses)
             },
 
+
+            [CreatureType.hare] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 2,
+            },
+
             [CreatureType.wolf] = new CreatureDefinition()
             {
                 Counter = 0,
@@ -62,7 +71,25 @@ namespace zenith.Core.Adaptations
 
             },
 
-            [CreatureType.sheep] = new CreatureDefinition()
+            [CreatureType.fox] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 2,
+
+            },
+
+            [CreatureType.goat] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 3f,
+
+            },
+
+            [CreatureType.deer] = new CreatureDefinition()
             {
                 Counter = 0,
                 HasAdaptation = false,
@@ -71,23 +98,53 @@ namespace zenith.Core.Adaptations
 
             },
 
-            [CreatureType.pig] = new CreatureDefinition()
+            [CreatureType.raccoon] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 0.5f,
+
+            },
+
+            [CreatureType.sheep] = new CreatureDefinition()
             {
                 Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 4.5f,
- 
 
             },
 
-            [CreatureType.hare] = new CreatureDefinition()
+            [CreatureType.chicken] = new CreatureDefinition()
             {
                 Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 2.5f,
+
             },
+
+            [CreatureType.pig] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 8f,
+ 
+
+            },
+
+            [CreatureType.hyena] = new CreatureDefinition()
+            {
+                Counter = 0,
+                HasAdaptation = false,
+                Threshold = 5,
+                NutritionVal = 1.5f,
+
+            },
+
+
 
 
             [CreatureType.unknown] = new CreatureDefinition()
