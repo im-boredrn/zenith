@@ -43,7 +43,7 @@ namespace zenith.Core.Abilities
 
         //    playerStats.Set("miningSpeedMul", "zenith", stageProvider.GetMiningSpeedMultiplier(), true);
 
-            SaveStats(); // So I can retrieve stats for GUI
+          //  SaveStats(); // So I can retrieve stats for GUI
             // could also mark dirty here if other method causes issues.
         }
 
@@ -51,7 +51,6 @@ namespace zenith.Core.Abilities
         {
 
           
-            entity.WatchedAttributes.MarkPathDirty("zenith");
 
 
         }

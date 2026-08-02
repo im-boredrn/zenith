@@ -21,7 +21,7 @@ namespace zenith.Core.Renderers
         private MeshData mesh;
         private MeshRef meshRef;
 
-        public bool BearSenseEnabled { get; set; }
+        public bool BearSenseEnabled { get; private set; } = true;
 
         public BearSenseRenderer(ICoreClientAPI capi, CreatureAdaptations adaptations)
         { 
@@ -45,13 +45,13 @@ namespace zenith.Core.Renderers
         {
 
             //     capi.Logger.Notification($"[RENDERER]  Entities: {bearSense.sensedEntities.Count}");
+            var bearSense = adaptations?.BearSenses;
+            if (bearSense == null) return;
 
             if (!BearSenseEnabled) return;
 
-            var bearSense = adaptations?.BearSenses;
           //  capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
 
-            if (bearSense == null) return;
 
             capi.Render.OrthoMode(capi.Render.FrameWidth, capi.Render.FrameHeight);
             capi.Render.GlMatrixModeModelView();

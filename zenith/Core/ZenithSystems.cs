@@ -85,7 +85,7 @@ namespace zenith.Core
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();
 
-                    CreatureAdaptations?.CheckLoad();
+                    CreatureAdaptations?.ReloadAdapt();
                 });
             }
 
