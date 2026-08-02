@@ -15,7 +15,7 @@ namespace zenith.Core.Traits
     public class Traits
     {
 
-        private readonly TreeAttribute watchedZenith;
+        private readonly ZenithData zenithData;
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         private readonly Entity entity;
@@ -23,15 +23,12 @@ namespace zenith.Core.Traits
         private EntityPlayer Player => entity as EntityPlayer;
         private StatOutput StatOutput;
       
-        public Traits(Entity entity, AssimilationCore assimilationProvider, StatOutput statOutput)
+        public Traits(Entity entity, AssimilationCore assimilationProvider, StatOutput statOutput, ZenithData zenithData    )
         {
             this.entity = entity;
             this.assimilationProvider = assimilationProvider;
             this.StatOutput = statOutput;
-            var entityPlayer = Player as EntityPlayer;
-
-            watchedZenith = (TreeAttribute)(entityPlayer.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entityPlayer.WatchedAttributes["zenith"] = watchedZenith;
+            this.zenithData = zenithData;
         }
 
         public static class ZenithKeys
@@ -178,9 +175,9 @@ namespace zenith.Core.Traits
 
             foreach (var stat in gTotals.GUIStats) 
             {
-                watchedZenith.SetFloat(ZenithKeys.GUIKeys[stat.Key], stat.Value);
+                zenithData.Tree.SetFloat(ZenithKeys.GUIKeys[stat.Key], stat.Value);
 
-                watchedZenith.SetFloat(ZenithKeys.GOutputKeys[stat.Key], StatOutput.OutputPercentages[stat.Key]);
+                zenithData.Tree.SetFloat(ZenithKeys.GOutputKeys[stat.Key], StatOutput.OutputPercentages[stat.Key]);
                 //Log($"[SAVETRAITS]Key : {stat.Key} | Value {stat.Value} | Output {StatOutput.OutputPercentages[stat.Key]}%  ");
             }
 

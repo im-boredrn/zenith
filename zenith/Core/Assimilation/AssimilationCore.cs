@@ -24,7 +24,8 @@ namespace zenith.Core.Assimilation
         static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer;
 
-        private readonly TreeAttribute watchedZenith;
+        private readonly ZenithData zenithData;
+
 
         public enum CreatureType
         {
@@ -221,12 +222,10 @@ namespace zenith.Core.Assimilation
              };
  
       
-        public AssimilationCore(Entity entity) : base(entity)
+        public AssimilationCore(Entity entity, ZenithData data) : base(entity)
         {
+            this.zenithData = data;
 
-
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
             LoadAssim();
             CalculateTotals();
             
@@ -237,7 +236,7 @@ namespace zenith.Core.Assimilation
         {
             var es = Player?.EntitySelection?.Entity;
 
-            Log($"[FLOW] Try Assimilate Called!");
+           // Log($"[FLOW] Try Assimilate Called!");
 
             if (es == null)
             {
@@ -377,7 +376,7 @@ namespace zenith.Core.Assimilation
 
         private void SaveAssim()
         {
-            Log("[FLOW] SaveAssim Called");
+           // Log("[FLOW] SaveAssim Called");
 
 
             foreach (var kvp in Definitions)
@@ -386,25 +385,11 @@ namespace zenith.Core.Assimilation
                 var key = kvp.Key;
                 var trait = kvp.Value;
 
-                watchedZenith.SetInt($"{key}LVL", trait.AssimLVL);
+                zenithData.Tree.SetInt($"{key}LVL", trait.AssimLVL);
           
              //   Log($"KEY : {key} LVL");
             }
-            //foreach (var key in watchedZenith.Keys)
-            //{
-            //    var attr = watchedZenith[key];
-
-            //    Log($"KEY={key}");
-
-            //    if (attr == null)
-            //    {
-            //        Log($"NULL ATTRIBUTE: {key}");
-            //    }
-            //    else
-            //    {
-            //        Log($"TYPE={attr.GetType().Name}");
-            //    }
-            //}
+            
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
             // Log($"[SAVE] AssimCounter : {watchedZenith.GetInt("AssimCounter", 0)} | AssimStage : {AssimStage}"); 
@@ -419,9 +404,9 @@ namespace zenith.Core.Assimilation
                 var key = kvp.Key;
                 var trait = kvp.Value;
 
-                trait.AssimLVL = watchedZenith.GetInt($"{key}LVL", 0);
+                trait.AssimLVL = zenithData.Tree.GetInt($"{key}LVL", 0);
    
-                Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
+             //   Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
             }
           
         }

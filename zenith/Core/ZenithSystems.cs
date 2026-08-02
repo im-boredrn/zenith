@@ -13,6 +13,7 @@ using zenith.Core.Adaptations;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
+using zenith.Core.Renderers;
 using zenith.Core.Traits;
 using zenith.GUI;
 using static zenith.Core.ZenithBehavior;
@@ -24,15 +25,17 @@ namespace zenith.Core
         {
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 
+        public ZenithData ZenithData { get; }
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
         public AbilityFactory AbilityFactory { get; }
         public ZenithGui ZenithGui { get; }
+        public BearSenseRenderer BearSenseRenderer { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
 
         public AssimilationCore AssimilationCore { get; }
         public CreatureAdaptations CreatureAdaptations { get; }
-        public TraitManager TraitManager { get; }
+        public Traits.Traits Traits { get; }
         public StatOutput StatOutput { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
@@ -43,26 +46,25 @@ namespace zenith.Core
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
             this.entity = entity;
-
+            ZenithData = new ZenithData(entity);
             // Core managers
-            ProgressionManager = new ProgressionManager(entity);
+            ProgressionManager = new ProgressionManager(entity, ZenithData);
              AbilityFactory = new AbilityFactory(ProgressionManager ,entity); 
             ProgressionManager.LoadProgression();
 
-            AssimilationCore = new AssimilationCore(entity);
-            CreatureAdaptations = new CreatureAdaptations(entity);
-                StatOutput = new StatOutput(entity, capi);
-           
-           
-            TraitManager = new TraitManager(entity, AssimilationCore, StatOutput);
+            AssimilationCore = new AssimilationCore(entity, ZenithData);
+            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData);
+                StatOutput = new StatOutput(entity, capi, ZenithData);
+
+            Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
 
 
             if (entity.World.Side == EnumAppSide.Server)
             {
-                TraitManager.Traits.ApplyTraits();
+                Traits.ApplyTraits();
             }
 
-            DomainManager = new DomainManager(entity, modConfig);
+            DomainManager = new DomainManager(entity, modConfig, ZenithData);
             DomainManager.LoadDomains();
             RefreshStats();
           
@@ -73,6 +75,8 @@ namespace zenith.Core
 
                 var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
 
+                 
+                BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
 
 
                 ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
@@ -80,6 +84,8 @@ namespace zenith.Core
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();
+
+                    CreatureAdaptations?.ReloadAdapt();
                 });
             }
 
@@ -88,7 +94,7 @@ namespace zenith.Core
     .Where(d => d != DomainEnum.None) // skip None
     .ToDictionary(d => d, d => AbilityFactory.CreatePassives(d));
 
-            Attack = Enum.GetValues(typeof(DomainEnum))
+            Attack = Enum.GetValues<DomainEnum>()
                 .Cast<DomainEnum>()
                 .Where(d => d != DomainEnum.None)
                 .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
@@ -157,7 +163,7 @@ namespace zenith.Core
 
             AssimilationCore.OnAssimChanged += () =>
             {
-                TraitManager.Traits.ApplyTraits();
+                Traits.ApplyTraits();
             };
 
             AssimilationCore.AssimilationSuccess += (creatureT ) =>
@@ -169,7 +175,7 @@ namespace zenith.Core
             StatOutput.OnOutputChange += () =>
             {
                 ZenithGui?.BonusGUI?.UpdateBonusStats();
-                TraitManager.Traits.ApplyTraits();
+                Traits.ApplyTraits();
                 Log("[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
 
@@ -200,9 +206,20 @@ namespace zenith.Core
 
                 if (CanUsePassive(domain))
                 AbilityFactory?.TickPassives(domain.GetDomain());
-
+             //   CreatureAdaptations?.Tick(dt);
             }
-            //   Log($"[DATA] Current Side is {player.World.Side}");
+             //Log($"[DATA] Current Side is {player.World.Side}");
+        }
+
+        public void OnClientTick(float dt)
+        {
+            var player = entity as EntityPlayer;
+            if (player == null) return;
+            //      Log($"[FLOW] OnClientTick Called");
+
+            CreatureAdaptations?.Tick(dt);
+
+           // Log($"CLIENT COUNT: {CreatureAdaptations.ActiveAdaptations.Count}");
         }
 
         private bool CanUsePassive( IDomainInfo domain)

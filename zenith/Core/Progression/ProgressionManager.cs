@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,16 +34,15 @@ namespace zenith.Core.Progression
        static private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
         private int EvolutionPoints;
 
-        private readonly TreeAttribute watchedZenith;
 
         private readonly Entity entity;
+        private readonly ZenithData data;
         private EntityPlayer Player => entity as EntityPlayer;
         // Constructor
-        public ProgressionManager(Entity entity )
+        public ProgressionManager(Entity entity, ZenithData zenithData )
         {
             this.entity = entity;
-            watchedZenith = (TreeAttribute)(entity.WatchedAttributes.GetTreeAttribute("zenith") ?? new TreeAttribute());
-            entity.WatchedAttributes["zenith"] = watchedZenith;
+            this.data = zenithData;
 
         }
 
@@ -149,18 +149,6 @@ namespace zenith.Core.Progression
 
         }
 
-        //public float GetArmorWSAMultiplier()
-        //{
-        //    return Stage switch
-        //    {
-        //        2 => ZenithSettings.ZStageArmorWSAMultipiler2,
-        //        3 => ZenithSettings.ZStageArmorWSAMultipiler3,
-        //        _ => 0f
-        //    };
-
-        //}
-
-    
 
 
         public float GetIgniteChanceMultiplier()
@@ -213,27 +201,13 @@ namespace zenith.Core.Progression
         private void SaveProgression()
         {
             Log("[FLOW] SaveProgression Called");
+            var dataTree = data.Tree;
+            dataTree.SetInt("Stage", Stage);
+            dataTree.SetInt("DomainPoints", DomainPoints);
+            dataTree.SetInt("EvolutionPoints", EvolutionPoints);
+            dataTree.SetString("StageName", GetStageName());
 
-            watchedZenith.SetInt("Stage", Stage);
-            watchedZenith.SetInt("DomainPoints", DomainPoints);
-            watchedZenith.SetInt("EvolutionPoints", EvolutionPoints);
-            watchedZenith.SetString("StageName", GetStageName());
-
-            //foreach (var key in watchedZenith.Keys)
-            //{
-            //    var attr = watchedZenith[key];
-
-            //    Log($"KEY={key}");
-
-            //    if (attr == null)
-            //    {
-            //        Log($"NULL ATTRIBUTE: {key}");
-            //    }
-            //    else
-            //    {
-            //        Log($"TYPE={attr.GetType().Name}");
-            //    }
-            //}
+        
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
@@ -244,12 +218,13 @@ namespace zenith.Core.Progression
 
         public void LoadProgression()
         {
-           
+            var dataTree = data.Tree;
 
-            Stage = watchedZenith.GetInt("Stage", 1);
-            DomainPoints = watchedZenith.GetInt("DomainPoints", 0);
-            EvolutionPoints = watchedZenith.GetInt("EvolutionPoints", 0);
-             StageName = watchedZenith.GetString("StageName", GetStageName());
+
+            Stage = dataTree.GetInt("Stage", 1);
+            DomainPoints = dataTree.GetInt("DomainPoints", 0);
+            EvolutionPoints = dataTree.GetInt("EvolutionPoints", 0);
+             StageName = dataTree.GetString("StageName", GetStageName());
 
             Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
         }

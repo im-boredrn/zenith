@@ -1,29 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
+using zenith.Config;
+using zenith.Core.Adaptations;
 using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 namespace zenith.Core.Adaptations
 {
     public class WolfAdaptation : Adaptation // Corpse Consumption
     {
-        private readonly Entity entity;
+        private readonly Entity Entity;
+        private readonly IWorldAccessor world;
+        EntityPlayer Player => Entity as EntityPlayer;
 
 
-        EntityPlayer Player => entity as EntityPlayer;
-      public  CreatureType SourceCreature { get; }
-
-      
-
-       
+        public WolfAdaptation(IWorldAccessor world, Entity entity) : base(world,entity)
+        {
+            this.Entity = entity;
+            this.world = world;
+        }
 
         public override void OnAssimilate(Entity entity , CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef)
         {
 
-            if (!creatureDef[CreatureType.wolf].AdaptAchieved) return;
 
 
             float Sat;
@@ -34,17 +42,12 @@ namespace zenith.Core.Adaptations
             player.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
         }
 
-    }
-
-    public class BearAdaptation : Adaptation // Bear Senses , Pack Mule
-    {
-
-        public override void OnAssimilate(Entity entity, CreatureDefinition creatureDefinition, IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef)
-        {
-            base.OnAssimilate(entity, creatureDefinition, creatureDef);
-        }
-
-
+        public override CreatureType SourceCreature => CreatureType.wolf;
 
     }
+
+
 }
+
+   
+

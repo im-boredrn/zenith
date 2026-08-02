@@ -88,12 +88,13 @@ namespace zenith.Core
 
                 // Register server tick listener
                 sapi.Event.RegisterGameTickListener(dt => systems.OnServerTick(dt), 1000);
+               
             }
             else if (entity.World.Side == EnumAppSide.Client)
             {
                 var capi = entity.World.Api as ICoreClientAPI;
                 capi?.Logger.Notification("Zenith behavior attached to CLIENT");
-
+                capi.Event.RegisterGameTickListener(dt => systems.OnClientTick(dt), 1000);
                 // Client-only systems (GUI)
                 systems = new ZenithSystems(entity, new ModConfig(), capi);
             }
