@@ -20,7 +20,7 @@ namespace zenith.Config
         public static ModConfig Config => ConfigLoader.Config; // points to loaded configs
         public static float ZDamageReductionPerTier => Config?.DamageReductionPerTier ?? 0.25f;
         public static int ZGlobalDomainMaxTier => Config?.GlobalDomainMaxTier ?? 4;
-        public static int ZGlobalDomainThreshold => Config?.GlobalDomainThreshold ?? 100;
+        public static int ZGlobalDomainThreshold => Config?.GlobalDomainThreshold ?? 50;
         
         public static int ZStageUpRequirement => Config?.StageUpRequirement ?? 3;
         
