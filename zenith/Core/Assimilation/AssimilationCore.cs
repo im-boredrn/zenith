@@ -286,10 +286,10 @@ namespace zenith.Core.Assimilation
 
 
 
-            foreach (var trait in Definitions.Values)
-            {
-              //  Log($"[DATA] Progress : {trait.AssimLVL}/{trait.MaxLVL}");
-            }
+            //foreach (var trait in Definitions.Values)
+            //{
+            //  //  Log($"[DATA] Progress : {trait.AssimLVL}/{trait.MaxLVL}");
+            //}
         }
 
       
@@ -423,7 +423,7 @@ namespace zenith.Core.Assimilation
             Player.World.Logger.Warning(message);
         }
 
-        private void SendError(IServerPlayer player, string code, string errorMessage)
+        private static void SendError(IServerPlayer player, string code, string errorMessage)
         {
             player.SendIngameError(code, errorMessage);
         }

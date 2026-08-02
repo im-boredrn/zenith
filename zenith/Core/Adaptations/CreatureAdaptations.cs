@@ -397,14 +397,11 @@ namespace zenith.Core.Adaptations
                 creature.Value.Counter = ZenithData.GetInt($"{creature.Key} CA-Counter", 0);
             }
 
-
             //Log($"CreatureAdaptations instance {GetHashCode()}");
             //Log($"Active list {ActiveAdaptations.GetHashCode()}");
             //Log($"Count {ActiveAdaptations.Count}");
             //  Log($" adaptations Null? : {adaptationTree == null}");
         }
-
-   
 
         private void Log(string message)
         {
