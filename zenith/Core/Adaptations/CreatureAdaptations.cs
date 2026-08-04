@@ -235,7 +235,8 @@ namespace zenith.Core.Adaptations
             //    Log("[LOAD] Creating adaptation");
 
                 var adaptation = CreateAdaption(creatureType);
-                sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup, $"{creatureType.ToString().ToUpper()} Adaptation Successfully Assimilated", EnumChatType.Notification);
+                sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
+                    $"{creatureType.ToString().ToUpper()} Adaptation Successfully Assimilated", EnumChatType.Notification);
 
 
 
@@ -294,8 +295,13 @@ namespace zenith.Core.Adaptations
 
             foreach (var adaptation in ActiveAdaptations)
             {
-                adaptation.Tick(dt);
+
+                if (adaptation is ITickable tickable)
+                {
+                    tickable.OnTick(dt);
+                }
             }
+            
         }
         public void SaveCAdapt()
         {
@@ -337,20 +343,7 @@ namespace zenith.Core.Adaptations
 
         }
 
-        //private bool AdaptationsLoaded;
-        //public void CheckLoad()
-        //{
-        //    if (AdaptationsLoaded) return;
-
-        //    var currentZenith = ZenithData;
-
-        //    var adaptationTree = currentZenith?.GetTreeAttribute("adaptations");
-
-        //    if (adaptationTree == null) return;
-
-        //    LoadCAdapt();
-        //    AdaptationsLoaded = true;
-        //}
+       
 
         public void InitializeAdapt()
         {

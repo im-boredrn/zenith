@@ -58,7 +58,6 @@ namespace zenith.Core
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
 
-
             if (entity.World.Side == EnumAppSide.Server)
             {
                 Traits.ApplyTraits();
@@ -216,8 +215,9 @@ namespace zenith.Core
             var player = entity as EntityPlayer;
             if (player == null) return;
             //      Log($"[FLOW] OnClientTick Called");
-
-            CreatureAdaptations?.Tick(dt);
+           
+            
+           CreatureAdaptations?.Tick(dt);
 
            // Log($"CLIENT COUNT: {CreatureAdaptations.ActiveAdaptations.Count}");
         }

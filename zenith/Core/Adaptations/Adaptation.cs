@@ -19,7 +19,6 @@ namespace zenith.Core.Adaptations
             this.worldAccessor = worldAccessor;
         }
 
-        public virtual void Tick(float deltaTime) { }
 
         public virtual void OnAssimilate(Entity entity, CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }

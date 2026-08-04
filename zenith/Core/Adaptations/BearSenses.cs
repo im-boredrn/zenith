@@ -14,7 +14,7 @@ using static zenith.Core.Assimilation.AssimilationCore;
 
 namespace zenith.Core.Adaptations
 {
-    public class BearSenses  : Adaptation 
+    public class BearSenses  : Adaptation, ITickable
     {
 
        
@@ -42,7 +42,7 @@ namespace zenith.Core.Adaptations
       
 
 
-        public override void Tick(float dt)
+        public  void OnTick(float dt)
         {
             if (entity.World.Side != EnumAppSide.Client)
                 return;
