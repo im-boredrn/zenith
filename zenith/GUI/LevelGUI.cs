@@ -29,10 +29,7 @@ namespace zenith.GUI
         public void SetupDialog()
         {
 
-            ElementBounds dialogBounds =
-    ElementBounds.Fixed(0, 0, 300, 300)
-    .WithAlignment(EnumDialogArea.CenterMiddle);
-
+           
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating

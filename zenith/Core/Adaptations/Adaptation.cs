@@ -22,8 +22,12 @@ namespace zenith.Core.Adaptations
 
         public virtual void OnAssimilate(Entity entity, CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }
+      
 
-
+        public virtual string AdaptationName { get; }
+        public virtual string AdaptationDescription { get; }
+        public virtual string LockedDescription { get; }
+     //   public virtual bool IsUnlocked { get; }
         
     }
 }

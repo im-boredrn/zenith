@@ -22,11 +22,14 @@ namespace zenith.Core.Adaptations
         private readonly EntityPlayer Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
+        private readonly IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq;
 
-        public BearSenses(IWorldAccessor world, EntityPlayer entity) : base(world, entity) // Bear Sense, Pack Mule
+        public BearSenses(IWorldAccessor world, EntityPlayer entity, IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) : base(world, entity) // Bear Sense, Pack Mule
         {
             this.Player = entity;
             this.world = world;
+            this.statReq = creatureDef;
+
             //Log($"[BEAR] Created {this.GetHashCode()}");
             Log($"Side: {entity.World.Side}");
 
@@ -35,12 +38,12 @@ namespace zenith.Core.Adaptations
 
         private float SenseTimer;
         private float DebugTimer;
-        private readonly List<SensedEntity> SensedEntities = new();
+        private readonly List<SensedEntity> SensedEntities = [];
 
-        public IReadOnlyList<SensedEntity> sensedEntities => SensedEntities;
+        public IReadOnlyList<SensedEntity> SensedList => SensedEntities;
 
-      
 
+     
 
         public  void OnTick(float dt)
         {
@@ -64,11 +67,11 @@ namespace zenith.Core.Adaptations
                 SenseTimer = 0;
             }
 
-            if (DebugTimer > 4f)
-            {
-                DebugSense();
-                DebugTimer = 0;
-            }
+            //if (DebugTimer > 4f && DebugMode )
+            //{
+            //    DebugSense();
+            //    DebugTimer = 0;
+            //}
         }
 
         private void UpdateSense()
@@ -79,7 +82,6 @@ namespace zenith.Core.Adaptations
 
             var lookDir = Player.Pos.GetViewVector().ToVec3d();
 
-            var capi = entity.World.Api as ICoreClientAPI;
 
 
            
@@ -141,27 +143,27 @@ namespace zenith.Core.Adaptations
 }
         }
 
-        private void DebugSense()
-        {
+      //  private void DebugSense()
+      //  {
 
 
-         //   if (Player == null) return;
-         //   var sapi = entity.World.Api as ICoreServerAPI;
+      //      if (Player == null) return;
+      //      var sapi = entity.World.Api as ICoreServerAPI;
       //      StringBuilder senseOutput = new StringBuilder();
 
-            foreach (var sensed in SensedEntities)
-            {
-            //    if (!sensed.Entity.Alive) continue;
+      //      foreach (var sensed in SensedEntities)
+      //      {
+      //          if (!sensed.Entity.Alive) continue;
 
 
-                double angle = Math.Acos(sensed.Dot) * GameMath.RAD2DEG;
-            //    senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
+      //          double angle = Math.Acos(sensed.Dot) * GameMath.RAD2DEG;
+      //         senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
 
-            }
-            //Log(senseOutput.ToString());
-            //sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
-            //     senseOutput.ToString(), EnumChatType.Notification);
-        }
+      //      }
+      //      Log(senseOutput.ToString());
+      //      sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
+      //           senseOutput.ToString(), EnumChatType.Notification);
+      //  }
 
         public class SensedEntity
         {
@@ -179,23 +181,8 @@ namespace zenith.Core.Adaptations
             public float Timer = 5f;
             public bool Hostile;
         }
-  string GetDirection(double dot)
-        {
-            if (dot > 0.5f)
-            {
-                return ("FRONT");
-            }
-            else if (dot < -0.5f)
-            {
-                return ("BEHIND");
-            }
-            else
-            {
-                return ("SIDE");
-            }
-        }
 
-        bool IsPredator(Entity entity)
+        static bool  IsPredator(Entity entity)
         {
 
             if (entity is EntityAgent)
@@ -218,6 +205,9 @@ namespace zenith.Core.Adaptations
         }
         public override CreatureType SourceCreature => CreatureType.bear;
 
+        public override string AdaptationName => "Instinct";
+        public override string AdaptationDescription => "Enhance your senses to detect Predator and Prey. Toggle With I";
+        public override string LockedDescription => $"Assimilate {statReq[CreatureType.bear].Counter}/{statReq[CreatureType.bear].Threshold} Bears to unlock ";
 
         private void Log(string message)
         {

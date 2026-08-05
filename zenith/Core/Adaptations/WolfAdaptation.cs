@@ -15,18 +15,13 @@ using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 namespace zenith.Core.Adaptations
 {
-    public class WolfAdaptation : Adaptation // Corpse Consumption
+    public class WolfAdaptation(IWorldAccessor world, Entity entity, IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq) : Adaptation(world,entity) 
     {
-        private readonly Entity Entity;
-        private readonly IWorldAccessor world;
-        EntityPlayer Player => Entity as EntityPlayer;
+
+        EntityPlayer Player => entity as EntityPlayer;
 
 
-        public WolfAdaptation(IWorldAccessor world, Entity entity) : base(world,entity)
-        {
-            this.Entity = entity;
-            this.world = world;
-        }
+       
 
         public override void OnAssimilate(Entity entity , CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef)
@@ -42,8 +37,13 @@ namespace zenith.Core.Adaptations
             player.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
         }
 
-        public override CreatureType SourceCreature => CreatureType.wolf;
+     
 
+        public override CreatureType SourceCreature => CreatureType.wolf;
+        public override string AdaptationName => "Corpse Consumption";
+        public override string AdaptationDescription => "You've gained the ability to digest assimilated creatures";
+        public override string LockedDescription => $"Assimilate {statReq[CreatureType.wolf].Counter}/{statReq[CreatureType.wolf].Threshold} Wolves to unlock ";
+        // Locked Description string Later.
     }
 
 

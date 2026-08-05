@@ -14,9 +14,9 @@ namespace zenith.Core.Renderers
 
         private readonly ICoreClientAPI capi;
         private readonly CreatureAdaptations adaptations;
-        private int predatorSenseTextureID;
-        private int preySenseTextureID;
-        private int testTex;
+        private readonly int predatorSenseTextureID;
+        private readonly int preySenseTextureID;
+        private readonly int testTex;
 
         private MeshData mesh;
         private MeshRef meshRef;
@@ -27,7 +27,6 @@ namespace zenith.Core.Renderers
         { 
             this.capi = capi;
             this.adaptations = adaptations;
-
               capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
             //  capi.Logger.Warning($"BearSense count: {bearSense?.sensedEntities.Count}");
 
@@ -63,7 +62,7 @@ namespace zenith.Core.Renderers
             {
 
 
-                foreach (var sensed in bearSense.sensedEntities)
+                foreach (var sensed in bearSense.SensedList)
                 {
                     Vec3d markerPos = sensed.WorldPosition.OffsetCopy(0, 1, 0);
 
@@ -78,14 +77,14 @@ namespace zenith.Core.Renderers
                     //if (screenPos.Y < 0 || screenPos.Y > capi.Render.FrameHeight)
                     //    continue;
 
-                    bool behind = screenPos.Z <= 0;
+                   // bool behind = screenPos.Z <= 0;
                         
 
                   
                     float margin = 32;
 
                     float x = (float)screenPos.X;
-                    float rawy = (float)screenPos.Y;
+                  //  float rawy = (float)screenPos.Y;
                     float y = capi.Render.FrameHeight - (float)screenPos.Y;
                     int width = capi.Render.FrameWidth;
                     int height = capi.Render.FrameHeight;

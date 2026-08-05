@@ -78,7 +78,7 @@ namespace zenith.Core
                 BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
 
 
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork );
+                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork, CreatureAdaptations );
 
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
@@ -178,6 +178,7 @@ namespace zenith.Core
                 Log("[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
 
+          
             
 
         }

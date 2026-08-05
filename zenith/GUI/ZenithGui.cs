@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Vintagestory.API.Client;
 using zenith.Config;
+using zenith.Core.Adaptations;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
@@ -17,20 +18,23 @@ namespace zenith.GUI
 
         DomainManager domainManager;
         private readonly IStageProvider stageProvider;
-        private AssimilationCore AssimilationCore;
+        private readonly AssimilationCore AssimilationCore;
         DomainDetailsGUI DomainDetailsGUI;
         public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
+        public AdaptationGUI AdaptationGUI;
         private readonly StatOutput StatOutut;
+        private readonly CreatureAdaptations creatureAdaptations;
         private readonly ZenithNetwork ZenithNetwork;
         private Dictionary<DomainEnum, string> domainButtonIds = new();
-        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
+        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork, CreatureAdaptations adaptations) : base(capi)
         {
             this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
             this.ZenithNetwork = zenithNetwork;
+            this.creatureAdaptations = adaptations;
             progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
 
@@ -85,6 +89,9 @@ namespace zenith.GUI
 
             ElementBounds buttonBounds2 = buttonBounds.FlatCopy().FixedUnder(buttonBounds, -70);
 
+            ElementBounds buttonBounds3 = buttonBounds2.FlatCopy().FixedUnder(buttonBounds, -70);
+
+
             ElementBounds dropdownBounds = ElementBounds.Fixed(20, 60, 200, 35)
                 .WithAlignment(EnumDialogArea.LeftTop);
 
@@ -97,6 +104,7 @@ namespace zenith.GUI
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
                  .AddButton("Bonuses", () => OnShowBonuses(), buttonBounds, EnumButtonStyle.Small)
                  .AddButton("Levels", () => OnShowLevels(), buttonBounds2, EnumButtonStyle.Small)
+                 .AddButton("Adaptations", () => OnShowAdaptations(), buttonBounds3, EnumButtonStyle.Small)
                 .AddDynamicText($"Stage : {StageName}\nDomainPoints : {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext");
 
             int i = 0;
@@ -197,6 +205,20 @@ namespace zenith.GUI
 
             LevelGUI = new LevelGUI(capi, AssimilationCore);
             LevelGUI.TryOpen();
+
+            return true;
+        }
+
+        private bool OnShowAdaptations()
+        {
+            if (AdaptationGUI != null)
+            {
+                AdaptationGUI.TryClose();
+                AdaptationGUI.Dispose();
+            }
+
+            AdaptationGUI = new AdaptationGUI(capi, creatureAdaptations);
+            AdaptationGUI.TryOpen();
 
             return true;
         }

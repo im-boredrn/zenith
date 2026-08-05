@@ -153,10 +153,12 @@ namespace zenith.Core.Adaptations
             },
         };
 
+        public IReadOnlyDictionary<CreatureType, CreatureDefinition> CreatureLibrary => CreatureDefinitions;
 
 
-        private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new();
-        public readonly List<Adaptation> ActiveAdaptations;
+        private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = [];
+        public readonly List<Adaptation> ActiveAdaptations = [];
+        public IReadOnlyDictionary<Type, Func<Adaptation>> AdaptationManager => AdaptationProducer;
         public BearSenses BearSenses { get; private set; }
 
         private EntityPlayer Player => entity as EntityPlayer;
@@ -165,7 +167,7 @@ namespace zenith.Core.Adaptations
         private TreeAttribute ZenithData => zenithData.Tree;
         // Always Check for Stale References -- I lost 1 day and 5 hours to this mistake.
         static public bool DebugMode => ZenithSettings.ZDebugMode;
-
+        public event Action OnAdaptationChanged;
 
         public CreatureAdaptations(Entity entity, ZenithData data  ) 
         {
@@ -179,16 +181,13 @@ namespace zenith.Core.Adaptations
 
             AdaptationProducer = new Dictionary<Type, Func<Adaptation>>()
             {
-                [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World,entity),
-                [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer)
+                [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World,entity, CreatureLibrary),
+                [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer, CreatureLibrary)
 
 
             };
 
-            ActiveAdaptations = new List<Adaptation>();
 
-
-         
 
           //  Log($"Tree Null? {ZenithData == null}");
             InitializeAdapt();
@@ -238,8 +237,13 @@ namespace zenith.Core.Adaptations
 
                 var adaptation = CreateAdaption(creatureType);
 
-                string text = $"{creatureType.ToString()} Adaptation Successfully Assimilated";
-                text = char.ToUpper(text[0]) + text.Substring(1);
+                string text = $"{creatureType} Adaptation Successfully Assimilated";
+
+                if (!String.IsNullOrEmpty(text))
+                {
+                    text = $"{char.ToUpper(text[0])}{text[1..]}";
+                }
+               
                 sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
                     text, EnumChatType.Notification);
 
@@ -274,8 +278,9 @@ namespace zenith.Core.Adaptations
                 if (BearSenses != null) return;
                 BearSenses = bear;
             }
-
-            ActiveAdaptations.Add(adaptation); // Somehow empties itself
+            
+            ActiveAdaptations.Add(adaptation);
+            OnAdaptationChanged?.Invoke();
             //Log($"SERVER COUNT AFTER ADD: {ActiveAdaptations.Count}");
         }
 
