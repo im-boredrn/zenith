@@ -147,7 +147,7 @@ namespace zenith.Core.Adaptations
 
          //   if (Player == null) return;
          //   var sapi = entity.World.Api as ICoreServerAPI;
-            StringBuilder senseOutput = new StringBuilder();
+      //      StringBuilder senseOutput = new StringBuilder();
 
             foreach (var sensed in SensedEntities)
             {

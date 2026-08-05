@@ -7,11 +7,13 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Adaptations;
+using static System.Net.Mime.MediaTypeNames;
 using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 
 namespace zenith.Core.Assimilation
@@ -322,13 +324,21 @@ namespace zenith.Core.Assimilation
             }
 
 
-            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult; 
-
+            Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult;
+            StringBuilder gainPrint = new StringBuilder();
 
             var sapi = entity.World.Api as ICoreServerAPI;
 
+            foreach (var gain in Definitions[creatureType].Gains)
+            {
 
+                var trueVal = gain.Value * 100f;
+                gainPrint.Append($"+{trueVal}% {gain.Key} ");  
+            }
+           
             sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
+            sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
+                    gainPrint.ToString(), EnumChatType.Notification);
             AssimilationSuccess?.Invoke(creatureType);
             OnAssimChanged?.Invoke();
             SaveAssim();

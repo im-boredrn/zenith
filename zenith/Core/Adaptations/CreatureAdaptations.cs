@@ -116,7 +116,7 @@ namespace zenith.Core.Adaptations
 
             },
 
-            [CreatureType.chicken] = new CreatureDefinition()
+            [CreatureType.chicken] = new CreatureDefinition() // Add Flight Adaptatiion -- Glide -- Investigate wingsuit thing 
             {
                 Counter = 0,
                 HasAdaptation = false,
@@ -152,6 +152,8 @@ namespace zenith.Core.Adaptations
                 IsUnknown = true
             },
         };
+
+
 
         private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = new();
         public readonly List<Adaptation> ActiveAdaptations;
@@ -235,9 +237,11 @@ namespace zenith.Core.Adaptations
             //    Log("[LOAD] Creating adaptation");
 
                 var adaptation = CreateAdaption(creatureType);
-                sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
-                    $"{creatureType.ToString().ToUpper()} Adaptation Successfully Assimilated", EnumChatType.Notification);
 
+                string text = $"{creatureType.ToString()} Adaptation Successfully Assimilated";
+                text = char.ToUpper(text[0]) + text.Substring(1);
+                sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
+                    text, EnumChatType.Notification);
 
 
                 if (adaptation != null)
