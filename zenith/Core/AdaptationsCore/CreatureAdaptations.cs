@@ -10,9 +10,10 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 
-namespace zenith.Core.Adaptations
+namespace zenith.Core.AdaptationsCore
 {
     public class CreatureAdaptations 
     {

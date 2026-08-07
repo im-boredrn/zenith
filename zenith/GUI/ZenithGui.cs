@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Vintagestory.API.Client;
 using zenith.Config;
-using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
@@ -104,7 +104,7 @@ namespace zenith.GUI
                 .AddDialogTitleBar("Organism State", OnGuiClosed) // makes it Draggable
                  .AddButton("Bonuses", () => OnShowBonuses(), buttonBounds, EnumButtonStyle.Small)
                  .AddButton("Levels", () => OnShowLevels(), buttonBounds2, EnumButtonStyle.Small)
-                 .AddButton("Adaptations", () => OnShowAdaptations(), buttonBounds3, EnumButtonStyle.Small)
+                 .AddButton("Adaptations", () => OnShowAdaptations(), buttonBounds3, EnumButtonStyle.Small) // Eventual Horizontal Tabs for Levels and Bonuses
                 .AddDynamicText($"Stage : {StageName}\nDomainPoints : {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext");
 
             int i = 0;

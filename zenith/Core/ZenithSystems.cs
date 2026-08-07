@@ -9,7 +9,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Abilities;
-using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Progression;

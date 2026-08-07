@@ -5,7 +5,7 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
 using Vintagestory.Client.NoObf;
-using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore;
 
 namespace zenith.Core.Renderers
 {

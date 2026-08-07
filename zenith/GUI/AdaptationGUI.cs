@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore;
 
 namespace zenith.GUI
 {

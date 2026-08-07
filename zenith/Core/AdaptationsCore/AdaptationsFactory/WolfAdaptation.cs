@@ -13,7 +13,7 @@ using zenith.Config;
 using zenith.Core.Adaptations;
 using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
-namespace zenith.Core.Adaptations
+namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
     public class WolfAdaptation(IWorldAccessor world, Entity entity, IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq) : Adaptation(world,entity) 
     {

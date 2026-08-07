@@ -10,9 +10,10 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Adaptations;
 using static zenith.Core.Assimilation.AssimilationCore;
 
-namespace zenith.Core.Adaptations
+namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
     public class BearSenses  : Adaptation, ITickable
     {
