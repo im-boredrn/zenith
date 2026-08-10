@@ -16,7 +16,7 @@ namespace zenith.GUI
 
         public override string ToggleKeyCombinationCode => null;
 
-        DomainManager domainManager;
+        private readonly DomainManager domainManager;
         private readonly IStageProvider stageProvider;
         private readonly AssimilationCore AssimilationCore;
         DomainDetailsGUI DomainDetailsGUI;
@@ -26,7 +26,7 @@ namespace zenith.GUI
         private readonly StatOutput StatOutut;
         private readonly CreatureAdaptations creatureAdaptations;
         private readonly ZenithNetwork ZenithNetwork;
-        private Dictionary<DomainEnum, string> domainButtonIds = new();
+        private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork, CreatureAdaptations adaptations) : base(capi)
         {
             this.stageProvider = progressionManager;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zenith.Core.Adaptations
+namespace zenith.Core.Helper
 {
     public interface ITickable
     {

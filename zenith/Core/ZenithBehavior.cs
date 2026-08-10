@@ -85,7 +85,6 @@ namespace zenith.Core
                         return ReduceDamage(damage, source);
                     };
                 }
-
                 // Register server tick listener
                 sapi.Event.RegisterGameTickListener(dt => systems.OnServerTick(dt), 1000);
                
@@ -128,7 +127,7 @@ namespace zenith.Core
             
         }
        
-        private EnumDamageType GetDamageType(DamageSource source) // #Extractor
+        private static EnumDamageType GetDamageType(DamageSource source) // #Extractor
         {
             return source.Type;
         }

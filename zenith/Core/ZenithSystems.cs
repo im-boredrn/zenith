@@ -7,11 +7,15 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.AdaptationsCore;
+using zenith.Core.AdaptationsCore.AdaptationsFactory;
+using zenith.Core.AdaptationsCore.AdaptationsFactory.AdaptUtil;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.Helper;
 using zenith.Core.Progression;
 using zenith.Core.Renderers;
 using zenith.Core.Traits;
@@ -35,11 +39,14 @@ namespace zenith.Core
 
         public AssimilationCore AssimilationCore { get; }
         public CreatureAdaptations CreatureAdaptations { get; }
+       // public WingedEnabler WingedEnabler;
         public Traits.Traits Traits { get; }
         public StatOutput StatOutput { get; }
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
+        private readonly List<ITickable> Tickables = [];
+        public IReadOnlyList<ITickable> ReadTickables => Tickables;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
@@ -53,7 +60,7 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
-            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData);
+            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData, Tickables);
                 StatOutput = new StatOutput(entity, capi, ZenithData);
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
@@ -79,12 +86,19 @@ namespace zenith.Core
 
 
                 ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork, CreatureAdaptations );
-
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();
 
                     CreatureAdaptations?.ReloadAdapt();
+
+
+                    //if (CreatureAdaptations.ActiveAdaptations.Any(a => a is WingedAdaptation) && WingedEnabler == null)
+                    //{
+                    //   WingedEnabler = new WingedEnabler(capi, entity as EntityPlayer);
+                    //    WingedEnabler.HasWings = true;
+                    //}
+
                 });
             }
 
@@ -217,8 +231,12 @@ namespace zenith.Core
             if (player == null) return;
             //      Log($"[FLOW] OnClientTick Called");
            
-            
-           CreatureAdaptations?.Tick(dt);
+            foreach (var tickable in ReadTickables)
+            {
+                tickable.OnTick(dt);
+            }
+           
+          // CreatureAdaptations?.Tick(dt);
 
            // Log($"CLIENT COUNT: {CreatureAdaptations.ActiveAdaptations.Count}");
         }

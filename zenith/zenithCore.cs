@@ -27,7 +27,6 @@ public class zenithCore : ModSystem
 
     public ZenithNetwork ZenithNetwork { get; private set; }
     public Keybinds Keybinds { get; private set; }
-
     public static ModConfig Config => ConfigLoader.Config;
  //   private readonly long tickListenerId;   
 
@@ -46,7 +45,6 @@ public class zenithCore : ModSystem
         ZenithNetwork = new ZenithNetwork();
 
         Keybinds = new Keybinds(ZenithNetwork);
-
         
     }
 
@@ -149,6 +147,8 @@ public class zenithCore : ModSystem
             }
             return false;
         });
+
+       
 
 
     }

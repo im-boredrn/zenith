@@ -28,7 +28,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         {
 
 
-
+            
             float Sat;
             Sat = creatureDefinition.NutritionVal * 100f;
 
@@ -43,7 +43,6 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         public override string AdaptationName => "Corpse Consumption";
         public override string AdaptationDescription => "You've gained the ability to digest assimilated creatures";
         public override string LockedDescription => $"Assimilate {statReq[CreatureType.wolf].Counter}/{statReq[CreatureType.wolf].Threshold} Wolves to unlock ";
-        // Locked Description string Later.
     }
 
 

@@ -27,7 +27,7 @@ namespace zenith.Core.Renderers
         { 
             this.capi = capi;
             this.adaptations = adaptations;
-              capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
+          //    capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
             //  capi.Logger.Warning($"BearSense count: {bearSense?.sensedEntities.Count}");
 
             predatorSenseTextureID = capi.Render.GetOrLoadTexture(new Vintagestory.API.Common.AssetLocation("zenith", "textures/icons/pred.png"));

@@ -11,6 +11,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Adaptations;
+using zenith.Core.Helper;
 using static zenith.Core.Assimilation.AssimilationCore;
 
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
@@ -48,7 +49,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 
         public  void OnTick(float dt)
         {
-            if (entity.World.Side != EnumAppSide.Client)
+            if (Player.World.Side != EnumAppSide.Client)
                 return;
 
 

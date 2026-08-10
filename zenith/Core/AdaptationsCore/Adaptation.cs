@@ -7,26 +7,22 @@ using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 namespace zenith.Core.Adaptations
 {
-    public abstract class Adaptation
+    public abstract class Adaptation(IWorldAccessor worldAccessor, Entity entity)
     {
-        protected readonly IWorldAccessor worldAccessor;
-        protected readonly Entity entity;
+      //  protected readonly IWorldAccessor worldAccessor;
+       // protected readonly Entity entity;
         public abstract  CreatureType SourceCreature { get;  }
 
-        protected Adaptation(IWorldAccessor worldAccessor, Entity entity)
-        {
-            this.entity = entity;
-            this.worldAccessor = worldAccessor;
-        }
+       
 
 
-        public virtual void OnAssimilate(Entity entity, CreatureDefinition creatureDefinition,
+        public virtual void OnAssimilate( Entity entity, CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }
       
-
-        public virtual string AdaptationName { get; }
-        public virtual string AdaptationDescription { get; }
-        public virtual string LockedDescription { get; }
+        public virtual void Apply() { }
+        public abstract string AdaptationName { get; }
+        public abstract string AdaptationDescription { get; }
+        public abstract string LockedDescription { get; }
      //   public virtual bool IsUnlocked { get; }
         
     }
