@@ -6,24 +6,17 @@ using Vintagestory.API.Common;
 
 namespace zenith.Core.NetWork
 {
-    public class Keybinds
+    public static class Keybinds
     {
-        public ZenithNetwork ZenithNetwork { get; private set; }
 
 
-        public Keybinds(ZenithNetwork zenithNetwork)
-        {
-            this.ZenithNetwork = zenithNetwork;
-            ZenithNetwork = zenithNetwork ?? throw new ArgumentNullException(nameof(zenithNetwork));
+       
 
-        }
-
-        public void WireKeybinds(ICoreClientAPI api )
+        public static void WireKeybinds( ICoreClientAPI api , ZenithNetwork zenithNetwork)
         {
 #pragma warning disable IDE0019
 
             var player = api.World.Player?.Entity as EntityPlayer;
-
 
             // Register hotkey once, at client start
         
@@ -31,7 +24,7 @@ namespace zenith.Core.NetWork
             api.Input.RegisterHotKey("assimilate", "Consume", GlKeys.V, HotkeyType.GUIOrOtherControls); // Use Znetwork
             api.Input.SetHotKeyHandler("assimilate", comb =>
             {
-                ZenithNetwork.Request(GlKeys.V, false, false);
+                zenithNetwork.Request(GlKeys.V, false, false);
                 return true; // returning false causes double firing.
             });
 
@@ -44,7 +37,7 @@ namespace zenith.Core.NetWork
                 bool altHeld = api.Input.KeyboardKeyState[(int)GlKeys.AltLeft] ||
                 api.Input.KeyboardKeyState[(int)GlKeys.AltRight];
 
-                ZenithNetwork.Request(GlKeys.B, shiftHeld, altHeld);
+                zenithNetwork.Request(GlKeys.B, shiftHeld, altHeld);
                 return true;
             });
 
@@ -59,7 +52,7 @@ namespace zenith.Core.NetWork
                 api.Input.KeyboardKeyState[(int)GlKeys.AltRight];
 
 
-                ZenithNetwork.Request(GlKeys.N, shiftHeld, altHeld );
+                zenithNetwork.Request(GlKeys.N, shiftHeld, altHeld );
 
 
             

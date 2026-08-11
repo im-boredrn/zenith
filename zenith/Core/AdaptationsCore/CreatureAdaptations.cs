@@ -11,7 +11,6 @@ using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
-using zenith.Core.AdaptationsCore.AdaptationsFactory.AdaptUtil;
 using zenith.Core.Helper;
 using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
 
@@ -122,10 +121,10 @@ namespace zenith.Core.AdaptationsCore
             [CreatureType.chicken] = new CreatureDefinition() // Add Flight Adaptatiion -- Glide -- Investigate wingsuit thing 
             {
                 Counter = 0,
-                HasAdaptation = true,
+                HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 2.5f,
-                AdaptationType = typeof(WingedAdaptation)
+            //    AdaptationType = typeof(WingedAdaptation)
 
             },
 
@@ -169,16 +168,14 @@ namespace zenith.Core.AdaptationsCore
         private readonly Entity entity;
         private readonly ZenithData zenithData;
         private TreeAttribute ZenithData => zenithData.Tree;
-        public List<ITickable> Tickables;
         // Always Check for Stale References -- I lost 1 day and 5 hours to this mistake.
         static public bool DebugMode => ZenithSettings.ZDebugMode;
         public event Action OnAdaptationChanged;
 
-        public CreatureAdaptations(Entity entity, ZenithData data, List<ITickable> tickables  ) 
+        public CreatureAdaptations(Entity entity, ZenithData data) 
         {
             this.entity = entity;
             this.zenithData = data;
-            this.Tickables = tickables;
             // this.core = coreAPI;
             if (Player == null)
             {
@@ -188,8 +185,6 @@ namespace zenith.Core.AdaptationsCore
             {
                 [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World, entity, CreatureLibrary),
                 [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer, CreatureLibrary),
-                [typeof(WingedAdaptation)] = () => new WingedAdaptation(entity.World as IWorldAccessor, entity, CreatureLibrary)
-
 
             };
 
@@ -305,21 +300,7 @@ namespace zenith.Core.AdaptationsCore
         }
 
 
-        public void Tick(float dt)
-        {
-       //     Log($"Client COUNT AFTER ADD: {ActiveAdaptations.Count}");
-
-            foreach (var adaptation in ActiveAdaptations)
-            {
-
-                if (adaptation is ITickable tickable)
-                {
-                    //tickable.OnTick(dt);
-                    Tickables.Add(tickable);
-                }
-            }
-            
-        }
+       
 
         private void ApplyAdaptations()
         {

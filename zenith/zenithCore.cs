@@ -26,7 +26,6 @@ public class zenithCore : ModSystem
     public ZenithGui ZenithGui;
 
     public ZenithNetwork ZenithNetwork { get; private set; }
-    public Keybinds Keybinds { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
  //   private readonly long tickListenerId;   
 
@@ -44,7 +43,6 @@ public class zenithCore : ModSystem
 
         ZenithNetwork = new ZenithNetwork();
 
-        Keybinds = new Keybinds(ZenithNetwork);
         
     }
 
@@ -115,7 +113,7 @@ public class zenithCore : ModSystem
        
 
 
-        Keybinds.WireKeybinds(api);
+        Keybinds.WireKeybinds(api,ZenithNetwork);
 
      
         api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);

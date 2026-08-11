@@ -74,7 +74,6 @@ namespace zenith.Core.Abilities
 
         public void TickPassives(DomainEnum domain ) 
         {
-           // Log($"[FLOW] Tick Passives Called");
 
            
             

@@ -34,7 +34,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 
             //Log($"[BEAR] Created {this.GetHashCode()}");
             Log($"Side: {entity.World.Side}");
-
+            TickManager.RegisterClientTick(this);
 
         }
 
@@ -47,7 +47,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 
      
 
-        public  void OnTick(float dt)
+        public  void OnTick(EntityPlayer Player,float dt)
         {
             if (Player.World.Side != EnumAppSide.Client)
                 return;

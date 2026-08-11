@@ -12,7 +12,6 @@ using zenith.Config;
 using zenith.Core.Abilities;
 using zenith.Core.AdaptationsCore;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
-using zenith.Core.AdaptationsCore.AdaptationsFactory.AdaptUtil;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Helper;
@@ -45,8 +44,6 @@ namespace zenith.Core
 
         public Dictionary<DomainEnum, IPassives> Passives;
         public Dictionary<DomainEnum, IAttackAbilities> Attack;
-        private readonly List<ITickable> Tickables = [];
-        public IReadOnlyList<ITickable> ReadTickables => Tickables;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
@@ -60,7 +57,7 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
-            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData, Tickables);
+            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData);
                 StatOutput = new StatOutput(entity, capi, ZenithData);
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
@@ -222,6 +219,11 @@ namespace zenith.Core
                 AbilityFactory?.TickPassives(domain.GetDomain());
              //   CreatureAdaptations?.Tick(dt);
             }
+
+            foreach (var serverTickable in TickManager.ServerTick)
+            {
+                serverTickable.OnTick(player,dt);
+            }
              //Log($"[DATA] Current Side is {player.World.Side}");
         }
 
@@ -231,13 +233,11 @@ namespace zenith.Core
             if (player == null) return;
             //      Log($"[FLOW] OnClientTick Called");
            
-            foreach (var tickable in ReadTickables)
+            foreach (var tickable in TickManager.ClientTick)
             {
-                tickable.OnTick(dt);
+                tickable.OnTick(player,dt);
             }
            
-          // CreatureAdaptations?.Tick(dt);
-
            // Log($"CLIENT COUNT: {CreatureAdaptations.ActiveAdaptations.Count}");
         }
 
