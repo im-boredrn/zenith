@@ -119,7 +119,7 @@ namespace zenith.Core
         {
             if (eventsWired)
             {
-                Log("[FLOW] Events Already Wired Returning...");
+                Logger.Log(Player, "[FLOW] Events Already Wired Returning...");
                 return;
             }
             eventsWired = true;
@@ -130,24 +130,24 @@ namespace zenith.Core
                 domain.DomainMaxed += ProgressionManager.HandleDomainMaxed;
                 domain.DomainMaxed += () =>
                 {
-                    Log($"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
+                    Logger.Log(Player,$"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
                     ZenithGui?.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
                     if (CanUsePassive(domain))
                     {
                         AbilityFactory.ApplyPassives(domain.GetDomain());
-                        Log($"[EVENT] Stats Refreshed!");
+                        Logger.Log(Player, $"[EVENT] Stats Refreshed!");
                     }
                 };
 
                 domain.OnTierUp += (d) => // Action <d> so the parameters contain the object
                 {
                     ZenithGui?.UpdateStats();
-                    Log($"[EVENT] {domain} tier increased to {d.GetTier()}");
+                    Logger.Log(Player, $"[EVENT] {domain} tier increased to {d.GetTier()}");
 
                     if (CanUsePassive(d))
                     {
                         AbilityFactory.ApplyPassives(d.GetDomain());
-                        Log($"[EVENT] Stats Refreshed!");
+                        Logger.Log(Player, $"[EVENT] Stats Refreshed!");
                     }
                 };
 
@@ -155,10 +155,10 @@ namespace zenith.Core
             // On stage up Update GUI and check if domains can get passives
             ProgressionManager.OnStageUp += () =>
             {
-                Log($"[EVENT] StageUp ZenithGui UpdateStats Called...");
+                Logger.Log(Player, $"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
                 RefreshStats();
-                Log($"[EVENT] Stats Refreshed!");
+                Logger.Log(Player,$"[EVENT] Stats Refreshed!");
                 foreach (var domain in DomainManager.Domains.Values)
                 {
                     if (domain.GetDomain() == DomainEnum.None) continue;
@@ -186,7 +186,7 @@ namespace zenith.Core
             {
                 ZenithGui?.BonusGUI?.UpdateBonusStats();
                 Traits.ApplyTraits();
-                Log("[EVENT]OUTPUT CHANGE EVENT FIRED");
+                Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
 
           
@@ -264,10 +264,7 @@ namespace zenith.Core
             }
         }
 
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            Player.World.Logger.Warning(message);
-        }
+
+        
     }
 }

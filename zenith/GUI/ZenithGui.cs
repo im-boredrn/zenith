@@ -10,7 +10,7 @@ using static zenith.Core.ZenithBehavior;
 
 namespace zenith.GUI
 {
-    public class ZenithGui : GuiDialog
+    public  class ZenithGui : GuiDialog
     {
         public static bool DebugMode => ZenithSettings.ZDebugMode;
 

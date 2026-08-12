@@ -10,6 +10,7 @@ namespace zenith.Core
     {
 
         private readonly Entity entity;
+        public int Stage => Tree.GetInt("Stage", 1);
 
         public ZenithData(Entity entity)
         {

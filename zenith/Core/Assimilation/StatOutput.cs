@@ -9,6 +9,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.Helper;
 
 namespace zenith.Core.Assimilation
 {
@@ -76,7 +77,7 @@ namespace zenith.Core.Assimilation
         public void StatSwitch(StatType statType) // Call with Keybind
         {
 
-            Log($"[FLOW] StatSwitch Called");
+            Logger.Log(Player,$"[FLOW] StatSwitch Called");
 
 #pragma warning disable IDE0019
             var sapi = entity.World.Api as ICoreServerAPI;
@@ -86,7 +87,7 @@ namespace zenith.Core.Assimilation
 
             selectedStat = statType;
 
-            Log($"[DATA] SSI : {selectedStat}");
+            Logger.Log(Player, $"[DATA] SSI : {selectedStat}");
 
             if (!Enum.IsDefined(typeof(StatType), selectedStat))
             {
@@ -188,11 +189,7 @@ namespace zenith.Core.Assimilation
             entity.WatchedAttributes.MarkPathDirty("zenith");
 
         }
-
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            Player.World.Logger.Warning(message);
-        }
+        
+      
     }
 }
