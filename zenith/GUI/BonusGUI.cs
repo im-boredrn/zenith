@@ -21,16 +21,12 @@ namespace zenith.GUI
     public class BonusGUI : GuiDialog
     {
         public static bool DebugMode => ZenithSettings.ZDebugMode;
-        private readonly IStageProvider stageProvider;
-        private readonly AssimilationCore assimilationCore;
         public override string ToggleKeyCombinationCode => null;
         private readonly StatOutput statOutput;
         private readonly ZenithNetwork zenithNetwork;
-        public BonusGUI(ICoreClientAPI capi, IStageProvider stageP, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
+        public BonusGUI(ICoreClientAPI capi, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
         {
 
-            this.stageProvider = stageP;
-            this.assimilationCore = assimilationCore;
             this.statOutput = statOutput;
             this.zenithNetwork = zenithNetwork; 
             SetupDialog();
@@ -138,10 +134,6 @@ namespace zenith.GUI
             this.Dispose();
         }
 
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            capi.World.Logger.Warning(message);
-        }
+      
     }
 }

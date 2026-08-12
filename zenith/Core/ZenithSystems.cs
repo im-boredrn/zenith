@@ -171,6 +171,11 @@ namespace zenith.Core
                 // ZenithGui?.BonusGUI.UpdateBonusStats();
             };
 
+            ProgressionManager.OnProgressionChanged += () =>
+            {
+                ZenithGui.UpdateStats();
+            };
+
             AssimilationCore.OnAssimChanged += () =>
             {
                 Traits.ApplyTraits();

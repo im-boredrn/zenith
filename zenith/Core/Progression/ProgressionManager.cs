@@ -235,6 +235,7 @@ namespace zenith.Core.Progression
         public int GetStage()
         {
             return Stage;
+
         }
 
         public string GetStageName()

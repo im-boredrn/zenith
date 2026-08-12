@@ -17,7 +17,6 @@ namespace zenith.GUI
         public override string ToggleKeyCombinationCode => null;
 
         private readonly DomainManager domainManager;
-        private readonly IStageProvider stageProvider;
         private readonly AssimilationCore AssimilationCore;
         DomainDetailsGUI DomainDetailsGUI;
         public BonusGUI BonusGUI;
@@ -29,7 +28,6 @@ namespace zenith.GUI
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
         public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork, CreatureAdaptations adaptations) : base(capi)
         {
-            this.stageProvider = progressionManager;
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
@@ -51,7 +49,7 @@ namespace zenith.GUI
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
+            var StageName = zenith?.GetString("StageName", "Adapting Organism"); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
 
@@ -146,7 +144,7 @@ namespace zenith.GUI
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
             var Stage = zenith?.GetInt("Stage", 1);
-            var StageName = zenith?.GetString("StageName", stageProvider.GetStageName()); 
+            var StageName = zenith?.GetString("StageName", "Adapting Organism"); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
 
@@ -189,7 +187,7 @@ namespace zenith.GUI
                 BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
 
-            BonusGUI = new BonusGUI(capi, stageProvider, AssimilationCore, StatOutut, ZenithNetwork);
+            BonusGUI = new BonusGUI(capi,  StatOutut, ZenithNetwork);
             BonusGUI.TryOpen();
 
             return true;
