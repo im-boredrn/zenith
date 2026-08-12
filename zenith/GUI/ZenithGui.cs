@@ -24,16 +24,13 @@ namespace zenith.GUI
         public AdaptationGUI AdaptationGUI;
         private readonly StatOutput StatOutut;
         private readonly CreatureAdaptations creatureAdaptations;
-        private readonly ZenithNetwork ZenithNetwork;
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
-        public ZenithGui(ICoreClientAPI capi, ProgressionManager progressionManager, DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, ZenithNetwork zenithNetwork, CreatureAdaptations adaptations) : base(capi)
+        public ZenithGui(ICoreClientAPI capi,   DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, CreatureAdaptations adaptations) : base(capi)
         {
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
-            this.ZenithNetwork = zenithNetwork;
             this.creatureAdaptations = adaptations;
-            progressionManager.OnProgressionChanged += UpdateStats;
             SetupDialog();
 
         }
@@ -186,8 +183,9 @@ namespace zenith.GUI
                 BonusGUI.TryClose();
                 BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
+            var zenithNetwork = capi.ModLoader.GetModSystem<zenithCore>().ZenithNetwork;
 
-            BonusGUI = new BonusGUI(capi,  StatOutut, ZenithNetwork);
+            BonusGUI = new BonusGUI(capi,  StatOutut, zenithNetwork);
             BonusGUI.TryOpen();
 
             return true;

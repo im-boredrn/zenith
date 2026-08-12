@@ -75,14 +75,11 @@ namespace zenith.Core
             // GUI
             if (capi != null && Player.Player as ICoreServerAPI == null)
             {
-
-                var modSystem = capi.ModLoader.GetModSystem<zenithCore>();
-
                  
                 BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
 
 
-                ZenithGui = new ZenithGui(capi, ProgressionManager, DomainManager, AssimilationCore, StatOutput,modSystem.ZenithNetwork, CreatureAdaptations );
+                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, CreatureAdaptations );
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();

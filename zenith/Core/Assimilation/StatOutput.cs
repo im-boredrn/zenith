@@ -45,7 +45,6 @@ namespace zenith.Core.Assimilation
             CropRate
         }
 
-        static public bool DebugMode => ZenithSettings.ZDebugMode;
 
 
         private readonly Entity entity;
