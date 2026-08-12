@@ -15,7 +15,6 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Abilities;
 using zenith.Core.Domains;
 using zenith.Core.Progression;
 
@@ -102,11 +101,9 @@ namespace zenith.Core
             stageProvider = systems.ProgressionManager; 
         }
 
-        public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
-        {
-
-            systems.ApplyAttack(source, targetEntity);
-        }
+        //public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
+        //{
+        //}
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {

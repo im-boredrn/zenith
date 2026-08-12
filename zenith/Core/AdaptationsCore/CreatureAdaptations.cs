@@ -157,7 +157,8 @@ namespace zenith.Core.AdaptationsCore
         };
 
         public IReadOnlyDictionary<CreatureType, CreatureDefinition> CreatureLibrary => CreatureDefinitions;
-
+        // Maybe make a list / dict of consumable blocks. I.e BlockDefinition.
+        // Move Dict init somewhere it is a lot to scroll through.
 
         private Dictionary<Type, Func<Adaptation>> AdaptationProducer { get; } = [];
         public readonly List<Adaptation> ActiveAdaptations = [];
@@ -312,7 +313,7 @@ namespace zenith.Core.AdaptationsCore
         public void SaveCAdapt()
         {
 
-            Log($"Saving {ActiveAdaptations.Count} adaptations");
+            Logger.Log(Player,$"Saving {ActiveAdaptations.Count} adaptations");
 
             foreach (var adadpt in ActiveAdaptations)
             {
@@ -400,12 +401,6 @@ namespace zenith.Core.AdaptationsCore
             //Log($"Active list {ActiveAdaptations.GetHashCode()}");
             //Log($"Count {ActiveAdaptations.Count}");
             //  Log($" adaptations Null? : {adaptationTree == null}");
-        }
-
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            Player.World.Logger.Warning(message);
         }
 
       

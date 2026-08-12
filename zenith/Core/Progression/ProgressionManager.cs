@@ -12,7 +12,6 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Abilities;
 using zenith.Core.Domains;
 using static zenith.Core.ZenithBehavior;
 
@@ -32,7 +31,6 @@ namespace zenith.Core.Progression
         public int Stage { get; private set; }
         public string StageName { get; private set; }
        static private int StageUpRequirement => ZenithSettings.ZStageUpRequirement ;
-        private int EvolutionPoints;
 
 
         private readonly Entity entity;
@@ -79,7 +77,6 @@ namespace zenith.Core.Progression
             }
             else
             {
-                EvolutionPoints += 20; // Could be used in Assim Evolution - Use EVPoints to improve traits
                 SaveProgression();
             }
 
@@ -204,9 +201,8 @@ namespace zenith.Core.Progression
             var dataTree = data.Tree;
             dataTree.SetInt("Stage", Stage);
             dataTree.SetInt("DomainPoints", DomainPoints);
-            dataTree.SetInt("EvolutionPoints", EvolutionPoints);
             dataTree.SetString("StageName", GetStageName());
-
+            dataTree.SetFloat("StageMult", GetStageMultiplier());
         
 
             entity.WatchedAttributes.MarkPathDirty("zenith");
@@ -223,10 +219,9 @@ namespace zenith.Core.Progression
 
             Stage = dataTree.GetInt("Stage", 1);
             DomainPoints = dataTree.GetInt("DomainPoints", 0);
-            EvolutionPoints = dataTree.GetInt("EvolutionPoints", 0);
              StageName = dataTree.GetString("StageName", GetStageName());
 
-            Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints} | EvolutionPoints: {EvolutionPoints}");
+            Log($"[LOAD] Stage: {Stage} | Stage Name: {StageName} | DomainPoints: {DomainPoints}");
         }
 
      
@@ -250,13 +245,7 @@ namespace zenith.Core.Progression
             };
         }
 
-        /// <summary>
-        /// Logs a warning message to the world logger if debug mode is enabled.
-        /// </summary>
-        /// <remarks>This method is intended for use during development and debugging. It will not log
-        /// messages if debug mode is disabled, ensuring that only relevant information is captured during debugging
-        /// sessions.</remarks>
-        /// <param name="message">The message to log as a warning. This should provide context about the event or condition being logged.</param>
+      
         private void Log(string message)
         {
             if (!DebugMode) return;

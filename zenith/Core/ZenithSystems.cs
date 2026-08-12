@@ -9,7 +9,6 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Abilities;
 using zenith.Core.AdaptationsCore;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using zenith.Core.Assimilation;
@@ -31,7 +30,6 @@ namespace zenith.Core
         public ZenithData ZenithData { get; }
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
-        public AbilityFactory AbilityFactory { get; }
         public ZenithGui ZenithGui { get; }
         public BearSenseRenderer BearSenseRenderer { get; }
         public DomainDetailsGUI DomainDetailsGUI { get; }
@@ -41,9 +39,6 @@ namespace zenith.Core
        // public WingedEnabler WingedEnabler;
         public Traits.Traits Traits { get; }
         public StatOutput StatOutput { get; }
-
-        public Dictionary<DomainEnum, IPassives> Passives;
-        public Dictionary<DomainEnum, IAttackAbilities> Attack;
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
@@ -53,7 +48,7 @@ namespace zenith.Core
             ZenithData = new ZenithData(entity);
             // Core managers
             ProgressionManager = new ProgressionManager(entity, ZenithData);
-             AbilityFactory = new AbilityFactory(ProgressionManager ,entity); 
+            // Maybe Replace With Assim : Assimilating Blocks and Entities to give these effects
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
@@ -68,9 +63,7 @@ namespace zenith.Core
             }
 
             DomainManager = new DomainManager(entity, modConfig, ZenithData);
-            DomainManager.LoadDomains();
-            RefreshStats();
-          
+            DomainManager.LoadDomains();          
 
             // GUI
             if (capi != null && Player.Player as ICoreServerAPI == null)
@@ -95,16 +88,6 @@ namespace zenith.Core
 
                 });
             }
-
-            Passives = Enum.GetValues<DomainEnum>()
-    .Cast<DomainEnum>()
-    .Where(d => d != DomainEnum.None) // skip None
-    .ToDictionary(d => d, d => AbilityFactory.CreatePassives(d));
-
-            Attack = Enum.GetValues<DomainEnum>()
-                .Cast<DomainEnum>()
-                .Where(d => d != DomainEnum.None)
-                .ToDictionary(d => d, d => AbilityFactory.CreateAttack(d));
 
         WireEvents();
             
@@ -131,7 +114,6 @@ namespace zenith.Core
                     ZenithGui?.UpdateStats(); //() INVOKES - immediately call the method once it reaches this line of code
                     if (CanUsePassive(domain))
                     {
-                        AbilityFactory.ApplyPassives(domain.GetDomain());
                         Logger.Log(Player, $"[EVENT] Stats Refreshed!");
                     }
                 };
@@ -141,11 +123,7 @@ namespace zenith.Core
                     ZenithGui?.UpdateStats();
                     Logger.Log(Player, $"[EVENT] {domain} tier increased to {d.GetTier()}");
 
-                    if (CanUsePassive(d))
-                    {
-                        AbilityFactory.ApplyPassives(d.GetDomain());
-                        Logger.Log(Player, $"[EVENT] Stats Refreshed!");
-                    }
+                   
                 };
 
             }
@@ -154,15 +132,11 @@ namespace zenith.Core
             {
                 Logger.Log(Player, $"[EVENT] StageUp ZenithGui UpdateStats Called...");
                 ZenithGui?.UpdateStats();
-                RefreshStats();
                 Logger.Log(Player,$"[EVENT] Stats Refreshed!");
                 foreach (var domain in DomainManager.Domains.Values)
                 {
                     if (domain.GetDomain() == DomainEnum.None) continue;
 
-
-                    if (CanUsePassive(domain))
-                        AbilityFactory.ApplyPassives(domain.GetDomain());
                 }
 
                 // ZenithGui?.BonusGUI.UpdateBonusStats();
@@ -170,7 +144,7 @@ namespace zenith.Core
 
             ProgressionManager.OnProgressionChanged += () =>
             {
-                ZenithGui.UpdateStats();
+                ZenithGui?.UpdateStats();
             };
 
             AssimilationCore.OnAssimChanged += () =>
@@ -190,21 +164,6 @@ namespace zenith.Core
                 Traits.ApplyTraits();
                 Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
             };
-
-          
-            
-
-        }
-
-        public void ApplyAttack(DamageSource source, EntityAgent targetEntity)
-        {
-            foreach (var domains in DomainManager.Domains.Values)
-            {
-
-                if (CanUseAttack(domains))
-                AbilityFactory.HandleAttack(domains.GetDomain(), source, targetEntity);
-            }
-
         }
 
 
@@ -214,13 +173,7 @@ namespace zenith.Core
             if (player == null) return;
       //      Log($"[FLOW] OnServerTick Called");
 
-            foreach (var domain in DomainManager.Domains.Values)
-            {
-
-                if (CanUsePassive(domain))
-                AbilityFactory?.TickPassives(domain.GetDomain());
-             //   CreatureAdaptations?.Tick(dt);
-            }
+         
 
             foreach (var serverTickable in TickManager.ServerTick)
             {
@@ -250,21 +203,8 @@ namespace zenith.Core
             return ProgressionManager.GetStage() >= 2 && domain.GetTier() >= passiveReq;
         }
 
-        private bool CanUseAttack(IDomainInfo domain)
-        {
-            var attackReq = domain.GetMaxTier() / 2;
-
-            return ProgressionManager.GetStage() >= 2 && domain.GetTier() >= attackReq;
-        }
-
-        private void RefreshStats()
-        {
-            foreach (var domain in DomainManager.Domains.Values)
-            {
-                if (CanUsePassive(domain))
-                   AbilityFactory.ApplyPassives(domain.GetDomain());
-            }
-        }
+      
+      
 
 
         

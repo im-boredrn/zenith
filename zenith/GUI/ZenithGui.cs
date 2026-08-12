@@ -183,7 +183,7 @@ namespace zenith.GUI
                 BonusGUI.TryClose();
                 BonusGUI.Dispose(); // Previously this line was Tryopen - caused BlackBox Issue
             }
-            var zenithNetwork = capi.ModLoader.GetModSystem<zenithCore>().ZenithNetwork;
+            var zenithNetwork = capi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
 
             BonusGUI = new BonusGUI(capi,  StatOutut, zenithNetwork);
             BonusGUI.TryOpen();
