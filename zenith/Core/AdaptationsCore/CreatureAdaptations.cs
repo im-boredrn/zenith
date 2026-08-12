@@ -170,7 +170,6 @@ namespace zenith.Core.AdaptationsCore
         private readonly ZenithData zenithData;
         private TreeAttribute ZenithData => zenithData.Tree;
         // Always Check for Stale References -- I lost 1 day and 5 hours to this mistake.
-        static public bool DebugMode => ZenithSettings.ZDebugMode;
         public event Action OnAdaptationChanged;
 
         public CreatureAdaptations(Entity entity, ZenithData data) 
@@ -287,9 +286,6 @@ namespace zenith.Core.AdaptationsCore
             //Log($"SERVER COUNT AFTER ADD: {ActiveAdaptations.Count}");
         }
 
-       
-
-   
         public void AssimilateLink(CreatureType creatureType) 
         {
          //   Log("[CA-FLOW] AssimilateLink Called");

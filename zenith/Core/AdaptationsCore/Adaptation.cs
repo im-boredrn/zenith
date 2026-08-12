@@ -20,6 +20,9 @@ namespace zenith.Core.Adaptations
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }
       
         public virtual void Apply() { }
+        public virtual void OnEvolve( ) { }
+
+        
         public abstract string AdaptationName { get; }
         public abstract string AdaptationDescription { get; }
         public abstract string LockedDescription { get; }
