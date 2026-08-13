@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore;
 
@@ -12,6 +13,9 @@ namespace zenith.GUI
         public override string ToggleKeyCombinationCode => null;
 
         private readonly CreatureAdaptations creatureAdaptations;
+        InventoryGeneric inv;
+        public int packetIDOffset;
+
         public AdaptationGUI(ICoreClientAPI capi, CreatureAdaptations adaptations) : base (capi)
         {
             this.creatureAdaptations = adaptations;
@@ -30,10 +34,13 @@ namespace zenith.GUI
             ElementBounds bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle);
 
 
+            double pad = GuiElementItemSlotGridBase.unscaledSlotPadding;
+            ElementBounds slotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftBottom, pad, 40.0 + pad, 1, 1).FixedGrow(2.0 * pad, 2.0 * pad);
+
             SingleComposer = capi.Gui.CreateCompo("Adaptations", bounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($"Adaptations", OnGuiClosed);
-
+            inv = new InventoryGeneric(1, "assim-slot", capi, (id, self) => new ItemSlot(self));
 
             int i = 0;
             int spacing = 40;
@@ -62,7 +69,7 @@ namespace zenith.GUI
                // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
                 i++;
             }
-
+            SingleComposer.AddItemSlotGrid(inv, SendEntityPacket, 1, slotBounds); // Idk if thats the right packet.
             SingleComposer.Compose();
         }
 
@@ -98,6 +105,27 @@ namespace zenith.GUI
                 return text;
         }
 
+        private void SendEntityPacket(object p)
+        {
+
+            var slot = inv[0];
+
+           
+
+            long entityid = capi.World.Player.Entity.EntityId;
+            capi.Network.SendEntityPacketWithOffset(entityid, packetIDOffset, p);
+            //Analyze Block Method() Send An Event
+            if (slot.Empty)
+            {
+                return;
+            }
+            else
+            {
+                var stack = slot.Itemstack;
+                ItemSent?.Invoke(stack);
+            }
+        }
+
 
         public override void OnGuiOpened()
         {
@@ -120,5 +148,6 @@ namespace zenith.GUI
             this.Dispose();
         }
 
+        public Action<ItemStack> ItemSent;
     }
 }

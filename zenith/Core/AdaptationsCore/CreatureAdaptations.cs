@@ -296,6 +296,14 @@ namespace zenith.Core.AdaptationsCore
             }
         }
 
+        public void ItemSentLink(ItemStack stack)
+        {
+            var sapi = entity.World.Api as ICoreServerAPI;
+
+
+            sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.Item.Code}", EnumChatType.OwnMessage);
+        }
+
 
        
 

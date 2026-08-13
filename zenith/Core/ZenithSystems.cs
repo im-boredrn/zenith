@@ -152,6 +152,11 @@ namespace zenith.Core
                 CreatureAdaptations?.AssimilateLink(creatureT);
             };
 
+            ZenithGui?.AdaptationGUI?.ItemSent += (slot) =>
+            {
+                CreatureAdaptations?.ItemSentLink(slot);
+            };
+
             StatOutput.OnOutputChange += () =>
             {
                 ZenithGui?.BonusGUI?.UpdateBonusStats();
