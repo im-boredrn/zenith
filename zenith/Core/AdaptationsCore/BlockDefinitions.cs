@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 
 namespace zenith.Core.AdaptationsCore
 {
@@ -19,6 +21,15 @@ namespace zenith.Core.AdaptationsCore
         public float Value { get; set; }
         public bool IsUnknown { get; set; }
 
+        //public static readonly Dictionary<Block, BlockDefinitions> BlockStat = new()
+        //{
+        //    [] = new BlockDefinitions()
+        //    {
+
+        //    }
+        //};
+
+        public Dictionary<AdaptationValue, float> BlockGains { get; set; } = [];
 
         public Type AdaptationType { get; set; }
     }

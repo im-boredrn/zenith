@@ -8,6 +8,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
@@ -298,10 +299,21 @@ namespace zenith.Core.AdaptationsCore
 
         public void ItemSentLink(ItemStack stack)
         {
-            var sapi = entity.World.Api as ICoreServerAPI;
+            var capi = entity.World.Api as ICoreClientAPI;
+
+         
+               
+                capi.SendChatMessage($"Assimilated {stack.GetName()}", "assim-group");
 
 
-            sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.Item.Code}", EnumChatType.OwnMessage);
+            //if (stack.Block is Block block)
+            //{
+            //   if (BlockDefinitions.BlockStat.TryGetValue(block, out var definitions))
+            //    {
+            //        definitions.BlockGains[] += 3;
+            //    }
+            //}
+            
         }
 
         public void EvolveAdaptation(Adaptation adaptation)
@@ -311,7 +323,7 @@ namespace zenith.Core.AdaptationsCore
             adaptation.StageUp();
         }
 
-
+        
        
 
         private void ApplyAdaptations()

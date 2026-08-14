@@ -26,7 +26,6 @@ public class ZenithCore : ModSystem
 
     public ZenithNetwork ZenithNetwork { get; private set; }
     public static ModConfig Config => ConfigLoader.Config;
- //   private readonly long tickListenerId;   
 
     public override void StartPre(ICoreAPI api)
     {
@@ -42,7 +41,6 @@ public class ZenithCore : ModSystem
 
         ZenithNetwork = new ZenithNetwork();
 
-        
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -71,9 +69,6 @@ public class ZenithCore : ModSystem
 
         ZenithNetwork.RegisterClient(api);
 
-
-       
-        
             api.Event.PlayerJoin += (IClientPlayer player) =>
             { // Apparently Causes Crash, Might not be My mod though | Could be null player.
                 api.Event.EnqueueMainThreadTask(() =>
@@ -101,20 +96,13 @@ public class ZenithCore : ModSystem
                         Logger.Error($"Start Client Side EnqueueMainThreadTask Threw {e}");
                     }
 
-                   
-
 
                 }, "AttachBehaviors");
 
             };
 
-        
-       
-
-
         Keybinds.WireKeybinds(api,ZenithNetwork);
 
-     
         api.Input.RegisterHotKey("opendomain", "Open Organism GUI", GlKeys.G, HotkeyType.GUIOrOtherControls);
         api.Input.SetHotKeyHandler("opendomain", comb =>
         {
@@ -145,25 +133,6 @@ public class ZenithCore : ModSystem
             return false;
         });
 
-       
-
-
-    }
-
-    private void OnServerTick(float dt)
-    {
-
-        foreach (var player in sapi.World.AllOnlinePlayers)
-        {
-            var entityPlayer = player.Entity as EntityPlayer;
-            if (entityPlayer == null) continue;
-
-            var zenithBehavior = entityPlayer.GetBehavior<ZenithBehavior>();
-            if (zenithBehavior?.systems != null)
-            {
-                zenithBehavior.systems.OnServerTick(dt); 
-            }
-        }
     }
 
     public override void Dispose()

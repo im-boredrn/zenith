@@ -85,6 +85,7 @@ namespace zenith.Core
                     //}
 
                 });
+
             }
 
         WireEvents();
@@ -152,15 +153,6 @@ namespace zenith.Core
                 CreatureAdaptations?.AssimilateLink(creatureT);
             };
 
-            ZenithGui?.AdaptationGUI?.ItemSent += (slot) =>
-            {
-                CreatureAdaptations?.ItemSentLink(slot);
-            };
-
-            ZenithGui?.AdaptationGUI?.EvolveSelected += (adapt) =>
-            {
-                CreatureAdaptations?.EvolveAdaptation(adapt);
-            };
 
             StatOutput.OnOutputChange += () =>
             {
@@ -171,27 +163,27 @@ namespace zenith.Core
         }
 
 
+      
+
         public void OnServerTick(float dt)
         {
-            var player = entity as EntityPlayer;
-            if (player == null) return;
+            if (Player == null) return;
 
          
 
             foreach (var serverTickable in TickManager.ServerTick)
             {
-                serverTickable.OnTick(player,dt);
+                serverTickable.OnTick(Player,dt);
             }
         }
 
         public void OnClientTick(float dt)
         {
-            var player = entity as EntityPlayer;
-            if (player == null) return;
+            if (Player == null) return;
            
             foreach (var tickable in TickManager.ClientTick)
             {
-                tickable.OnTick(player,dt);
+                tickable.OnTick(Player,dt);
             }        
         }
     }

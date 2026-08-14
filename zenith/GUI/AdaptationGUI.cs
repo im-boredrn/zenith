@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore;
+using zenith.Core.Helper;
 
 namespace zenith.GUI
 {
@@ -26,6 +28,12 @@ namespace zenith.GUI
                 RefreshAdaptation();
             };
             SetupDialog();
+
+            ItemSent  += (stack) =>
+            {
+                creatureAdaptations.ItemSentLink(stack);
+            }; // Events need to Be initialized in pocket GUI or they will be null. 
+            //TODO: Fix Other GUI events
         }
 
         private void SetupDialog()
@@ -107,25 +115,32 @@ namespace zenith.GUI
 
         private void SendEntityPacket(object p)
         {
-
+            
             var slot = inv[0];
 
            
 
             long entityid = capi.World.Player.Entity.EntityId;
             capi.Network.SendEntityPacketWithOffset(entityid, packetIDOffset, p);
-            //Analyze Block Method() Send An Event
             if (slot.Empty)
             {
                 return;
             }
             else
             {
+                if (inputStack.Attributes.GetBool("consumed", false))
+                {
+                    return;
+                }
+
                 var stack = slot.Itemstack;
                 ItemSent?.Invoke(stack);
+                inputStack.Attributes.SetBool("consumed", true);
+                Logger.Log(capi.World.Player.Entity, $"Empty? {inv[0].Empty}");
+
             }
         }
-
+        
         private void SendEvolvableAdaptation(Adaptation adaptation)
         {
             EvolveSelected?.Invoke(adaptation);
@@ -145,13 +160,25 @@ namespace zenith.GUI
         
 
             base.OnGuiClosed();
-            creatureAdaptations.OnAdaptationChanged += () =>
+            creatureAdaptations.OnAdaptationChanged -= () =>
             {
                 RefreshAdaptation();
+            };
+
+            ItemSent -= (stack) =>
+            {
+                creatureAdaptations.ItemSentLink(stack);
             };
             this.TryClose();
             this.Dispose();
         }
+
+        public ItemStack inputStack
+        {
+            get { return inv[0].Itemstack; }
+            set { inv[0].Itemstack = value; inv[0].MarkDirty(); }
+        }
+
         public Action<Adaptation> EvolveSelected;
         public Action<ItemStack> ItemSent;
     }
