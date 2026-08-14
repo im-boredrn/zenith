@@ -299,11 +299,11 @@ namespace zenith.Core.AdaptationsCore
 
         public void ItemSentLink(ItemStack stack)
         {
-            var capi = entity.World.Api as ICoreClientAPI;
+            var sapi = entity.World.Api as ICoreServerAPI;
 
          
                
-                capi.SendChatMessage($"Assimilated {stack.GetName()}", "assim-group");
+                sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.GetName()}", EnumChatType.Notification);
 
 
             //if (stack.Block is Block block)

@@ -11,11 +11,13 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Domains;
+using zenith.Core.Inventory;
 using zenith.Core.Progression;
 
 namespace zenith.Core
@@ -64,7 +66,6 @@ namespace zenith.Core
         public ZenithSystems systems;
         private readonly IStageProvider stageProvider;
         private  IDomainInfo domainInfo;
-
         public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
         {
             if (entity.World.Side == EnumAppSide.Server) // If server Side
@@ -101,9 +102,7 @@ namespace zenith.Core
             stageProvider = systems.ProgressionManager; 
         }
 
-        //public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
-        //{
-        //}
+       
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {

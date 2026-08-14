@@ -14,6 +14,7 @@ using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Helper;
+using zenith.Core.Inventory;
 using zenith.Core.Progression;
 using zenith.Core.Renderers;
 using zenith.Core.Traits;
@@ -40,6 +41,9 @@ namespace zenith.Core
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
+        private AssimilationInventory ServerAssimilationInventory;
+        private AssimilationInventory ClientAssimilationInventory;
+
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {
             this.entity = entity;
@@ -61,16 +65,24 @@ namespace zenith.Core
             }
 
             DomainManager = new DomainManager(entity, modConfig, ZenithData);
-            DomainManager.LoadDomains();          
+            DomainManager.LoadDomains();
 
+            if (capi == null)
+            {
+                ServerAssimilationInventory = new AssimilationInventory(1, $"assiminvID-{Player.PlayerUID}", Player.Api);
+                ServerAssimilationInventory.LateInitialize($"assiminvID-{Player.PlayerUID}", Player.Api);
+
+            }
             // GUI
-            if (capi != null && Player.Player as ICoreServerAPI == null)
+            if (capi != null )
             {
                  
                 BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
 
+                ClientAssimilationInventory = new AssimilationInventory(1,$"assiminvID-{Player.PlayerUID}", capi);
+                ClientAssimilationInventory.LateInitialize($"assiminvID-{Player.PlayerUID}", Player.Api);
 
-                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, CreatureAdaptations );
+                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, CreatureAdaptations, ClientAssimilationInventory );
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();
@@ -78,11 +90,6 @@ namespace zenith.Core
                     CreatureAdaptations?.ReloadAdapt();
 
 
-                    //if (CreatureAdaptations.ActiveAdaptations.Any(a => a is WingedAdaptation) && WingedEnabler == null)
-                    //{
-                    //   WingedEnabler = new WingedEnabler(capi, entity as EntityPlayer);
-                    //    WingedEnabler.HasWings = true;
-                    //}
 
                 });
 
@@ -154,6 +161,7 @@ namespace zenith.Core
             };
 
 
+
             StatOutput.OnOutputChange += () =>
             {
                 ZenithGui?.BonusGUI?.UpdateBonusStats();
@@ -162,8 +170,34 @@ namespace zenith.Core
             };
         }
 
+        public void OpenAssimInv(IServerPlayer player)
+        {
+            player.InventoryManager.OpenInventory(ServerAssimilationInventory);
+        }
+        public void CloseAssimInv(IServerPlayer player)
+        {
+            player.InventoryManager.CloseInventoryAndSync(ServerAssimilationInventory);
+        }
 
-      
+        public void SubmitItemAssim()
+        {
+            Logger.Log(Player, $"Inventory exists? {ServerAssimilationInventory != null}");
+
+            Logger.Log(Player, $"Slot empty? {ServerAssimilationInventory?[0].Empty}");
+
+            Logger.Log(Player, $"Stack null? {ServerAssimilationInventory?[0].Itemstack == null}");
+            if (ServerAssimilationInventory[0].Itemstack == null) return;
+
+
+            CreatureAdaptations.ItemSentLink(ServerAssimilationInventory[0].Itemstack);
+            ServerAssimilationInventory[0].TakeOutWhole();
+
+
+        }
+
+
+
+
 
         public void OnServerTick(float dt)
         {

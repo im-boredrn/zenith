@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -7,6 +8,8 @@ using Vintagestory.GameContent;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore;
 using zenith.Core.Helper;
+using zenith.Core.Inventory;
+using zenith.Core.NetWork;
 
 namespace zenith.GUI
 {
@@ -15,12 +18,14 @@ namespace zenith.GUI
         public override string ToggleKeyCombinationCode => null;
 
         private readonly CreatureAdaptations creatureAdaptations;
-        InventoryGeneric inv;
         public int packetIDOffset;
-
-        public AdaptationGUI(ICoreClientAPI capi, CreatureAdaptations adaptations) : base (capi)
+        private readonly AssimilationInventory inventory;
+        private readonly ZenithNetwork zenithNetwork;
+        public AdaptationGUI(ICoreClientAPI capi, CreatureAdaptations adaptations, AssimilationInventory assimInventory, ZenithNetwork zenithNetwork) : base (capi)
         {
             this.creatureAdaptations = adaptations;
+            this.inventory = assimInventory;
+            this.zenithNetwork = zenithNetwork;
             // Refresh on Adaptation Change
 
             creatureAdaptations.OnAdaptationChanged += () =>
@@ -29,11 +34,12 @@ namespace zenith.GUI
             };
             SetupDialog();
 
-            ItemSent  += (stack) =>
+            ItemSent  += (stack) => // Should move to server side | maybe through packet
             {
                 creatureAdaptations.ItemSentLink(stack);
             }; // Events need to Be initialized in pocket GUI or they will be null. 
             //TODO: Fix Other GUI events
+
         }
 
         private void SetupDialog()
@@ -41,14 +47,20 @@ namespace zenith.GUI
 
             ElementBounds bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle);
 
+            ElementBounds dialogBounds =
+    ElementBounds.Fixed(0, 0, 200, 200)
+    .WithAlignment(EnumDialogArea.RightMiddle);
+
+            ElementBounds buttonBounds =
+            ElementBounds.Fixed(0, 0, 30, 30)
+            .WithAlignment(EnumDialogArea.CenterBottom);
 
             double pad = GuiElementItemSlotGridBase.unscaledSlotPadding;
-            ElementBounds slotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftBottom, pad, 40.0 + pad, 1, 1).FixedGrow(2.0 * pad, 2.0 * pad);
+            ElementBounds slotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.LeftBottom, pad, 0 + pad, 1, 1).FixedGrow(2.0 * pad, 2.0 * pad);
 
-            SingleComposer = capi.Gui.CreateCompo("Adaptations", bounds)
+            SingleComposer = capi.Gui.CreateCompo("Adaptations", dialogBounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($"Adaptations", OnGuiClosed);
-            inv = new InventoryGeneric(1, "assim-slot", capi, (id, self) => new ItemSlot(self));
 
             int i = 0;
             int spacing = 40;
@@ -63,25 +75,26 @@ namespace zenith.GUI
                     SingleComposer.AddDynamicText($"{adaptation.AdaptationName}", CairoFont.WhiteSmallishText(),
                         ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}K")
                 .AddHoverText($"{adaptation.AdaptationDescription}",
-                CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 200, 30));
+                CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
                 }
                 else
                 {
                     SingleComposer.AddDynamicText($"[LOCKED]", CairoFont.WhiteSmallishText(),
                         ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}L")
              .AddHoverText($"{adaptation.LockedDescription}",
-             CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 200, 30));
+             CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
                 }
             
 
                // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
                 i++;
             }
-            SingleComposer.AddItemSlotGrid(inv, SendEntityPacket, 1, slotBounds); // Idk if thats the right packet.
+            SingleComposer.AddItemSlotGrid(inventory, SendEntityPacket, 1, slotBounds);
+            SingleComposer.AddButton("Eat", () => OnSubmitAssim(), buttonBounds, EnumButtonStyle.Small);
             SingleComposer.Compose();
         }
 
-
+        
         public void RefreshAdaptation()
         {
             if (!IsOpened()) return;
@@ -115,35 +128,31 @@ namespace zenith.GUI
 
         private void SendEntityPacket(object p)
         {
-            
-            var slot = inv[0];
-
-           
+            var slot = inventory[0];
 
             long entityid = capi.World.Player.Entity.EntityId;
-            capi.Network.SendEntityPacketWithOffset(entityid, packetIDOffset, p);
+            ObjectReader.DumpObject(capi.World.Player.Entity, p, 2);
+            capi.Network.SendPacketClient( p);
             if (slot.Empty)
             {
                 return;
             }
             else
             {
-                if (inputStack.Attributes.GetBool("consumed", false))
-                {
-                    return;
-                }
-
                 var stack = slot.Itemstack;
-                ItemSent?.Invoke(stack);
-                inputStack.Attributes.SetBool("consumed", true);
-                Logger.Log(capi.World.Player.Entity, $"Empty? {inv[0].Empty}");
-
+                Logger.Log(capi.World.Player.Entity, $"{p} |Empty? {inventory[0].Empty} | {stack}");
             }
         }
         
         private void SendEvolvableAdaptation(Adaptation adaptation)
         {
             EvolveSelected?.Invoke(adaptation);
+        }
+
+        public bool OnSubmitAssim()
+        {
+            zenithNetwork.RequestSubmitItem();
+            return true;
         }
 
 
@@ -169,15 +178,13 @@ namespace zenith.GUI
             {
                 creatureAdaptations.ItemSentLink(stack);
             };
+            capi.World.Player.InventoryManager.CloseInventoryAndSync(inventory);
+
             this.TryClose();
             this.Dispose();
         }
 
-        public ItemStack inputStack
-        {
-            get { return inv[0].Itemstack; }
-            set { inv[0].Itemstack = value; inv[0].MarkDirty(); }
-        }
+        
 
         public Action<Adaptation> EvolveSelected;
         public Action<ItemStack> ItemSent;

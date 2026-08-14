@@ -14,6 +14,8 @@ using zenith.Core.Adaptations;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
 using zenith.GUI;
+using System.Collections.Generic;
+using zenith.Core.Inventory;
 namespace zenith;
 public class ZenithCore : ModSystem
 {

@@ -23,6 +23,9 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<IncreasePacket>()
                 .RegisterMessageType<DecreasePacket>()
                 .RegisterMessageType<SelectedStatPacket>()
+                .RegisterMessageType<OpenAssimInventoryPacket>()
+                .RegisterMessageType<CloseAssimInventoryPacket>()
+                .RegisterMessageType<SubmitAssimItemPacket>()
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
@@ -48,7 +51,22 @@ namespace zenith.Core.NetWork
                 {
                     var behavior = player.Entity.GetBehavior<ZenithBehavior>();
                     behavior?.systems?.StatOutput?.StatSwitch((StatOutput.StatType)packet.SelectedStat);
-                });
+                })
+                .SetMessageHandler<OpenAssimInventoryPacket>((player,packet) =>
+                {
+                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    behavior?.systems.OpenAssimInv(player);
+                })
+                 .SetMessageHandler<CloseAssimInventoryPacket>((player, packet) =>
+                 {
+                     var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                     behavior?.systems.CloseAssimInv(player);
+                 })
+                  .SetMessageHandler<SubmitAssimItemPacket>((player, packet) =>
+                  {
+                      var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                      behavior?.systems.SubmitItemAssim();
+                  });
 
         }
 
@@ -59,7 +77,10 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<ConsumePacket>()
                 .RegisterMessageType<IncreasePacket>()
                 .RegisterMessageType<DecreasePacket>()
-                .RegisterMessageType<SelectedStatPacket>();
+                .RegisterMessageType<SelectedStatPacket>()
+                .RegisterMessageType<OpenAssimInventoryPacket>()
+                .RegisterMessageType<CloseAssimInventoryPacket>()
+                .RegisterMessageType<SubmitAssimItemPacket>();
         }
 
         public void RequestStat(StatOutput.StatType stat)
@@ -72,6 +93,25 @@ namespace zenith.Core.NetWork
 
         }
 
+        public void RequestOpenAssimInventory()
+        {
+            ClientChannel?.SendPacket(new OpenAssimInventoryPacket()
+            {
+               // Maybe put in toggleMode one day
+            });
+        }
+        public void RequestCloseAssimInventory()
+        {
+            ClientChannel?.SendPacket(new CloseAssimInventoryPacket()
+            {
+            });
+        }
+        public void RequestSubmitItem()
+        {
+            ClientChannel?.SendPacket(new SubmitAssimItemPacket());
+
+
+        }
 
         public void Request(GlKeys glKeys, bool shift, bool alt)
         {

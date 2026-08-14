@@ -4,6 +4,7 @@ using zenith.Config;
 using zenith.Core.AdaptationsCore;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
+using zenith.Core.Inventory;
 using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehavior;
@@ -25,12 +26,15 @@ namespace zenith.GUI
         private readonly StatOutput StatOutut;
         private readonly CreatureAdaptations creatureAdaptations;
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
-        public ZenithGui(ICoreClientAPI capi,   DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput, CreatureAdaptations adaptations) : base(capi)
+        private readonly AssimilationInventory inventory;
+        public ZenithGui(ICoreClientAPI capi,   DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput,
+            CreatureAdaptations adaptations, AssimilationInventory inv) : base(capi)
         {
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
             this.creatureAdaptations = adaptations;
+            this.inventory = inv;
             SetupDialog();
 
         }
@@ -207,13 +211,21 @@ namespace zenith.GUI
 
         private bool OnShowAdaptations()
         {
+            var zenithNetwork = capi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
             if (AdaptationGUI != null)
             {
+                zenithNetwork.RequestCloseAssimInventory();
+                capi.World.Player.InventoryManager.CloseInventoryAndSync(inventory);
+
                 AdaptationGUI.TryClose();
                 AdaptationGUI.Dispose();
             }
+            AdaptationGUI = new AdaptationGUI(capi, creatureAdaptations, inventory,zenithNetwork);
 
-            AdaptationGUI = new AdaptationGUI(capi, creatureAdaptations);
+            zenithNetwork.RequestOpenAssimInventory();
+            capi.World.Player.InventoryManager.OpenInventory(inventory);
+
             AdaptationGUI.TryOpen();
 
             return true;
@@ -233,6 +245,7 @@ namespace zenith.GUI
 
         public override void OnGuiClosed()
         {
+
             this.TryClose();
             DomainDetailsGUI? .TryClose(); 
            Log("Dialog closed");
