@@ -126,6 +126,11 @@ namespace zenith.GUI
             }
         }
 
+        private void SendEvolvableAdaptation(Adaptation adaptation)
+        {
+            EvolveSelected?.Invoke(adaptation);
+        }
+
 
         public override void OnGuiOpened()
         {
@@ -147,7 +152,7 @@ namespace zenith.GUI
             this.TryClose();
             this.Dispose();
         }
-
+        public Action<Adaptation> EvolveSelected;
         public Action<ItemStack> ItemSent;
     }
 }

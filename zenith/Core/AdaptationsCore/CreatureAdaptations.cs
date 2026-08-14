@@ -304,6 +304,13 @@ namespace zenith.Core.AdaptationsCore
             sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.Item.Code}", EnumChatType.OwnMessage);
         }
 
+        public void EvolveAdaptation(Adaptation adaptation)
+        {
+            if (!adaptation.ReadyToEvolve) return;
+
+            adaptation.StageUp();
+        }
+
 
        
 

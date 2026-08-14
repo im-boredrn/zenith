@@ -7,11 +7,16 @@ namespace zenith.Core.AdaptationsCore
     public class BlockDefinitions
     {
 
+        public enum AdaptationValue // Make enum for category so I can .Contains(Category)
+        {
+            Biomatter,
+            Clay,
+            Fungal,
+        }
 
         public bool HasAdaptation { get; set; }
         public bool IsLocked { get; set; } = false;
-        public int Threshold { get; set; } 
-        public float BiomatterVal { get; set; }
+        public float Value { get; set; }
         public bool IsUnknown { get; set; }
 
 

@@ -20,13 +20,25 @@ namespace zenith.Core.Adaptations
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }
       
         public virtual void Apply() { }
-        public virtual void OnEvolve( ) { }
+        public virtual void StageUp( )
+        {
+            if (ReadyToEvolve)
+            {
+                CurrentStage++;
+                Apply();
+                EvolutionRequirement *= 2;
+                ReadyToEvolve = false;
+            }
+
+        }
 
         
         public abstract string AdaptationName { get; }
         public abstract string AdaptationDescription { get; }
         public abstract string LockedDescription { get; }
-     //   public virtual bool IsUnlocked { get; }
-        
+        public virtual bool ReadyToEvolve { get; private set; }
+
+        public virtual int EvolutionRequirement { get; private set; }
+        public virtual int CurrentStage { get; private set; } = 1;
     }
 }
