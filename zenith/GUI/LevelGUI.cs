@@ -45,7 +45,7 @@ namespace zenith.GUI
 
             int i = 0;
             int spacing = 20;
-            foreach (var kvp in assimilationCore.Definitions.Where(kvp => !kvp.Value.IsUnknown))
+            foreach (var kvp in AssimilationDefinition.Definitions.Where(kvp => !kvp.Value.IsUnknown))
             {
                 var key = kvp.Key;
                 var trait = kvp.Value;
@@ -70,7 +70,7 @@ namespace zenith.GUI
             if (!IsOpened()) return;
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
 
-            foreach (var kvp in assimilationCore.Definitions.Where(kvp => !kvp.Value.IsUnknown))
+            foreach (var kvp in AssimilationDefinition.Definitions.Where(kvp => !kvp.Value.IsUnknown))
             {
 
                 var key = kvp.Key;

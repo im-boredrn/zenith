@@ -4,28 +4,30 @@ using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using static zenith.Core.Assimilation.AssimilationCore;
-using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
+using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
+using BlockCategory = zenith.Core.AdaptationsCore.BlockDefinitions.BlockCategory;
+using zenith.Core.AdaptationsCore;
 namespace zenith.Core.Adaptations
 {
     public abstract class Adaptation(IWorldAccessor worldAccessor, Entity entity)
     {
       //  protected readonly IWorldAccessor worldAccessor;
        // protected readonly Entity entity;
-        public abstract  CreatureType SourceCreature { get;  }
-
-       
+        public virtual  CreatureType SourceCreature { get;  }
+        public virtual BlockCategory BlockCategory { get; }
+       public abstract AdaptCategory.AdaptationCategory AdaptationCategory { get; }
 
 
         public virtual void OnAssimilate( Entity entity, CreatureDefinition creatureDefinition,
             IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) { }
       
-        public virtual void Apply() { }
+        public virtual void Initialize() { }
         public virtual void StageUp( )
         {
             if (ReadyToEvolve)
             {
                 CurrentStage++;
-                Apply();
+                Initialize();
                 EvolutionRequirement *= 2;
                 ReadyToEvolve = false;
             }

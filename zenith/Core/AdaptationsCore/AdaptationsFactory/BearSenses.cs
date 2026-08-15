@@ -13,7 +13,7 @@ using zenith.Config;
 using zenith.Core.Adaptations;
 using zenith.Core.Helper;
 using static zenith.Core.Assimilation.AssimilationCore;
-
+using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
     public class BearSenses  : Adaptation, ITickable

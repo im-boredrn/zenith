@@ -36,7 +36,7 @@ namespace zenith.GUI
 
             ItemSent  += (stack) => // Should move to server side | maybe through packet
             {
-                creatureAdaptations.ItemSentLink(stack);
+                creatureAdaptations.EatItem(stack);
             }; // Events need to Be initialized in pocket GUI or they will be null. 
             //TODO: Fix Other GUI events
 
@@ -48,7 +48,7 @@ namespace zenith.GUI
             ElementBounds bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle);
 
             ElementBounds dialogBounds =
-    ElementBounds.Fixed(0, 0, 200, 200)
+    ElementBounds.Fixed(0, 0, 200, 300)
     .WithAlignment(EnumDialogArea.RightMiddle);
 
             ElementBounds buttonBounds =
@@ -68,7 +68,7 @@ namespace zenith.GUI
             {
                 var adaptation = adaptationFactory.Invoke();
 
-                var unlocked = creatureAdaptations.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
 
                 if (unlocked)
                 {
@@ -102,7 +102,7 @@ namespace zenith.GUI
             foreach (var adaptationFactory in creatureAdaptations.AdaptationManager.Values)
             {
                 var adaptation = adaptationFactory.Invoke();
-                var unlocked = creatureAdaptations.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
                 string suffix = unlocked ? "K" : "L";
 
             
@@ -119,7 +119,7 @@ namespace zenith.GUI
         public string BuildAdaptationText(Adaptation adaptation)
         {
         
-                var unlocked = creatureAdaptations.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
 
                 string text = unlocked ? $"{adaptation.AdaptationName}" : $"[Locked]";
 
@@ -128,20 +128,9 @@ namespace zenith.GUI
 
         private void SendEntityPacket(object p)
         {
-            var slot = inventory[0];
-
             long entityid = capi.World.Player.Entity.EntityId;
-            ObjectReader.DumpObject(capi.World.Player.Entity, p, 2);
+          //  ObjectReader.DumpObject(capi.World.Player.Entity, p, 2);
             capi.Network.SendPacketClient( p);
-            if (slot.Empty)
-            {
-                return;
-            }
-            else
-            {
-                var stack = slot.Itemstack;
-                Logger.Log(capi.World.Player.Entity, $"{p} |Empty? {inventory[0].Empty} | {stack}");
-            }
         }
         
         private void SendEvolvableAdaptation(Adaptation adaptation)
@@ -176,7 +165,7 @@ namespace zenith.GUI
 
             ItemSent -= (stack) =>
             {
-                creatureAdaptations.ItemSentLink(stack);
+                creatureAdaptations.EatItem(stack);
             };
             capi.World.Player.InventoryManager.CloseInventoryAndSync(inventory);
 

@@ -3,34 +3,38 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
+using zenith.Core.AdaptationsCore.AdaptationsFactory;
 
 namespace zenith.Core.AdaptationsCore
 {
     public class BlockDefinitions
     {
 
-        public enum AdaptationValue // Make enum for category so I can .Contains(Category)
+        public enum BlockCategory // Make enum for category so I can .Contains(Category)
         {
             Biomatter,
             Clay,
             Fungal,
         }
 
-        public bool HasAdaptation { get; set; }
         public bool IsLocked { get; set; } = false;
-        public float Value { get; set; }
-        public bool IsUnknown { get; set; }
+        public int Threshold { get; set; }
+        public int BlockLVL { get; set; } = 0;
 
-        //public static readonly Dictionary<Block, BlockDefinitions> BlockStat = new()
-        //{
-        //    [] = new BlockDefinitions()
-        //    {
+        public static IReadOnlyDictionary<AssetLocation, BlockDefinitions> BlockLibrary => BlockDefinition;
+        public static readonly Dictionary<AssetLocation, BlockDefinitions> BlockDefinition = new()
+        {
+            [new AssetLocation("game:clay-blue")] = new() // too rigid
+            {
+                AdaptationType = typeof(ClayAdaptation),
+                   Threshold = 100 
+                
+            }
+        };
 
-        //    }
-        //};
-
-        public Dictionary<AdaptationValue, float> BlockGains { get; set; } = [];
+       
 
         public Type AdaptationType { get; set; }
+
     }
 }

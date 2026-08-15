@@ -188,29 +188,19 @@ namespace zenith.Core
             Logger.Log(Player, $"Stack null? {ServerAssimilationInventory?[0].Itemstack == null}");
             if (ServerAssimilationInventory[0].Itemstack == null) return;
 
-
-            CreatureAdaptations.ItemSentLink(ServerAssimilationInventory[0].Itemstack);
+            CreatureAdaptations.EatItem(ServerAssimilationInventory[0].Itemstack);
             ServerAssimilationInventory[0].TakeOutWhole();
-
-
         }
-
-
-
-
 
         public void OnServerTick(float dt)
         {
             if (Player == null) return;
-
-         
 
             foreach (var serverTickable in TickManager.ServerTick)
             {
                 serverTickable.OnTick(Player,dt);
             }
         }
-
         public void OnClientTick(float dt)
         {
             if (Player == null) return;

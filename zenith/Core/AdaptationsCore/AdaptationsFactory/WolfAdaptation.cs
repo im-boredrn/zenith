@@ -12,13 +12,13 @@ using Vintagestory.API.Server;
 using zenith.Config;
 using zenith.Core.Adaptations;
 using static zenith.Core.Assimilation.AssimilationCore;
-using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
+using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class WolfAdaptation(IWorldAccessor world, Entity entity, IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq) : Adaptation(world,entity) 
+    public class WolfAdaptation(IWorldAccessor world, Entity entity,
+        IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq) : Adaptation(world,entity) 
     {
 
-        EntityPlayer Player => entity as EntityPlayer;
 
 
        

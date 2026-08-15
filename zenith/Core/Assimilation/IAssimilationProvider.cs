@@ -10,7 +10,6 @@ namespace zenith.Core.Assimilation
 {
     public interface IAssimilationProvider
     {
-        float GetCreatureLevel(CreatureType creatureType);
         public TraitTotals CalculateTotals();
 
 

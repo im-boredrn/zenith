@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -12,152 +13,17 @@ using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Adaptations;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
+using zenith.Core.Assimilation;
 using zenith.Core.Helper;
-using CreatureType = zenith.Core.Assimilation.AssimilationCore.CreatureType;
-
+using static zenith.Core.Adaptations.CreatureDefinition;
+using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
+using AdaptationCategory = zenith.Core.AdaptationsCore.BlockDefinitions.BlockCategory;
 namespace zenith.Core.AdaptationsCore
 {
     public class CreatureAdaptations 
     {
 
-        public Dictionary<CreatureType, CreatureDefinition> CreatureDefinitions { get; } = new Dictionary<CreatureType, CreatureDefinition>()
-        {
-            [CreatureType.drifter] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 0.1f
-            },
-
-            [CreatureType.bowtorn] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false, // maybe add bone spear ability later somehow.
-                Threshold = 5,
-                NutritionVal = 0.1f
-            },
-
-            [CreatureType.shiver] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 0.1f
-            },
-
-            [CreatureType.bear] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = true,
-                Threshold = 4, 
-                NutritionVal = 5f,
-                AdaptationType = typeof (BearSenses)
-            },
-
-
-            [CreatureType.hare] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 2,
-            },
-
-            [CreatureType.wolf] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = true,
-                Threshold = 5,
-                NutritionVal = 2.5f,
-                AdaptationType = typeof(WolfAdaptation)
-
-            },
-
-            [CreatureType.fox] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 2,
-
-            },
-
-            [CreatureType.goat] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 3f,
-
-            },
-
-            [CreatureType.deer] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 3.5f,
-
-            },
-
-            [CreatureType.raccoon] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 0.5f,
-
-            },
-
-            [CreatureType.sheep] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 4.5f,
-
-            },
-
-            [CreatureType.chicken] = new CreatureDefinition() // Add Flight Adaptatiion -- Glide -- Investigate wingsuit thing 
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 2.5f,
-            //    AdaptationType = typeof(WingedAdaptation)
-
-            },
-
-            [CreatureType.pig] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 8f,
- 
-
-            },
-
-            [CreatureType.hyena] = new CreatureDefinition()
-            {
-                Counter = 0,
-                HasAdaptation = false,
-                Threshold = 5,
-                NutritionVal = 1.5f,
-
-            },
-
-
-
-
-            [CreatureType.unknown] = new CreatureDefinition()
-            {
-                IsUnknown = true
-            },
-        };
-
-        public IReadOnlyDictionary<CreatureType, CreatureDefinition> CreatureLibrary => CreatureDefinitions;
+      
         // Maybe make a list / dict of consumable blocks. I.e BlockDefinition.
         // Move Dict init somewhere it is a lot to scroll through.
 
@@ -184,8 +50,9 @@ namespace zenith.Core.AdaptationsCore
             }
             AdaptationProducer = new Dictionary<Type, Func<Adaptation>>()
             {
-                [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World, entity, CreatureLibrary),
-                [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer, CreatureLibrary),
+                [typeof(WolfAdaptation)] = () => new WolfAdaptation(entity.World, entity, CreatureDefinition.CreatureLibrary),
+                [typeof(BearSenses)] = () => new BearSenses(entity.World, entity as EntityPlayer, CreatureDefinition.CreatureLibrary),
+                [typeof(ClayAdaptation)] = () => new ClayAdaptation(entity.World, entity, BlockDefinitions.BlockLibrary)
 
             };
 
@@ -196,9 +63,9 @@ namespace zenith.Core.AdaptationsCore
 
         }
 
-        public Adaptation CreateAdaption(CreatureType creatureType)
+        public Adaptation CreateCreatureAdaption(CreatureType creatureType )
         {
-            var type = CreatureDefinitions[creatureType].AdaptationType;
+            var type = CreatureDefinition.CreatureLibrary[creatureType].AdaptationType;
 
             if (type != null && AdaptationProducer.TryGetValue(type, out var factory))
             {
@@ -212,10 +79,26 @@ namespace zenith.Core.AdaptationsCore
             return null;
         }
 
+        public Adaptation CreateBlockAdaptation(ItemStack stack)
+        {
+            var type = BlockDefinitions.BlockDefinition[stack.Collectible.Code].AdaptationType;
+
+            if (type != null && AdaptationProducer.TryGetValue(type, out var factory))
+            {
+                var adaptation = factory();
+
+                //    Log($"Created {adaptation.GetType().Name} {adaptation.GetHashCode()}");
+
+                return adaptation;
+            }
+
+            return null;
+        }
+
         public void CheckAdaptation(CreatureType creatureType)
         {
 
-            var def = CreatureDefinitions[creatureType];
+            var def = CreatureDefinition.CreatureLibrary[creatureType];
             var sapi = entity.World.Api as ICoreServerAPI;
 
             def.Counter += 1;
@@ -237,7 +120,7 @@ namespace zenith.Core.AdaptationsCore
 
             //    Log("[LOAD] Creating adaptation");
 
-                var adaptation = CreateAdaption(creatureType);
+                var adaptation = CreateCreatureAdaption(creatureType);
 
                 string text = $"{creatureType} Adaptation Successfully Assimilated";
 
@@ -259,11 +142,62 @@ namespace zenith.Core.AdaptationsCore
             }
 
             SaveCAdapt();
-            //foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
-            //{
-            //    Log($"[CA] {creature.ToString()}");
-            //}
+           
         }
+
+        public void EatItem(ItemStack stack)
+        {
+            var sapi = entity.World.Api as ICoreServerAPI;
+            var code = stack.Collectible.Code;
+
+
+
+            if (BlockDefinitions.BlockDefinition.TryGetValue(code, out var definitions))
+            {
+                definitions.BlockLVL += stack.StackSize;
+
+                if (definitions.BlockLVL >= definitions.Threshold)
+                {
+                    definitions.BlockLVL = definitions.Threshold;
+                }
+                else
+                {
+                    SaveCAdapt();
+                    return;
+
+                }
+
+
+                if (!definitions.IsLocked)
+                {
+
+                    var adaptation = CreateBlockAdaptation(stack);
+
+                    string text = $"{definitions.AdaptationType.Name} Adaptation Successfully Assimilated";
+
+                    if (!String.IsNullOrEmpty(text))
+                    {
+                        text = $"{char.ToUpper(text[0])}{text[1..]}";
+                    }
+
+                    sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
+                        text, EnumChatType.Notification);
+
+
+                    if (adaptation != null)
+                    {
+                        RegisterAdaptation(adaptation);
+                        definitions.IsLocked = true;
+                    }
+                    SaveCAdapt();
+                }
+            }
+            sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.GetName()}", EnumChatType.Notification);
+
+            Logger.Log(Player, $"{stack.Collectible.Code}");
+
+        }
+
 
         private void RegisterAdaptation(Adaptation adaptation)
         {
@@ -290,32 +224,14 @@ namespace zenith.Core.AdaptationsCore
         public void AssimilateLink(CreatureType creatureType) 
         {
          //   Log("[CA-FLOW] AssimilateLink Called");
-            var def = CreatureDefinitions[creatureType];
+            var def = CreatureDefinition.CreatureLibrary[creatureType];
             foreach (var adaptation in ActiveAdaptations)
             {
-                adaptation.OnAssimilate(entity, def, CreatureDefinitions);
+                adaptation.OnAssimilate(entity, def, CreatureDefinition.CreatureLibrary);
             }
         }
 
-        public void ItemSentLink(ItemStack stack)
-        {
-            var sapi = entity.World.Api as ICoreServerAPI;
-
-         
-               
-                sapi.SendMessage(Player.Player, GlobalConstants.CurrentChatGroup, $"Assimilated {stack.GetName()}", EnumChatType.Notification);
-
-
-            //if (stack.Block is Block block)
-            //{
-            //   if (BlockDefinitions.BlockStat.TryGetValue(block, out var definitions))
-            //    {
-            //        definitions.BlockGains[] += 3;
-            //    }
-            //}
-            
-        }
-
+      
         public void EvolveAdaptation(Adaptation adaptation)
         {
             if (!adaptation.ReadyToEvolve) return;
@@ -330,7 +246,7 @@ namespace zenith.Core.AdaptationsCore
         {
             foreach (var adaptation in ActiveAdaptations)
             {
-                adaptation.Apply();
+                adaptation.Initialize();
             }
         }
         public void SaveCAdapt()
@@ -343,9 +259,14 @@ namespace zenith.Core.AdaptationsCore
            //     Log($"SAVE {adadpt.SourceCreature} {adadpt.GetHashCode()}");
 
             }
-            foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
+            foreach (var creature in CreatureDefinition.CreatureDefinitions.Where(c => !c.Value.IsUnknown))
             {
                 ZenithData.SetInt($"{creature.Key} CA-Counter", creature.Value.Counter) ;
+            }
+
+            foreach (var block in BlockDefinitions.BlockDefinition)
+            {
+                ZenithData.SetInt($"{block.Key} CA-BlockLVL", block.Value.BlockLVL);
             }
 
             var adaptationTree = new TreeAttribute();
@@ -353,6 +274,7 @@ namespace zenith.Core.AdaptationsCore
             for (int i = 0; i < ActiveAdaptations.Count; i++)
             {
                 adaptationTree.SetString(i.ToString(), ActiveAdaptations[i].SourceCreature.ToString());
+                adaptationTree.SetString(i.ToString(), ActiveAdaptations[i].BlockCategory.ToString());
             }
 
 
@@ -360,15 +282,6 @@ namespace zenith.Core.AdaptationsCore
             ZenithData["adaptations"] = adaptationTree;
             entity.WatchedAttributes.MarkPathDirty("zenith");
             entity.WatchedAttributes.MarkPathDirty("adaptations");
-
-            //Log($"Tree Null? {ZenithData == null}");
-
-
-            //Log($"CreatureAdaptations instance {GetHashCode()}");
-            //Log($"Active list {ActiveAdaptations.GetHashCode()}");
-            //Log($"Count {ActiveAdaptations.Count}");
-
-            //     Log($"Loading adaptations. Tree exists: {watchedZenith.GetTreeAttribute("adaptations") != null}");
 
 
         }
@@ -397,12 +310,11 @@ namespace zenith.Core.AdaptationsCore
                 {
                     var creatureType = Enum.Parse<CreatureType>(adaptationTree.GetString(key.Key));
 
-                    var def = CreatureDefinitions[creatureType];
+                    var def = CreatureDefinition.CreatureDefinitions[creatureType];
                     def.IsLocked = true;
 
                     //       Log("[LOAD] Creating adaptation");
-                    var adaptation = CreateAdaption(creatureType);
-
+                    var adaptation = CreateCreatureAdaption(creatureType);
                     if (adaptation is BearSenses bear)
                     {
                         BearSenses = bear;
@@ -414,18 +326,15 @@ namespace zenith.Core.AdaptationsCore
                     }
                 }
             }
-
-            foreach (var creature in CreatureDefinitions.Where(c => !c.Value.IsUnknown))
+            foreach (var creature in CreatureDefinition.CreatureDefinitions.Where(c => !c.Value.IsUnknown))
             {
                 creature.Value.Counter = ZenithData.GetInt($"{creature.Key} CA-Counter", 0);
             }
 
-            //Log($"CreatureAdaptations instance {GetHashCode()}");
-            //Log($"Active list {ActiveAdaptations.GetHashCode()}");
-            //Log($"Count {ActiveAdaptations.Count}");
-            //  Log($" adaptations Null? : {adaptationTree == null}");
+            foreach (var block in BlockDefinitions.BlockDefinition)
+            {
+                block.Value.BlockLVL = ZenithData.GetInt($"{block.Key} CA-BlockLVL", 0);
+            }
         }
-
-      
     }
 }
