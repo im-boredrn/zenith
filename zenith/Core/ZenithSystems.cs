@@ -41,8 +41,8 @@ namespace zenith.Core
         private EntityPlayer Player => entity as EntityPlayer;
         private readonly Entity entity;
 
-        private AssimilationInventory ServerAssimilationInventory;
-        private AssimilationInventory ClientAssimilationInventory;
+        private readonly AssimilationInventory ServerAssimilationInventory;
+        private readonly AssimilationInventory ClientAssimilationInventory;
 
         public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
             {

@@ -10,13 +10,14 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore.AdaptationData;
+using zenith.Core.Definitions;
 using zenith.Core.Helper;
 using static zenith.Core.Assimilation.AssimilationCore;
-using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
+using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class BearSenses  : Adaptation, ITickable
+    public class BearSenses  : AdaptationDefinitions, ITickable
     {
 
        
@@ -24,16 +25,15 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         private readonly EntityPlayer Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
-        private readonly IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq;
+        private readonly IReadOnlyDictionary<string, AdaptationProgress> statReq;
 
-        public BearSenses(IWorldAccessor world, EntityPlayer entity, IReadOnlyDictionary<CreatureType, CreatureDefinition> creatureDef) : base(world, entity) // Bear Sense, Pack Mule
+        public BearSenses(IWorldAccessor world, EntityPlayer entity, IReadOnlyDictionary<string, AdaptationProgress> creatureDef) : base(world, entity) // Bear Sense, Pack Mule
         {
             this.Player = entity;
             this.world = world;
             this.statReq = creatureDef;
 
             //Log($"[BEAR] Created {this.GetHashCode()}");
-            Log($"Side: {entity.World.Side}");
             TickManager.RegisterClientTick(this);
 
         }
@@ -206,16 +206,12 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
             return false;
         }
         public override CreatureType SourceCreature => CreatureType.bear;
-
+        public override AdaptCategory.AdaptationCategory AdaptationCategory => AdaptCategory.AdaptationCategory.Creature;
         public override string AdaptationName => "Instinct";
         public override string AdaptationDescription => "Enhance your senses to detect Predator and Prey. Toggle With I";
-        public override string LockedDescription => $"Assimilate {statReq[CreatureType.bear].Counter}/{statReq[CreatureType.bear].Threshold} Bears to unlock ";
-
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            Player.World.Logger.Warning(message);
-        }
+        public override string LockedDescription => 
+            $"Assimilate {statReq["bear"].Counter}/{CreatureDefinition.CreatureLibrary[CreatureType.bear].Threshold} Bears to unlock ";
+       
     }
 
 

@@ -12,11 +12,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using zenith.Core.Adaptations;
 using static System.Net.Mime.MediaTypeNames;
 using StatType = zenith.Core.Assimilation.StatOutput.StatType;
-using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
+using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 using zenith.Core.Helper;
+using zenith.Core.Definitions;
 namespace zenith.Core.Assimilation
 {
 

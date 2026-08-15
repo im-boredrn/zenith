@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
-namespace zenith.Core.Adaptations
+namespace zenith.Core.Definitions
 {
     public class CreatureDefinition
     {
@@ -28,143 +28,126 @@ namespace zenith.Core.Adaptations
             unknown
         }
 
-        public string EntityName => Type.ToString();
-        public bool HasAdaptation { get; set; }
-        public bool IsLocked { get; set; } = false;
-        public int Threshold { get; set; }
-        public int Counter { get; set; }
-        public float NutritionVal { get; set; }
-        public bool IsUnknown { get; set; }
+        public bool HasAdaptation { get; init; }
+        public int Threshold { get; init; }
+        public float NutritionVal { get; init; }
+        public bool IsUnknown { get; init; }
 
         public static Dictionary<CreatureType, CreatureDefinition> CreatureDefinitions { get; } = new Dictionary<CreatureType, CreatureDefinition>()
         {
             [CreatureType.drifter] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
-                NutritionVal = 0.1f
+                NutritionVal = 0.1f,
+                Type = CreatureType.drifter
             },
 
             [CreatureType.bowtorn] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false, // maybe add bone spear ability later somehow.
                 Threshold = 5,
-                NutritionVal = 0.1f
+                NutritionVal = 0.1f,
+                Type = CreatureType.bowtorn
             },
 
             [CreatureType.shiver] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
-                NutritionVal = 0.1f
+                NutritionVal = 0.1f,
+                Type = CreatureType.shiver
             },
 
             [CreatureType.bear] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = true,
                 Threshold = 4,
                 NutritionVal = 5f,
+                Type = CreatureType.bear,
                 AdaptationType = typeof(BearSenses)
             },
 
-
             [CreatureType.hare] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 2,
-            },
+                Type = CreatureType.hare
 
+            },
             [CreatureType.wolf] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = true,
                 Threshold = 5,
                 NutritionVal = 2.5f,
+                Type = CreatureType.wolf,
                 AdaptationType = typeof(WolfAdaptation)
-
             },
 
             [CreatureType.fox] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 2,
-
+                Type = CreatureType.fox
             },
 
             [CreatureType.goat] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 3f,
-
+                Type = CreatureType.goat
             },
 
             [CreatureType.deer] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 3.5f,
-
+                Type = CreatureType.deer
             },
 
             [CreatureType.raccoon] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 0.5f,
-
+                Type = CreatureType.raccoon
             },
 
             [CreatureType.sheep] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 4.5f,
-
+                Type = CreatureType.sheep
             },
 
             [CreatureType.chicken] = new CreatureDefinition() // Add Flight Adaptatiion -- Glide -- Investigate wingsuit thing 
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 2.5f,
-
+                Type = CreatureType.chicken
             },
 
             [CreatureType.pig] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 8f,
-
-
+                Type = CreatureType.pig
             },
 
             [CreatureType.hyena] = new CreatureDefinition()
             {
-                Counter = 0,
                 HasAdaptation = false,
                 Threshold = 5,
                 NutritionVal = 1.5f,
-
+                Type = CreatureType.hyena
             },
-
-
-
 
             [CreatureType.unknown] = new CreatureDefinition()
             {
@@ -174,11 +157,8 @@ namespace zenith.Core.Adaptations
 
         public static IReadOnlyDictionary<CreatureType, CreatureDefinition> CreatureLibrary => CreatureDefinitions;
 
-        public Type AdaptationType { get; set; }
-        public override string ToString()
-        {
-            return $"Adapted: {IsLocked} | Counter: {Counter}/{Threshold} | Nutrition: {NutritionVal}";
-        }
+        public Type AdaptationType { get; init; }
+       
 
     }
 }

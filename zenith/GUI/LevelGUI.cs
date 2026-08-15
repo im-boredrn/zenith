@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using zenith.Core.Assimilation;
+using zenith.Core.Definitions;
 using zenith.Core.Progression;
 
 namespace zenith.GUI
@@ -32,7 +33,7 @@ namespace zenith.GUI
            
             var bounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); 
             var speed = zenith?.GetFloat("Speed", 0f);
             var dmg = zenith?.GetFloat("Dmg", 0f);
             var jHeight = zenith?.GetFloat("JHM", 0f);
@@ -68,7 +69,7 @@ namespace zenith.GUI
         {
 
             if (!IsOpened()) return;
-            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); // Method for live updating
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith"); 
 
             foreach (var kvp in AssimilationDefinition.Definitions.Where(kvp => !kvp.Value.IsUnknown))
             {

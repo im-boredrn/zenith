@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using zenith.Config;
 using StatType = zenith.Core.Assimilation.StatOutput.StatType;
-using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
-namespace zenith.Core.Assimilation
+using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
+namespace zenith.Core.Definitions
 {
     public class AssimilationDefinition
     {

@@ -5,8 +5,9 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
-using zenith.Core.Adaptations;
+using zenith.Core;
 using zenith.Core.AdaptationsCore;
+using zenith.Core.Definitions;
 using zenith.Core.Helper;
 using zenith.Core.Inventory;
 using zenith.Core.NetWork;
@@ -61,31 +62,31 @@ namespace zenith.GUI
             SingleComposer = capi.Gui.CreateCompo("Adaptations", dialogBounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($"Adaptations", OnGuiClosed);
-
+            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
+            
             int i = 0;
             int spacing = 40;
             foreach (var adaptationFactory in creatureAdaptations.AdaptationManager.Values)
             {
                 var adaptation = adaptationFactory.Invoke();
 
-                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+                bool unlocked = zenith.GetBool("") ;
 
-                if (unlocked)
-                {
-                    SingleComposer.AddDynamicText($"{adaptation.AdaptationName}", CairoFont.WhiteSmallishText(),
-                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}K")
-                .AddHoverText($"{adaptation.AdaptationDescription}",
+                string text = unlocked
+                    ? adaptation.AdaptationName
+                    : "[LOCKED]";
+
+                string suffix = unlocked 
+                    ? "K" 
+                    : "L";
+
+
+
+                SingleComposer.AddDynamicText($"{text}", CairoFont.WhiteSmallishText(),
+                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}{suffix}")
+                .AddHoverText(unlocked ? adaptation.AdaptationDescription : adaptation.LockedDescription,
                 CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
-                }
-                else
-                {
-                    SingleComposer.AddDynamicText($"[LOCKED]", CairoFont.WhiteSmallishText(),
-                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}L")
-             .AddHoverText($"{adaptation.LockedDescription}",
-             CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
-                }
             
-
                // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
                 i++;
             }
@@ -101,14 +102,19 @@ namespace zenith.GUI
 
             foreach (var adaptationFactory in creatureAdaptations.AdaptationManager.Values)
             {
-                var adaptation = adaptationFactory.Invoke();
-                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+                var adaptation = adaptationFactory.Invoke(); // may be creating new class.
+                bool unlocked = adaptation.IsUnlocked;
                 string suffix = unlocked ? "K" : "L";
 
+
+                string text = unlocked
+                    ? adaptation.AdaptationName
+                    : "[LOCKED]";
+
+                SingleComposer.GetDynamicText($"{adaptation.AdaptationName}{suffix}") // May be running IsUnlocked Twice 1
+                        .SetNewText(text, false, true , false);
+
             
-                
-                    SingleComposer.GetDynamicText($"{adaptation.AdaptationName}{suffix}") // May be running IsUnlocked Twice 1
-                        .SetNewText(BuildAdaptationText(adaptation), false, true , false);
               
             }
 
@@ -116,15 +122,15 @@ namespace zenith.GUI
         }
 
 
-        public string BuildAdaptationText(Adaptation adaptation)
-        {
+        //public string BuildAdaptationText(Adaptation adaptation)
+        //{
         
-                var unlocked = CreatureDefinition.CreatureDefinitions[adaptation.SourceCreature].IsLocked;
+        //        var unlocked = adaptation.IsUnlocked;
 
-                string text = unlocked ? $"{adaptation.AdaptationName}" : $"[Locked]";
+        //        string text = unlocked ? $"{adaptation.AdaptationName}" : $"[Locked]";
 
-                return text;
-        }
+        //        return text;
+        //}
 
         private void SendEntityPacket(object p)
         {
@@ -133,7 +139,7 @@ namespace zenith.GUI
             capi.Network.SendPacketClient( p);
         }
         
-        private void SendEvolvableAdaptation(Adaptation adaptation)
+        private void SendEvolvableAdaptation(AdaptationDefinitions adaptation)
         {
             EvolveSelected?.Invoke(adaptation);
         }
@@ -175,7 +181,7 @@ namespace zenith.GUI
 
         
 
-        public Action<Adaptation> EvolveSelected;
+        public Action<AdaptationDefinitions> EvolveSelected;
         public Action<ItemStack> ItemSent;
     }
 }

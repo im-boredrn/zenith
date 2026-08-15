@@ -10,13 +10,14 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using zenith.Config;
-using zenith.Core.Adaptations;
+using zenith.Core.AdaptationsCore.AdaptationData;
+using zenith.Core.Definitions;
 using static zenith.Core.Assimilation.AssimilationCore;
-using CreatureType = zenith.Core.Adaptations.CreatureDefinition.CreatureType;
+using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
     public class WolfAdaptation(IWorldAccessor world, Entity entity,
-        IReadOnlyDictionary<CreatureType, CreatureDefinition> statReq) : Adaptation(world,entity) 
+        IReadOnlyDictionary<string, AdaptationProgress> statReq) : AdaptationDefinitions(world,entity) 
     {
 
 
@@ -38,11 +39,11 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         }
 
      
-
-        public override CreatureType SourceCreature => CreatureType.wolf;
-        public override string AdaptationName => "Corpse Consumption";
-        public override string AdaptationDescription => "You've gained the ability to digest assimilated creatures";
-        public override string LockedDescription => $"Assimilate {statReq[CreatureType.wolf].Counter}/{statReq[CreatureType.wolf].Threshold} Wolves to unlock ";
+        public override CreatureType SourceCreature { get; init; } = CreatureType.wolf;
+        public override AdaptCategory.AdaptationCategory AdaptationCategory { get; init; } = AdaptCategory.AdaptationCategory.Creature;
+        public override string AdaptationName { get; init; } = "Corpse Consumption";
+        public override string AdaptationDescription { get; init; } = "You've gained the ability to digest assimilated creatures";
+        public override string LockedDescription { get; init; } = $"Assimilate {statReq["wolf"].Counter}/{CreatureDefinition.CreatureDefinitions[CreatureType.wolf].Threshold} Wolves to unlock ";
     }
 
 
