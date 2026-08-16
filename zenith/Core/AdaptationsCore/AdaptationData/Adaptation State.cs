@@ -6,33 +6,14 @@ using static zenith.Core.Definitions.CreatureDefinition;
 
 namespace zenith.Core.AdaptationsCore.AdaptationData
 {
-    public class AdaptationState // instanced
+    public abstract class AdaptationState 
     {
-        public int Counter { get; set; }
-        public int BlockLVL { get; set; }
-        public bool IsUnlocked { get; set; }
-        public int EvolutionStage { get; set; } = 1;
-        public int EvolutionRequirement { get; set; }
-        public static Dictionary<Type, AdaptationState> CreateProgress()
-        {
-            var progress = new Dictionary<Type, AdaptationState>();
+        public  virtual int Counter { get; set; }
+        public virtual int BlockLVL { get; set; }
+        public virtual bool IsUnlocked { get; set; }
+        public virtual int EvolutionStage { get; set; } = 1;
+        public virtual int EvolutionRequirement { get; set; }
 
-            foreach (var creature in CreatureDefinition.CreatureLibrary.Values) // give each creature progression
-            {
-                if (creature.AdaptationType != null)
-                {
-                    progress[creature.AdaptationType] = new AdaptationState();
-                }
-            }
-
-            foreach (var block in BlockDefinitions.BlockLibrary.Values)
-            {
-                if (block.AdaptationType != null)
-                {
-                    progress[block.AdaptationType] = new AdaptationState();
-                }
-            }
-            return progress;
-        }
+        
     }
 }

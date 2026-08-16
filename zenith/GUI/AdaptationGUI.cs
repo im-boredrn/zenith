@@ -149,6 +149,7 @@ namespace zenith.GUI
         public bool OnSubmitAssim()
         {
             zenithNetwork.RequestSubmitItem();
+            RefreshAdaptation();
             return true;
         }
 

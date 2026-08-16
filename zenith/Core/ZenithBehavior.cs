@@ -17,6 +17,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Domains;
+using zenith.Core.Helper;
 using zenith.Core.Inventory;
 using zenith.Core.Progression;
 
@@ -122,7 +123,9 @@ namespace zenith.Core
             Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
             
         }
-       
+
+      
+
         private static EnumDamageType GetDamageType(DamageSource source) // #Extractor
         {
             return source.Type;

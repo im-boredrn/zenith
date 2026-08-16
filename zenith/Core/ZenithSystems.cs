@@ -180,11 +180,7 @@ namespace zenith.Core
 
         public void SubmitItemAssim()
         {
-            Logger.Log(Player, $"Inventory exists? {ServerAssimilationInventory != null}");
-
-            Logger.Log(Player, $"Slot empty? {ServerAssimilationInventory?[0].Empty}");
-
-            Logger.Log(Player, $"Stack null? {ServerAssimilationInventory?[0].Itemstack == null}");
+       
             if (ServerAssimilationInventory[0].Itemstack == null) return;
 
             Adaptations.EatItem(ServerAssimilationInventory[0].Itemstack);

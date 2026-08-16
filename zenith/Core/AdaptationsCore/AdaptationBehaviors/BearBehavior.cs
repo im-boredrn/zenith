@@ -28,7 +28,6 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
             TickManager.RegisterClientTick(this);
 
         }
-        private int Counter => _state.Counter;
         private float SenseTimer;
         private float DebugTimer;
         private readonly List<SensedEntity> SensedEntities = [];

@@ -11,7 +11,7 @@ using AdaptationCategory = zenith.Core.Definitions.BlockDefinitions.BlockCategor
 
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class ClayDefinition(AdaptationState state) : AdaptationDefinitions 
+    public class ClayDefinition(ClayState state) : AdaptationDefinitions()
     {
 
 
@@ -24,6 +24,6 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         public override string AdaptationDescription { get; init; } = "Regenerate With Clay; You cannot heal through other means";
         public override string LockedDescription 
         =>
-            $"Eat {state.BlockLVL }/{BlockDefinitions.BlockLibrary["clay"].Threshold} Clay to unlock ";  
+            $"Eat {state.BlockLVL }/{BlockDefinitions.BlockDefinition["clay"].Threshold} Clay to unlock ";  
     }
 }

@@ -48,17 +48,47 @@ namespace zenith.Core.AdaptationsCore
             {
                 throw new Exception("CreatureAdaptations attached to non-player entity");
             }
-            PlayerStates = AdaptationState.CreateProgress();
 
             FullAdaptations = [];
 
             InitializeActiveAdaptations();
-         
 
 
-          //  Log($"Tree Null? {ZenithData == null}");
+            if (entity.World.Side == EnumAppSide.Server)
+            {
+                var sapi = entity?.World?.Api as ICoreServerAPI;
+
+                sapi?.Event?.HandInteract += Event_HandInteract;
+
+            }
+            //  Log($"Tree Null? {ZenithData == null}");
             InitializeAdapt();
 
+        }
+
+        private void Event_HandInteract(IServerPlayer player, EnumHandInteractNw enumHandInteract, float secondsPassed, ref EnumHandling handling)
+        {
+            var itemSlot = player.Entity.RightHandItemSlot;
+
+            if (itemSlot.Empty)
+                return;
+
+            if (!itemSlot.Itemstack.GetName().Contains("clay"))
+                return;
+
+            if (!FullAdaptations.TryGetValue(typeof(ClayDefinition), out var adaptation))
+                return;
+
+            if (!adaptation.IsUnlocked)
+                return;
+
+            if (adaptation.Behavior is not ClayBehavior clayBehavior)
+                return;
+
+            if (clayBehavior.HealWithClay(Player,itemSlot))
+            {
+                handling = EnumHandling.PreventDefault;
+            }
         }
 
         public ActiveAdaptation Get<T>() where T : AdaptationDefinitions
@@ -71,27 +101,33 @@ namespace zenith.Core.AdaptationsCore
         }
 
 
-        private void Register<T>(AdaptationState state, T definitions,AdaptationBehavior behavior) where T : AdaptationDefinitions
+        private void Register<TDefinition,TState>(TState state, TDefinition definitions,AdaptationBehavior behavior)
+            where TDefinition : AdaptationDefinitions
+            where TState : AdaptationState
         {
-            FullAdaptations[typeof(T)] = new ActiveAdaptation(state, definitions, behavior);
+            PlayerStates[typeof(TDefinition)] = state;
+
+            FullAdaptations[typeof(TDefinition)] = new ActiveAdaptation(state, definitions, behavior);
         }
 
         private void InitializeActiveAdaptations()
         {
-            var world = entity.World;
             var entityPlayer = entity as EntityPlayer;
             var saves = PlayerStates;
-            Register(saves[typeof(WolfDefinition)], new
-                WolfDefinition( saves[typeof(WolfDefinition)]), new WolfBehavior(entityPlayer));
 
-            Register(saves[typeof(BearSensesDefinition)], new
-                BearSensesDefinition( saves[typeof(BearSensesDefinition)]),
-                new BearBehavior( entityPlayer, saves[typeof(BearSensesDefinition)]));
+            WolfState wolfState = new ();
+            BearState bearState = new (); // Parallel Vars do a dictionary
+            ClayState clayState = new ();
 
-           
+            Register(wolfState , new
+                WolfDefinition(wolfState), new WolfBehavior(entityPlayer));
 
-            Register(saves[typeof(ClayDefinition)], new
-                ClayDefinition( saves[typeof(ClayDefinition)]), new ClayBehavior());
+            Register(bearState , new
+                BearSensesDefinition(bearState),
+                new BearBehavior( entityPlayer, bearState));
+
+            Register(clayState, new ClayDefinition(clayState),
+                new ClayBehavior(clayState));
         }
 
        
@@ -241,25 +277,14 @@ namespace zenith.Core.AdaptationsCore
             BearSenses = null;
 
 
-            var currentZenith = ZenithData;
-            var creatureTree = currentZenith?.GetTreeAttribute("creatureAdaptations");
 
-            if (creatureTree != null)
-            {
-                foreach (var entry in creatureTree)
-                {
-                    var creatureType =
-                        Enum.Parse<CreatureType>(entry.Value.ToString());
-
-                }
-            }
 
             
-            foreach (var entry in PlayerStates)
+            foreach (var (entry, state) in PlayerStates)
             {
-               entry.Value.BlockLVL = ZenithData.GetInt($"{entry.Key} CA-BlockLVL", 0);
-               entry.Value.Counter = ZenithData.GetInt($"{entry.Key} CA-Counter", 0);
-                entry.Value.IsUnlocked = ZenithData.GetBool($"{entry.Key}", false);
+               state.BlockLVL = ZenithData.GetInt($"{entry} CA-BlockLVL", 0);
+                state.Counter = ZenithData.GetInt($"{entry} CA-Counter", 0);
+                state.IsUnlocked = ZenithData.GetBool($"{entry}", false);
 
             }
         }

@@ -16,7 +16,7 @@ using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class WolfDefinition( AdaptationState state) : AdaptationDefinitions() 
+    public class WolfDefinition( WolfState state) : AdaptationDefinitions() 
     {
 
 
