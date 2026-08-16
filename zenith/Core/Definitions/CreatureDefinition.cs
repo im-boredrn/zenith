@@ -65,7 +65,7 @@ namespace zenith.Core.Definitions
                 Threshold = 4,
                 NutritionVal = 5f,
                 Type = CreatureType.bear,
-                AdaptationType = typeof(BearSenses)
+                AdaptationType = typeof(BearSensesDefinition)
             },
 
             [CreatureType.hare] = new CreatureDefinition()
@@ -82,7 +82,7 @@ namespace zenith.Core.Definitions
                 Threshold = 5,
                 NutritionVal = 2.5f,
                 Type = CreatureType.wolf,
-                AdaptationType = typeof(WolfAdaptation)
+                AdaptationType = typeof(WolfDefinition)
             },
 
             [CreatureType.fox] = new CreatureDefinition()

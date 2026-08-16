@@ -24,11 +24,11 @@ namespace zenith.GUI
         LevelGUI LevelGUI;
         public AdaptationGUI AdaptationGUI;
         private readonly StatOutput StatOutut;
-        private readonly CreatureAdaptations creatureAdaptations;
+        private readonly Adaptations creatureAdaptations;
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
         private readonly AssimilationInventory inventory;
         public ZenithGui(ICoreClientAPI capi,   DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput,
-            CreatureAdaptations adaptations, AssimilationInventory inv) : base(capi)
+            Adaptations adaptations, AssimilationInventory inv) : base(capi)
         {
             this.domainManager = domainManager;
             this.AssimilationCore = assimilationCore;

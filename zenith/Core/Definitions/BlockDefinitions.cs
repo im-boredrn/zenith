@@ -23,12 +23,11 @@ namespace zenith.Core.Definitions
         {
             [("clay")] = new() 
             {
-                AdaptationType = typeof(ClayAdaptation),
+                AdaptationType = typeof(ClayDefinition),
                    Threshold = 100 
                 
             }
         };
-        //TODO : Fix shared state issue between adaptationss
 
         public int Threshold { get; init; } 
 

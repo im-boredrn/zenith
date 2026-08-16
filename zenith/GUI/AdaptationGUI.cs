@@ -18,18 +18,18 @@ namespace zenith.GUI
     {
         public override string ToggleKeyCombinationCode => null;
 
-        private readonly CreatureAdaptations creatureAdaptations;
+        private readonly Adaptations Adaptations;
         public int packetIDOffset;
         private readonly AssimilationInventory inventory;
         private readonly ZenithNetwork zenithNetwork;
-        public AdaptationGUI(ICoreClientAPI capi, CreatureAdaptations adaptations, AssimilationInventory assimInventory, ZenithNetwork zenithNetwork) : base (capi)
+        public AdaptationGUI(ICoreClientAPI capi, Adaptations adaptations, AssimilationInventory assimInventory, ZenithNetwork zenithNetwork) : base (capi)
         {
-            this.creatureAdaptations = adaptations;
+            this.Adaptations = adaptations;
             this.inventory = assimInventory;
             this.zenithNetwork = zenithNetwork;
             // Refresh on Adaptation Change
 
-            creatureAdaptations.OnAdaptationChanged += () =>
+            Adaptations.OnAdaptationChanged += () =>
             {
                 RefreshAdaptation();
             };
@@ -37,7 +37,7 @@ namespace zenith.GUI
 
             ItemSent  += (stack) => // Should move to server side | maybe through packet
             {
-                creatureAdaptations.EatItem(stack);
+                Adaptations.EatItem(stack);
             }; // Events need to Be initialized in pocket GUI or they will be null. 
             //TODO: Fix Other GUI events
 
@@ -66,14 +66,14 @@ namespace zenith.GUI
             
             int i = 0;
             int spacing = 40;
-            foreach (var adaptationFactory in creatureAdaptations.AdaptationManager.Values)
+            foreach (var adaptationFactory in Adaptations.FullAdaptations.Values)
             {
-                var adaptation = adaptationFactory.Invoke();
-
-                bool unlocked = zenith.GetBool("") ;
+                var def = adaptationFactory.Definitions;
+                var state = adaptationFactory.State;
+                bool unlocked =  state.IsUnlocked;
 
                 string text = unlocked
-                    ? adaptation.AdaptationName
+                    ? def.AdaptationName
                     : "[LOCKED]";
 
                 string suffix = unlocked 
@@ -83,8 +83,8 @@ namespace zenith.GUI
 
 
                 SingleComposer.AddDynamicText($"{text}", CairoFont.WhiteSmallishText(),
-                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{adaptation.AdaptationName}{suffix}")
-                .AddHoverText(unlocked ? adaptation.AdaptationDescription : adaptation.LockedDescription,
+                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{def.AdaptationName}{suffix}")
+                .AddHoverText(unlocked ? def.AdaptationDescription : def.LockedDescription,
                 CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
             
                // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
@@ -100,18 +100,20 @@ namespace zenith.GUI
         {
             if (!IsOpened()) return;
 
-            foreach (var adaptationFactory in creatureAdaptations.AdaptationManager.Values)
+            foreach (var adaptationFactory in Adaptations.FullAdaptations.Values)
             {
-                var adaptation = adaptationFactory.Invoke(); // may be creating new class.
-                bool unlocked = adaptation.IsUnlocked;
+                var def = adaptationFactory.Definitions;
+                var state = adaptationFactory.State;
+             
+                bool unlocked = state.IsUnlocked;
                 string suffix = unlocked ? "K" : "L";
 
 
                 string text = unlocked
-                    ? adaptation.AdaptationName
+                    ? def.AdaptationName
                     : "[LOCKED]";
 
-                SingleComposer.GetDynamicText($"{adaptation.AdaptationName}{suffix}") // May be running IsUnlocked Twice 1
+                SingleComposer.GetDynamicText($"{def.AdaptationName}{suffix}") // May be running IsUnlocked Twice 1
                         .SetNewText(text, false, true , false);
 
             
@@ -164,14 +166,14 @@ namespace zenith.GUI
         
 
             base.OnGuiClosed();
-            creatureAdaptations.OnAdaptationChanged -= () =>
+            Adaptations.OnAdaptationChanged -= () =>
             {
                 RefreshAdaptation();
             };
 
             ItemSent -= (stack) =>
             {
-                creatureAdaptations.EatItem(stack);
+                Adaptations.EatItem(stack);
             };
             capi.World.Player.InventoryManager.CloseInventoryAndSync(inventory);
 

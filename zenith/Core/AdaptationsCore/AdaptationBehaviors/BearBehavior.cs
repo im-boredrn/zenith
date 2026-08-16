@@ -1,43 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.AdaptationsCore.AdaptationData;
-using zenith.Core.Definitions;
 using zenith.Core.Helper;
-using static zenith.Core.Assimilation.AssimilationCore;
-using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
-namespace zenith.Core.AdaptationsCore.AdaptationsFactory
+
+namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 {
-    public class BearSenses  : AdaptationDefinitions, ITickable
+    public sealed class BearBehavior : AdaptationBehavior, ITickable
     {
 
-       
         private readonly IWorldAccessor world;
         private readonly EntityPlayer Player;
         static public bool DebugMode => ZenithSettings.ZDebugMode;
 
-        private readonly IReadOnlyDictionary<string, AdaptationProgress> statReq;
-
-        public BearSenses(IWorldAccessor world, EntityPlayer entity, IReadOnlyDictionary<string, AdaptationProgress> creatureDef) : base(world, entity) // Bear Sense, Pack Mule
+        private AdaptationState _state;
+        public BearBehavior( EntityPlayer entity, AdaptationState state) // Pack Mule
         {
             this.Player = entity;
-            this.world = world;
-            this.statReq = creatureDef;
+            this.world = entity.World;
+            _state = state;
 
             //Log($"[BEAR] Created {this.GetHashCode()}");
             TickManager.RegisterClientTick(this);
 
         }
-
+        private int Counter => _state.Counter;
         private float SenseTimer;
         private float DebugTimer;
         private readonly List<SensedEntity> SensedEntities = [];
@@ -45,9 +36,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
         public IReadOnlyList<SensedEntity> SensedList => SensedEntities;
 
 
-     
-
-        public  void OnTick(EntityPlayer Player,float dt)
+        public void OnTick(EntityPlayer Player, float dt)
         {
             if (Player.World.Side != EnumAppSide.Client)
                 return;
@@ -65,7 +54,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
             {
                 UpdateSense();
 
-              //  Log($"[BEAR] Sensed count after update: {sensedEntities.Count}");
+                //  Log($"[BEAR] Sensed count after update: {sensedEntities.Count}");
                 SenseTimer = 0;
             }
 
@@ -78,15 +67,12 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 
         private void UpdateSense()
         {
-           
 
             var entities = world.GetEntitiesAround(Player.Pos.XYZ, 30, 20);
 
             var lookDir = Player.Pos.GetViewVector().ToVec3d();
 
 
-
-           
             //SensedEntities.Clear();
             foreach (var entity in entities)
             {
@@ -137,35 +123,35 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
                         Timer = 5f,
                         Side = side,
                         Hostile = hostile
-                        
+
 
                     });
                 }
 
-}
+            }
         }
 
-      //  private void DebugSense()
-      //  {
+        //  private void DebugSense()
+        //  {
 
 
-      //      if (Player == null) return;
-      //      var sapi = entity.World.Api as ICoreServerAPI;
-      //      StringBuilder senseOutput = new StringBuilder();
+        //      if (Player == null) return;
+        //      var sapi = entity.World.Api as ICoreServerAPI;
+        //      StringBuilder senseOutput = new StringBuilder();
 
-      //      foreach (var sensed in SensedEntities)
-      //      {
-      //          if (!sensed.Entity.Alive) continue;
+        //      foreach (var sensed in SensedEntities)
+        //      {
+        //          if (!sensed.Entity.Alive) continue;
 
 
-      //          double angle = Math.Acos(sensed.Dot) * GameMath.RAD2DEG;
-      //         senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
+        //          double angle = Math.Acos(sensed.Dot) * GameMath.RAD2DEG;
+        //         senseOutput.AppendLine($"{sensed.Code} {sensed.Direction} Dot : {sensed.Dot:F2} - {angle:F0} Degrees | {GetDirection(sensed.Dot)}");
 
-      //      }
-      //      Log(senseOutput.ToString());
-      //      sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
-      //           senseOutput.ToString(), EnumChatType.Notification);
-      //  }
+        //      }
+        //      Log(senseOutput.ToString());
+        //      sapi.SendMessage(Player.Player, GlobalConstants.AllChatGroups,
+        //           senseOutput.ToString(), EnumChatType.Notification);
+        //  }
 
         public class SensedEntity
         {
@@ -184,7 +170,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
             public bool Hostile;
         }
 
-        static bool  IsPredator(Entity entity)
+        static bool IsPredator(Entity entity)
         {
 
             if (entity is EntityAgent)
@@ -205,15 +191,6 @@ namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 
             return false;
         }
-        public override CreatureType SourceCreature => CreatureType.bear;
-        public override AdaptCategory.AdaptationCategory AdaptationCategory => AdaptCategory.AdaptationCategory.Creature;
-        public override string AdaptationName => "Instinct";
-        public override string AdaptationDescription => "Enhance your senses to detect Predator and Prey. Toggle With I";
-        public override string LockedDescription => 
-            $"Assimilate {statReq["bear"].Counter}/{CreatureDefinition.CreatureLibrary[CreatureType.bear].Threshold} Bears to unlock ";
-       
+
     }
-
-
-
 }

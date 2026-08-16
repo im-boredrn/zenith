@@ -34,8 +34,7 @@ namespace zenith.Core
         public BearSenseRenderer BearSenseRenderer { get; }
 
         public AssimilationCore AssimilationCore { get; }
-        public CreatureAdaptations CreatureAdaptations { get; }
-       // public WingedEnabler WingedEnabler;
+        public Adaptations Adaptations { get; }
         public Traits.Traits Traits { get; }
         public StatOutput StatOutput { get; }
         private EntityPlayer Player => entity as EntityPlayer;
@@ -50,11 +49,11 @@ namespace zenith.Core
             ZenithData = new ZenithData(entity);
             // Core managers
             ProgressionManager = new ProgressionManager(entity, ZenithData);
-            // Maybe Replace With Assim : Assimilating Blocks and Entities to give these effects
+
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
-            CreatureAdaptations = new CreatureAdaptations(entity, ZenithData);
+            Adaptations = new Adaptations(entity, ZenithData);
                 StatOutput = new StatOutput(entity, capi, ZenithData);
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
@@ -77,17 +76,17 @@ namespace zenith.Core
             if (capi != null )
             {
                  
-                BearSenseRenderer = new BearSenseRenderer(capi, CreatureAdaptations);
+                BearSenseRenderer = new BearSenseRenderer(capi, Adaptations);
 
                 ClientAssimilationInventory = new AssimilationInventory(1,$"assiminvID-{Player.PlayerUID}", capi);
                 ClientAssimilationInventory.LateInitialize($"assiminvID-{Player.PlayerUID}", Player.Api);
 
-                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, CreatureAdaptations, ClientAssimilationInventory );
+                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, Adaptations, ClientAssimilationInventory );
                 capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
                 {
                     ZenithGui?.BonusGUI?.UpdateBonusStats();
 
-                    CreatureAdaptations?.ReloadAdapt();
+                    Adaptations?.ReloadAdapt();
 
 
 
@@ -156,8 +155,8 @@ namespace zenith.Core
 
             AssimilationCore.AssimilationSuccess += (creatureT ) =>
             {
-                CreatureAdaptations?.CheckAdaptation(creatureT);
-                CreatureAdaptations?.AssimilateLink(creatureT);
+                Adaptations?.CheckAdaptation(creatureT);
+                Adaptations?.AssimilateLink(creatureT);
             };
 
 
@@ -188,7 +187,7 @@ namespace zenith.Core
             Logger.Log(Player, $"Stack null? {ServerAssimilationInventory?[0].Itemstack == null}");
             if (ServerAssimilationInventory[0].Itemstack == null) return;
 
-            CreatureAdaptations.EatItem(ServerAssimilationInventory[0].Itemstack);
+            Adaptations.EatItem(ServerAssimilationInventory[0].Itemstack);
             ServerAssimilationInventory[0].TakeOutWhole();
         }
 

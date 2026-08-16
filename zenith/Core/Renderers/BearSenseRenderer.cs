@@ -6,6 +6,8 @@ using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
 using Vintagestory.Client.NoObf;
 using zenith.Core.AdaptationsCore;
+using zenith.Core.AdaptationsCore.AdaptationBehaviors;
+using zenith.Core.AdaptationsCore.AdaptationsFactory;
 
 namespace zenith.Core.Renderers
 {
@@ -13,7 +15,7 @@ namespace zenith.Core.Renderers
     {
 
         private readonly ICoreClientAPI capi;
-        private readonly CreatureAdaptations adaptations;
+        private readonly Adaptations adaptations;
         private readonly int predatorSenseTextureID;
         private readonly int preySenseTextureID;
         private readonly int testTex;
@@ -23,7 +25,7 @@ namespace zenith.Core.Renderers
 
         public bool BearSenseEnabled { get; private set; } = true;
 
-        public BearSenseRenderer(ICoreClientAPI capi, CreatureAdaptations adaptations)
+        public BearSenseRenderer(ICoreClientAPI capi, Adaptations adaptations)
         { 
             this.capi = capi;
             this.adaptations = adaptations;
@@ -43,26 +45,24 @@ namespace zenith.Core.Renderers
         public void OnRenderFrame(float dt, EnumRenderStage enumRenderStage)
         {
 
-            //     capi.Logger.Notification($"[RENDERER]  Entities: {bearSense.sensedEntities.Count}");
-            var bearSense = adaptations?.BearSenses;
-            if (bearSense == null) return;
+
+            var bear = adaptations.Get<BearSensesDefinition>();
+            if (!bear.IsUnlocked) return;
+
+
+            if (bear.Behavior is not BearBehavior behavior)
+                return;
 
             if (!BearSenseEnabled) return;
-
-          //  capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
-
-
+         
             capi.Render.OrthoMode(capi.Render.FrameWidth, capi.Render.FrameHeight);
             capi.Render.GlMatrixModeModelView();
-
-            //  int textureId = capi.BlockTextureAtlas.Positions["stone"].atlasTextureId;
-            // capi.Logger.Notification($"[RENDERER] BearSense exists. Count: {bearSense.sensedEntities.Count}");
 
             try
             {
 
 
-                foreach (var sensed in bearSense.SensedList)
+                foreach (var sensed in behavior.SensedList)
                 {
                     Vec3d markerPos = sensed.WorldPosition.OffsetCopy(0, 1, 0);
 

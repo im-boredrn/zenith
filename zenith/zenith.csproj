@@ -57,10 +57,5 @@
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
 </ItemGroup>
-    
-
-<ItemGroup>
-  <Folder Include="Core\AdaptationsCore\AdaptationBehavior\" />
-</ItemGroup>
 
 </Project>

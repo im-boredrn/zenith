@@ -10,7 +10,6 @@ using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core;
 using zenith.Core.Assimilation;
-using zenith.Core.Adaptations;
 using zenith.Core.Domains;
 using zenith.Core.NetWork;
 using zenith.GUI;
