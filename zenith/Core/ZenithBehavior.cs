@@ -37,11 +37,6 @@ namespace zenith.Core
 
         }
 
-        //Summary: DomainEnum is The Key and sponge is the returned object from said key.
-        //Example domains[DomainEnum.Kinetic].Counter     Counter Comes from DomainSponge object
-
-
-        //#REF Map Created
         static readonly Dictionary<EnumDamageType, DomainEnum> DamageDomainMap =
     new Dictionary<EnumDamageType, DomainEnum>()
 {
@@ -118,7 +113,7 @@ namespace zenith.Core
                 return;
             }
             systems.DomainManager.ProcessDomain(domain, ref damage);
-            var domainState = systems.DomainManager.Domains[domain]; // Abstract
+            var domainState = systems.DomainManager.Domains[domain]; 
             domainInfo = systems.DomainManager.Domains[domain];
             Log($"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
             
@@ -135,22 +130,18 @@ namespace zenith.Core
         public DomainEnum IdentifyDomain(EnumDamageType type) // #Translator
         {
             
-                Log("[FLOW] Calling IdentifyDomain");
 
             if(DamageDomainMap.TryGetValue(type, out DomainEnum domain))
             {
-                Log($"[DATA] Returning {domain} Domain");
                 return domain;
             }
 
-            Log("[DATA] Returning No Domain");
             return DomainEnum.None;
         }
 
         public float ReduceDamage(float damage, DamageSource dmgSource)
         {
             
-               Log("[FLOW] Calling ReduceDamage");
 
 
             EnumDamageType type = GetDamageType(dmgSource);
@@ -166,7 +157,6 @@ namespace zenith.Core
 
             damage = damage / (1f + finalResistance);
             
-            Log("[EXIT] Finished Calling ReduceDamage");
 
             return damage;
 

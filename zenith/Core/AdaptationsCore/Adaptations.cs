@@ -27,9 +27,7 @@ namespace zenith.Core.AdaptationsCore
     {
 
       
-        public readonly List<string> BlockAdaptations = [];
         private readonly Dictionary<Type, AdaptationState> PlayerStates = [];
-        public BearSensesDefinition BearSenses { get; private set; }  // Maybe Switchto Behavior
 
 
         private EntityPlayer Player => entity as EntityPlayer;
@@ -53,43 +51,26 @@ namespace zenith.Core.AdaptationsCore
 
             InitializeActiveAdaptations();
 
-
-            if (entity.World.Side == EnumAppSide.Server)
-            {
-                var sapi = entity?.World?.Api as ICoreServerAPI;
-
-                sapi?.Event?.HandInteract += Event_HandInteract;
-
-            }
-            //  Log($"Tree Null? {ZenithData == null}");
             InitializeAdapt();
 
+            //if (entity.World.Side == EnumAppSide.Server)
+            //{
+            //    var sapi = entity?.World?.Api as ICoreServerAPI;
+
+            //    sapi?.Event?.HandInteract += Event_HandInteract;
+
+            //}
+
         }
 
-        private void Event_HandInteract(IServerPlayer player, EnumHandInteractNw enumHandInteract, float secondsPassed, ref EnumHandling handling)
-        {
-            var itemSlot = player.Entity.RightHandItemSlot;
+        //private void Event_HandInteract(IServerPlayer player, EnumHandInteractNw enumHandInteract, float secondsPassed, ref EnumHandling handling)//  multi-call
+        //{
+        //    var itemSlot = player.Entity.RightHandItemSlot;
 
-            if (itemSlot.Empty)
-                return;
+        //    if (itemSlot.Empty)
+        //        return;
 
-            if (!itemSlot.Itemstack.GetName().Contains("clay"))
-                return;
-
-            if (!FullAdaptations.TryGetValue(typeof(ClayDefinition), out var adaptation))
-                return;
-
-            if (!adaptation.IsUnlocked)
-                return;
-
-            if (adaptation.Behavior is not ClayBehavior clayBehavior)
-                return;
-
-            if (clayBehavior.HealWithClay(Player,itemSlot))
-            {
-                handling = EnumHandling.PreventDefault;
-            }
-        }
+        //}
 
         public ActiveAdaptation Get<T>() where T : AdaptationDefinitions
         {
@@ -113,7 +94,6 @@ namespace zenith.Core.AdaptationsCore
         private void InitializeActiveAdaptations()
         {
             var entityPlayer = entity as EntityPlayer;
-            var saves = PlayerStates;
 
             WolfState wolfState = new ();
             BearState bearState = new (); // Parallel Vars do a dictionary
@@ -190,7 +170,15 @@ namespace zenith.Core.AdaptationsCore
                     return;
                 var state = PlayerStates[definitions.AdaptationType];
                 state.BlockLVL += stack.StackSize;
-                Logger.Log(Player, $"{state.BlockLVL}");
+
+
+                var clay = Get<ClayDefinition>();
+
+                if (clay.Behavior is ClayBehavior behavior)
+                {
+                    behavior.IsClay(Player,stack.Item)
+                }
+
                 if (state.BlockLVL >= definitions.Threshold)
                 {
                     state.BlockLVL = definitions.Threshold;
@@ -272,13 +260,7 @@ namespace zenith.Core.AdaptationsCore
 
         public void ReloadAdapt()
         {
-            
-            BlockAdaptations.Clear();
-            BearSenses = null;
-
-
-
-
+      
             
             foreach (var (entry, state) in PlayerStates)
             {
