@@ -9,6 +9,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationData
 
      
         public float HealingReduction { get; set; } = 100;
-        public float HealthGain { get; set; } = 0.2f;
+        public float AbsorbGain { get; set; } = 0.2f; 
+        public float OverCharge { get; set; } = 0.5f;
     }
 }

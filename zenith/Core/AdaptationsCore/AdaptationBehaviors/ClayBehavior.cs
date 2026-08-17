@@ -12,49 +12,79 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
     {
 
 
-        public bool IsClay(EntityPlayer player,ItemStack itemStack)
+        
+
+        public bool CanAbsorb(EntityPlayer player,ItemStack itemStack)
         {
+            if (!itemStack.GetName().Contains("clay")) return false;
 
 
             if (!state.IsUnlocked)
                 return false;
 
-
-            if (!itemStack.GetName().Contains("clay"))
-            {
-                if (itemStack.Collectible.GetCollectibleBehavior<CollectibleBehaviorHealingItem>(true)
-                    is not CollectibleBehaviorHealingItem healingItem) return false; // Check for food eventually too.
-
-
-                ClayBehavior.BlockOtherHealing(healingItem); //  Needs testing without clayAdaptation | Needs testing on if Vals actually work.
-                
-                
-                
-              
-            }
-
-
-             HealWithClay(player, itemStack) ;
+             AbsorbClay(player, itemStack) ;
             return true;
           
         }
-
-        public void  HealWithClay(EntityPlayer player,ItemStack itemStack)
+        
+        public void  AbsorbClay(EntityPlayer player,ItemStack itemStack)
         {
+
 
             var healthBehavior = player.GetBehavior<EntityBehaviorHealth>();
-
-            float totalGain = state.HealthGain * itemStack.StackSize;
+            var foodBehavior = player.GetBehavior<EntityBehaviorHunger>();
             
-            healthBehavior.Health += totalGain;
+            float totalGain = state.AbsorbGain * itemStack.StackSize;
+            
+            if (healthBehavior != null)
+            {
+                healthBehavior.Health += totalGain;
+
+                float healthOverCharge = healthBehavior.MaxHealth * state.OverCharge;
+
+                if (healthBehavior.Health >= healthBehavior.MaxHealth + healthOverCharge)
+                {
+                    healthBehavior.Health = healthBehavior.MaxHealth + healthOverCharge;
+                }
+                
+
+                healthBehavior.MarkDirty();
+                float current = healthBehavior.Health;
+
+            }
+
+
+            if (foodBehavior == null) return;
+
+            foodBehavior?.Saturation += totalGain * 100;
+            float foodOverCharge = foodBehavior.MaxSaturation * state.OverCharge;
+
+            if (foodBehavior.Saturation >= foodBehavior.MaxSaturation + foodOverCharge)
+            {
+                foodBehavior.Saturation = foodBehavior.MaxSaturation + foodOverCharge;
+            }
 
         }
-        
-        public static void BlockOtherHealing(CollectibleBehaviorHealingItem item) // Can use the same method but detect if healing. Or hook into new event like onHeal.
+
+        public static void BlockOtherHealing(EntityPlayer player, float damage) // Can use the same method but detect if healing. Or hook into new event like onHeal.
         {
-            item.ApplicationTimeSec = 9999;
-            item.Health = 40;
-            return ;
+
+
+
+            var healthBehavior = player.GetBehavior<EntityBehaviorHealth>();
+            float oldHealth = healthBehavior.Health;
+            float newHealth = oldHealth + damage;
+            float gainedHealth = newHealth - oldHealth;
+            healthBehavior.Health -= gainedHealth;
+
+        }
+
+        public  void BlockSaturation(EntityPlayer player, ref float saturation)
+        {
+            var foodBehavior = player.GetBehavior<EntityBehaviorHunger>();
+            foodBehavior.Saturation  -=  saturation;
+            foodBehavior.Saturation += saturation;
+
         }
 
 

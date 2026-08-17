@@ -91,12 +91,12 @@ namespace zenith.Core.AdaptationsCore
             FullAdaptations[typeof(TDefinition)] = new ActiveAdaptation(state, definitions, behavior);
         }
 
-        private void InitializeActiveAdaptations()
+        private void InitializeActiveAdaptations() // Should Probably add an unlearn behavior in GUI. On Clicked send packet --> clicked behavior.IsUnlocked = false;
         {
             var entityPlayer = entity as EntityPlayer;
 
             WolfState wolfState = new ();
-            BearState bearState = new (); // Parallel Vars do a dictionary
+            BearState bearState = new (); // Parallel Vars do a dictionary -- maybe add them to a list and iterate through it , returning state.
             ClayState clayState = new ();
 
             Register(wolfState , new
@@ -176,7 +176,7 @@ namespace zenith.Core.AdaptationsCore
 
                 if (clay.Behavior is ClayBehavior behavior)
                 {
-                    behavior.IsClay(Player,stack.Item)
+                    behavior.CanAbsorb(Player, stack);
                 }
 
                 if (state.BlockLVL >= definitions.Threshold)
@@ -225,8 +225,8 @@ namespace zenith.Core.AdaptationsCore
         public void AssimilateLink(CreatureType creatureType) 
         {
             var wolf = Get<WolfDefinition>();
-
-            if (wolf.Behavior is WolfBehavior behavior && wolf.IsUnlocked)
+            var clay = Get<ClayDefinition>();
+            if (wolf.Behavior is WolfBehavior behavior && wolf.IsUnlocked && !clay.IsUnlocked)
             {
                 behavior.OnAssimilate(creatureType);
             }
@@ -239,15 +239,14 @@ namespace zenith.Core.AdaptationsCore
 
             Logger.Log(Player,$"Saving adaptations");
 
-            foreach (var entry in PlayerStates)
+           foreach (var adaptation in FullAdaptations.Values)
             {
-                ZenithData.SetInt($"{entry.Key} CA-BlockLVL", entry.Value.BlockLVL);
-                ZenithData.SetInt($"{entry.Key} CA-Counter", entry.Value.Counter);
-                ZenithData.SetBool($"{entry.Key}", entry.Value.IsUnlocked);
-
+                adaptation.State.Save(ZenithData);
             }
+          
+           
+          
 
-     
             entity.WatchedAttributes.MarkPathDirty("zenith");
          
         }
@@ -260,15 +259,13 @@ namespace zenith.Core.AdaptationsCore
 
         public void ReloadAdapt()
         {
-      
-            
-            foreach (var (entry, state) in PlayerStates)
-            {
-               state.BlockLVL = ZenithData.GetInt($"{entry} CA-BlockLVL", 0);
-                state.Counter = ZenithData.GetInt($"{entry} CA-Counter", 0);
-                state.IsUnlocked = ZenithData.GetBool($"{entry}", false);
 
+
+            foreach (var adaptation in FullAdaptations.Values)
+            {
+                adaptation.State.Load(ZenithData);
             }
+        
         }
     }
 }
