@@ -17,6 +17,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
+using zenith.Core.AdaptationsCore.Adaptation_Definitions;
 using zenith.Core.AdaptationsCore.AdaptationBehaviors;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using zenith.Core.Domains;
@@ -139,6 +140,21 @@ namespace zenith.Core
             }
             else
                 base.OnEntityReceiveSaturation(saturation, foodCat, saturationLossDelay, nutritionGainMultiplier);
+        }
+
+        public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
+        {
+            var poison = systems?.Adaptations?.Get<PoisonDefinition>();
+
+            if (poison.IsUnlocked)
+            {
+                if (poison.Behavior is PoisonBehavior poisonBehavior)
+                {
+                    poisonBehavior.PoisonInfusion();
+                }
+            }
+
+            base.DidAttack(source, targetEntity, ref handled);
         }
 
         

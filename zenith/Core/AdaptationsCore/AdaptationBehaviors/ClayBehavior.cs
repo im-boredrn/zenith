@@ -49,7 +49,6 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
                 
 
                 healthBehavior.MarkDirty();
-                float current = healthBehavior.Health;
 
             }
 

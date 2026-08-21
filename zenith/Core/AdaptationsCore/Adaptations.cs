@@ -12,6 +12,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using Vintagestory.ServerMods;
 using zenith.Config;
+using zenith.Core.AdaptationsCore.Adaptation_Definitions;
 using zenith.Core.AdaptationsCore.AdaptationBehaviors;
 using zenith.Core.AdaptationsCore.AdaptationData;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
@@ -98,6 +99,7 @@ namespace zenith.Core.AdaptationsCore
             WolfState wolfState = new ();
             BearState bearState = new (); // Parallel Vars do a dictionary -- maybe add them to a list and iterate through it , returning state.
             ClayState clayState = new ();
+            PoisonState poisonState = new();
 
             Register(wolfState , new
                 WolfDefinition(wolfState), new WolfBehavior(entityPlayer));
@@ -108,13 +110,15 @@ namespace zenith.Core.AdaptationsCore
 
             Register(clayState, new ClayDefinition(clayState),
                 new ClayBehavior(clayState));
-        }
 
+            Register(poisonState, new PoisonDefinition(poisonState)
+                , new PoisonBehavior(poisonState));
+        }
+        
        
 
         public void CheckAdaptation(CreatureType creatureType)
         {
-            string matc = creatureType.ToString();
             var creatureDef = CreatureDefinitions[creatureType];
             if (creatureDef.AdaptationType == null)
                 return;
@@ -226,6 +230,7 @@ namespace zenith.Core.AdaptationsCore
         {
             var wolf = Get<WolfDefinition>();
             var clay = Get<ClayDefinition>();
+            
             if (wolf.Behavior is WolfBehavior behavior && wolf.IsUnlocked && !clay.IsUnlocked)
             {
                 behavior.OnAssimilate(creatureType);

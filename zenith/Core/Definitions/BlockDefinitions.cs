@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
+using zenith.Core.AdaptationsCore.Adaptation_Definitions;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
 
 namespace zenith.Core.Definitions
@@ -25,7 +26,12 @@ namespace zenith.Core.Definitions
             {
                 AdaptationType = typeof(ClayDefinition),
                    Threshold = 100 
-                
+            },
+
+            [("mushroom")] = new()
+            {
+                AdaptationType = typeof(PoisonDefinition),
+                Threshold = 40
             }
         };
 
