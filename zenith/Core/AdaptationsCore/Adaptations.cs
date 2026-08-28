@@ -152,6 +152,11 @@ namespace zenith.Core.AdaptationsCore
 
                 sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
                     text, EnumChatType.Notification);
+
+                if (entity.World.Api is ICoreClientAPI capi)
+                {
+                    ZenithCore.PlayPlayerSound(capi, "sounds/assimilation/adaptationgained", Player, 0.8f, 1f);
+                }
                     state.IsUnlocked = true;
             }
 
@@ -168,11 +173,15 @@ namespace zenith.Core.AdaptationsCore
 
             if (match.Key != null)
             {
+                // #TODO Play Sound
+
                 var definitions = match.Value;
 
                 if (definitions.AdaptationType == null)
                     return;
+
                 var state = PlayerStates[definitions.AdaptationType];
+
                 state.BlockLVL += stack.StackSize;
 
 

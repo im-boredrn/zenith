@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using zenith.Core.Definitions;
@@ -19,6 +20,12 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 
 
             entity.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
+
+            if (entity.World.Api is ICoreClientAPI capi) // Call from client/ Add client server sync
+            {
+                ZenithCore.PlayPlayerSound(capi, "sounds/wolf/eating", entity, 0.8f, 1f);
+            }
+
         }
     }
 }

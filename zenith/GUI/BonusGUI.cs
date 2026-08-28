@@ -14,7 +14,7 @@ using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.Assimilation.StatOutput;
 using static zenith.Core.Traits.Traits;
-using static zenith.Core.ZenithBehavior;
+using static zenith.Core.ZenithBehaviorServer;
 using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.GUI
 {

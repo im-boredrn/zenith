@@ -130,7 +130,7 @@ namespace zenith.Core.Assimilation
 
 
             AssimilationDefinition.Definitions[creatureType].AssimLVL += 1 * ZenithSettings.ZAssimCreatureLVLMult;
-            StringBuilder gainPrint = new StringBuilder();
+            StringBuilder gainPrint = new();
 
             var sapi = entity.World.Api as ICoreServerAPI;
 
@@ -141,8 +141,13 @@ namespace zenith.Core.Assimilation
                 gainPrint.Append($"+{trueVal}% {gain.Key} ");  
             }
            
-            sapi.SendIngameDiscovery(player, $"AssimDisc {entityName}", $"Assimilated {entityName}");
-            sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
+            sapi.SendMessage(player, GlobalConstants.GeneralChatGroup,  $"Assimilated {entityName}" , EnumChatType.Notification );
+
+            if (Player.World.Api is ICoreClientAPI capi) // #TODO Client Server sync
+            {
+                ZenithCore.PlayPlayerSound(capi, "sounds/assimilation/assimed", Player, 0.8f, 1f);
+            }
+            sapi.SendMessage(player, GlobalConstants.GeneralChatGroup,
                     gainPrint.ToString(), EnumChatType.Notification);
             AssimilationSuccess?.Invoke(creatureType);
             OnAssimChanged?.Invoke();
@@ -153,7 +158,7 @@ namespace zenith.Core.Assimilation
 
         public TraitTotals CalculateTotals()
         {
-            TraitTotals totals = new TraitTotals();
+            TraitTotals totals = new ();
             foreach (var trait in AssimilationDefinition.Definitions.Values)
             {   
                 foreach (var gain in trait.Gains)
@@ -199,17 +204,11 @@ namespace zenith.Core.Assimilation
 
                 trait.AssimLVL = zenithData.Tree.GetInt($"{key}LVL", 0);
    
-             //   Log($"[LOAD] AssimLVL : {trait.AssimLVL}/{trait.MaxLVL}");
             }
           
         }
 
-        public static float GetCreatureLevel(CreatureType creatureType)
-        {
-            return AssimilationDefinition.Definitions[creatureType].AssimLVL;
-        }
-
-      
+  
      
 
         private static void SendError(IServerPlayer player, string code, string errorMessage)

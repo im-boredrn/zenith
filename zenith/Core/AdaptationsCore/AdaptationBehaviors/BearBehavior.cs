@@ -35,7 +35,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
         public IReadOnlyList<SensedEntity> SensedList => SensedEntities;
 
 
-        public void OnTick(EntityPlayer Player, float dt)
+        public void OnTick(Entity Player, float dt)
         {
             if (Player.World.Side != EnumAppSide.Client)
                 return;

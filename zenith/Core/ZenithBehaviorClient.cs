@@ -27,7 +27,7 @@ using zenith.Core.Progression;
 
 namespace zenith.Core
 {
-    public class ZenithBehavior : EntityBehavior
+    public class ZenithBehaviorClient : EntityBehavior
     {
         public enum DomainEnum
         {
@@ -61,18 +61,18 @@ namespace zenith.Core
         {EnumDamageType.Suffocation, DomainEnum.Drown }
 };
 
-      static public bool DebugMode => ZenithSettings.ZDebugMode;
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
-        public ZenithSystems systems;
-        private  IDomainInfo domainInfo;
-        public ZenithBehavior(Entity entity) : base(entity) // no need to pass Entityplayer entity anymore since we are attaching it to them.
+        public ZenithSystemsClient Clientsystems;
+        public ZenithSystemsServer ServerSystems;
+        public ZenithBehavior(Entity entity) : base(entity) // Remember to Split into ZenithBehaviorClient And Server
         {
             if (entity.World.Side == EnumAppSide.Server) // If server Side
             {
                 var sapi = entity.World.Api as ICoreServerAPI;
                 sapi?.Logger.Warning("Zenith behavior attached to SERVER");
-                // Server-only systems
-                systems = new ZenithSystems(entity, new ModConfig(), null); // pass null for capi
+
+
+                ServerSystems = new ZenithSystemsServer(entity, new ModConfig()); // pass null for capi
 
 
                 // Hook health behavior
@@ -85,29 +85,27 @@ namespace zenith.Core
                 
 
                 // Register server tick listener
-                sapi.Event.RegisterGameTickListener(dt => systems.OnServerTick(dt), 1000);
+                sapi.Event.RegisterGameTickListener(dt => ServerSystems.OnServerTick(dt), 1000);
                
             }
             else if (entity.World.Side == EnumAppSide.Client)
             {
                 var capi = entity.World.Api as ICoreClientAPI;
                 capi?.Logger.Notification("Zenith behavior attached to CLIENT");
-                capi.Event.RegisterGameTickListener(dt => systems.OnClientTick(dt), 1000);
+                capi.Event.RegisterGameTickListener(dt => Clientsystems.OnClientTick(dt), 1000);
                 // Client-only systems (GUI)
-                systems = new ZenithSystems(entity, new ModConfig(), capi);
+                Clientsystems = new ZenithSystemsClient(entity, new ModConfig(), capi);
             }
 
 
         }
-
-       
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
         {
             EnumDamageType type = GetDamageType(damageSource); // catches returned type
             DomainEnum domain = IdentifyDomain(type); // translates type into domain
 
-            var clay = systems?.Adaptations?.Get<ClayDefinition>();
+            var clay = ServerSystems?.Adaptations?.Get<ClayDefinition>();
 
             if (clay.IsUnlocked && damageSource.Type == EnumDamageType.Heal && damageSource.Source != EnumDamageSource.Revive)
             {
@@ -119,16 +117,13 @@ namespace zenith.Core
                // Logger.Log(Player,"[DATA] Returning domain Not found  ");
                 return;
             }
-            systems.DomainManager.ProcessDomain(domain, ref damage);
-            var domainState = systems.DomainManager.Domains[domain]; 
-            domainInfo = systems.DomainManager.Domains[domain];
-            Logger.Log(Player,$"Domain :{domain}\n Tier: {domainInfo.GetTier()}\n Counter: {domainInfo.GetCounter()}/{domainState.GetThreshold()} \n Damage Taken: {damage} ");
+            ServerSystems.DomainManager.ProcessDomain(domain, ref damage);
             
         }
 
         public override void OnEntityReceiveSaturation(float saturation, EnumFoodCategory foodCat = EnumFoodCategory.Unknown, float saturationLossDelay = 10, float nutritionGainMultiplier = 1)
         {
-            var clay = systems?.Adaptations?.Get<ClayDefinition>();
+            var clay = ServerSystems?.Adaptations?.Get<ClayDefinition>();
             if (clay.IsUnlocked)
             {
                 if (clay.Behavior is ClayBehavior clayBehavior)
@@ -144,21 +139,18 @@ namespace zenith.Core
 
         public override void DidAttack(DamageSource source, EntityAgent targetEntity, ref EnumHandling handled)
         {
-            var poison = systems?.Adaptations?.Get<PoisonDefinition>();
+            var poison = ServerSystems?.Adaptations?.Get<PoisonDefinition>(); // Needs Both
 
             if (poison.IsUnlocked)
             {
                 if (poison.Behavior is PoisonBehavior poisonBehavior)
                 {
-                    poisonBehavior.PoisonInfusion();
+                    poisonBehavior.PoisonInfusion(targetEntity);
                 }
             }
 
             base.DidAttack(source, targetEntity, ref handled);
         }
-
-        
-
 
         private static EnumDamageType GetDamageType(DamageSource source) // #Extractor
         {
@@ -185,10 +177,10 @@ namespace zenith.Core
 
             if (domain == DomainEnum.None) return damage;
 
-            var domainstate = systems.DomainManager.Domains[domain];
+            var domainBody = ServerSystems.DomainManager.Domains[domain];
 
-            float domainResistance = domainstate.GetResistanceValue();
-            float stageMultiplier = systems.ProgressionManager.GetResistanceMultiplier();
+            float domainResistance = domainBody.DomainBehavior.Resistance();
+            float stageMultiplier = Clientsystems.ProgressionManager.GetResistanceMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage /= (1f + finalResistance);

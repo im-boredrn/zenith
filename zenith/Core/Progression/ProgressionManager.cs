@@ -13,7 +13,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
 using zenith.Core.Domains;
-using static zenith.Core.ZenithBehavior;
+using static zenith.Core.ZenithBehaviorServer;
 
 namespace zenith.Core.Progression
 {

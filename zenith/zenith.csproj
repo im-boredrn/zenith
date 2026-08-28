@@ -57,5 +57,12 @@
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
 </ItemGroup>
+    
+
+<ItemGroup>
+  <Folder Include="assets\zenith\sounds\wolf\" />
+  <Folder Include="assets\zenith\sounds\poison\" />
+  <Folder Include="GUI\PlayerGUIData\" />
+</ItemGroup>
 
 </Project>

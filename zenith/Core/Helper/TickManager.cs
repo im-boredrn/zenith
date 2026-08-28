@@ -20,5 +20,17 @@ namespace zenith.Core.Helper
             ServerTick.Add(serverTick);
         }
 
+        public static void UnRegisterClientTick(ITickable clientTickable)
+        {
+            ClientTick.Remove(clientTickable);
+        }
+
+        public static void UnRegisterServerTick(ITickable serverTick)
+        {
+            ServerTick.Remove(serverTick);
+        }
+
+        
+
     }
 }

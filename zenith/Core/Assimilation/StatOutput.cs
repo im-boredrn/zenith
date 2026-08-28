@@ -49,12 +49,10 @@ namespace zenith.Core.Assimilation
 
         private readonly Entity entity;
          private EntityPlayer Player => entity as EntityPlayer;
-        private readonly ICoreClientAPI capi;
 
-        public StatOutput(Entity entity, ICoreClientAPI capi, ZenithData zenithData)
+        public StatOutput(Entity entity,ZenithData zenithData)
         {
             this.entity = entity;
-            this.capi = capi;
             this.zenithData = zenithData;
             var entityPlayer = Player as EntityPlayer;
 

@@ -1,48 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using Vintagestory;
+using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 using zenith.Core.AdaptationsCore.AdaptationData;
 using zenith.Core.Helper;
 
 namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 {
-    public class PoisonBehavior(PoisonState state): AdaptationBehavior
+    public class PoisonBehavior(PoisonState PoisonState): AdaptationBehavior
     {
-         Timer Timer;
-        public void PoisonInfusion()
+
+
+     
+
+        public void PoisonInfusion( EntityAgent targetEntity)
         {
-            state.PoisonStack++;
-            if (state.PoisonStack > state.MaxPoisonStack)
+
+            if (!targetEntity.HasBehavior<PoisonedEntity>())
             {
-                state.PoisonStack = state.MaxPoisonStack;
+                targetEntity.AddBehavior(new PoisonedEntity(targetEntity, PoisonState));
             }
 
-            CalculatePoisonDuration();
+
+            if (targetEntity.GetBehavior("PoisonedEntity") is PoisonedEntity poisoned) 
+            {
+                poisoned.PoisonedStack++;
+
+                if (poisoned.PoisonedStack >= PoisonState.MaxPoisonStack)
+                {
+                    poisoned.PoisonedStack = PoisonState.MaxPoisonStack;
+                }
+
+                if (poisoned._disposed)
+                {
+                    targetEntity.RemoveBehavior(poisoned);
+                }
+            }
+
+            if (targetEntity.HasBehavior<PoisonedEntity>()) return;
+
+        
         }
 
-        public void CalculatePoisonDuration()
-        {
-            TimerCallback callback = new TimerCallback(CallPoisonDamage);
-
-            Timer = new Timer(CallPoisonDamage, null, state.PoisonDuration, Timeout.Infinite);
-
-        }
-
-        public void CallPoisonDamage(object sta)
-        {
-            PoisonDamage();
-            Timer.Dispose();
-
-        }
-
-        public void PoisonDamage( )
-        {
-
-        }
-
+      
         public void LifeSteal() { } // call DidAttack/OnInteract
     }
 }

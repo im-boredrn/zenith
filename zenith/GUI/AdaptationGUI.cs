@@ -113,9 +113,11 @@ namespace zenith.GUI
                     ? def.AdaptationName
                     : "[LOCKED]";
 
-                SingleComposer.GetDynamicText($"{def.AdaptationName}{suffix}") // May be running IsUnlocked Twice 1
-                        .SetNewText(text, false, true , false);
-
+                if (SingleComposer.GetDynamicText($"{def.AdaptationName}{suffix}") is GuiElementDynamicText elementDynamicText)
+                {
+                    elementDynamicText.SetNewText(text, false, true, false);
+                }
+             
             
               
             }

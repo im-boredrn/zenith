@@ -29,43 +29,44 @@ namespace zenith.Core.NetWork
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                    behavior?.systems?.AssimilationCore?.TryAssimilate(player);
+                    var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
+                    behavior?.ServerSystems?.AssimilationCore?.TryAssimilate(player); // #TODO Go through these and
+                                                                                      // separate methods/create client and server classes
                 })
                 .SetMessageHandler<IncreasePacket>((player, packet) =>
                 {
 
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
 
-                    behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
+                    behavior?.ServerSystems?.StatOutput?.OutputChange(packet.ShiftHeld,packet.AltHeld, "Increase");
                 })
                 .SetMessageHandler<DecreasePacket>((player,packet) =>
                 {
 
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
+                    var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
 
 
-                    behavior?.systems?.StatOutput?.OutputChange(packet.ShiftHeld, packet.AltHeld, "Decrease");
+                    behavior?.ServerSystems?.StatOutput?.OutputChange(packet.ShiftHeld, packet.AltHeld, "Decrease");
                 })
                 .SetMessageHandler<SelectedStatPacket>((player,packet) =>
                 {
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                    behavior?.systems?.StatOutput?.StatSwitch((StatOutput.StatType)packet.SelectedStat);
+                    var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
+                    behavior?.ServerSystems?.StatOutput?.StatSwitch((StatOutput.StatType)packet.SelectedStat);
                 })
                 .SetMessageHandler<OpenAssimInventoryPacket>((player,packet) =>
                 {
-                    var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                    behavior?.systems.OpenAssimInv(player);
+                    var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
+                    behavior?.ServerSystems.OpenAssimInv(player);
                 })
                  .SetMessageHandler<CloseAssimInventoryPacket>((player, packet) =>
                  {
-                     var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                     behavior?.systems.CloseAssimInv(player);
+                     var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
+                     behavior?.ServerSystems.CloseAssimInv(player);
                  })
                   .SetMessageHandler<SubmitAssimItemPacket>((player, packet) =>
                   {
-                      var behavior = player.Entity.GetBehavior<ZenithBehavior>();
-                      behavior?.systems.SubmitItemAssim();
+                      var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
+                      behavior?.ServerSystems.SubmitItemAssim();
                   });
 
         }

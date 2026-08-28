@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Vintagestory.API.Client;
 using zenith.Config;
+using zenith.Core;
 using zenith.Core.AdaptationsCore;
 using zenith.Core.Assimilation;
 using zenith.Core.Domains;
 using zenith.Core.Inventory;
 using zenith.Core.NetWork;
 using zenith.Core.Progression;
-using static zenith.Core.ZenithBehavior;
+using static zenith.Core.ZenithBehaviorServer;
 
 namespace zenith.GUI
 {
@@ -17,8 +21,8 @@ namespace zenith.GUI
 
         public override string ToggleKeyCombinationCode => null;
 
-        private readonly DomainManager domainManager;
         private readonly AssimilationCore AssimilationCore;
+        private readonly ZenithData zenithData;
         DomainDetailsGUI DomainDetailsGUI;
         public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
@@ -27,10 +31,10 @@ namespace zenith.GUI
         private readonly Adaptations creatureAdaptations;
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
         private readonly AssimilationInventory inventory;
-        public ZenithGui(ICoreClientAPI capi,   DomainManager domainManager, AssimilationCore assimilationCore, StatOutput statOutput,
+        public ZenithGui(ICoreClientAPI capi,ZenithData data, AssimilationCore assimilationCore, StatOutput statOutput,
             Adaptations adaptations, AssimilationInventory inv) : base(capi)
         {
-            this.domainManager = domainManager;
+            this.zenithData = data;
             this.AssimilationCore = assimilationCore;
             this.StatOutut = statOutput;
             this.creatureAdaptations = adaptations;
@@ -39,17 +43,9 @@ namespace zenith.GUI
 
         }
 
-
-        // Dialog Cycle
-        // 1. Create Dialog
-        // 2. Setup Layout
-        // 3. Open() 
-        // 4. User Interation
-        // 5. Close()
         public void SetupDialog()
         {
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
-            var Stage = zenith?.GetInt("Stage", 1);
             var StageName = zenith?.GetString("StageName", "Adapting Organism"); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
 
@@ -107,15 +103,28 @@ namespace zenith.GUI
                 .AddDynamicText($"Stage : {StageName}\nDomainPoints : {DomainPoints}", CairoFont.WhiteSmallishText(), numberBounds, "statstext");
 
             int i = 0;
-            foreach (var kvp in domainManager.Domains)
+
+            var domains = zenithData.Tree.GetTreeAttribute("Domains");
+
+            if (domains == null) return;
+
+            foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
             {
-               
-                DomainEnum domain = kvp.Key;
-                IDomainInfo sponge = kvp.Value;
+
+                if (domain == DomainEnum.None) continue;
+
+                var domainTree = domains.GetTreeAttribute(domain.ToString());
+
+                if (domainTree == null) continue;
+
+
+                var counter = domainTree.GetFloat("Counter", 0);
+                var tier = domainTree.GetInt("Tier", 0);
+                var isMaxed = domainTree.GetBool("Maxed", false);
 
                 string text = $"{domain}";
 
-                if (sponge.IsDMaxed())
+                if (isMaxed)
                     text += "MAX";
 
                 int row = i / buttonsPerRow;
@@ -131,37 +140,29 @@ namespace zenith.GUI
 
                 // Store ID for live updates
                 domainButtonIds[domain] = buttonId;
-                i++;     
-               
+                i++;
+
             }
+
                 SingleComposer.Compose(); // Finalize
         }
-
 
        public void UpdateStats() 
         {
             if (SingleComposer == null) return;
-            Log("[GUI] UpdateStats called");
 
             var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
-            var Stage = zenith?.GetInt("Stage", 1);
             var StageName = zenith?.GetString("StageName", "Adapting Organism"); 
             var DomainPoints = zenith?.GetInt("DomainPoints") ?? 0;
             string newText = $"Stage : {StageName}\nDomainPoints: {DomainPoints}/{ZenithSettings.ZStageUpRequirement}";
-
-            Log($"[GUI] Stage seen by GUI: {Stage}");
-            Log($"[GUI] DomainPoints seen by GUI: {DomainPoints}");
-            Log($"[GUI] Before: Current stageName {StageName}");
+ 
             SingleComposer.GetDynamicText("statstext")?
                           .SetNewText(newText,false,true,false);
-            Log($"[GUI] After: Current stageName {StageName}");
-            Log($"[GUI] Stage seen by GUI: {Stage}");
-            Log($"[GUI] DomainPoints seen by GUI: {DomainPoints}");
+
         }
 
         bool OnDomainButton(DomainEnum domain)
         {
-
 
             if (DomainDetailsGUI != null)
             {
@@ -169,13 +170,10 @@ namespace zenith.GUI
                 DomainDetailsGUI.Dispose();
             }
 
-            DomainDetailsGUI = new DomainDetailsGUI(capi, domainManager, domain);
+            DomainDetailsGUI = new DomainDetailsGUI(capi, domain, zenithData);
             DomainDetailsGUI.TryOpen();
-            Log("Domain button clicked: " + domain);
 
             return true;
-
-          
         }
 
         private bool OnShowBonuses()
@@ -231,16 +229,13 @@ namespace zenith.GUI
             return true;
         }
 
-
         public override void OnGuiOpened()
         {
-            Log("Dialog opened");
             base.OnGuiOpened();
             SingleComposer.Dispose();
             SetupDialog();   // rebuild UI from fresh data
             UpdateStats(); // Pull latest stage/domain values
             
-
         }
 
         public override void OnGuiClosed()
@@ -248,13 +243,6 @@ namespace zenith.GUI
 
             this.TryClose();
             DomainDetailsGUI? .TryClose(); 
-           Log("Dialog closed");
         }
-        private void Log(string message)
-        {
-            if (!DebugMode) return;
-            capi.World.Logger.Warning(message);
-        }
-
     }
 }

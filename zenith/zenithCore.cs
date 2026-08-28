@@ -52,9 +52,9 @@ public class ZenithCore : ModSystem
             sapi.Event.EnqueueMainThreadTask(() =>
             {
 
-                if (!player.Entity.HasBehavior<ZenithBehavior>())
+                if (!player.Entity.HasBehavior<ZenithBehaviorServer>())
                 {
-                    player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
+                    player.Entity.AddBehavior(new ZenithBehaviorServer(player.Entity));
                     sapi.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                 }
 
@@ -84,10 +84,10 @@ public class ZenithCore : ModSystem
                             return;
                         }
 
-                        if (!player.Entity.HasBehavior<ZenithBehavior>())
+                        if (!player.Entity.HasBehavior<ZenithBehaviorServer>())
                         {
                             // Pass capi here so GUI can be initialized
-                            player.Entity.AddBehavior(new ZenithBehavior(player.Entity));
+                            player.Entity.AddBehavior(new ZenithBehaviorServer(player.Entity));
                             api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                         }
 
@@ -110,10 +110,10 @@ public class ZenithCore : ModSystem
             var player = api.World.Player?.Entity as EntityPlayer;
             if (player == null) return false;
 
-            var behavior = player.GetBehavior<ZenithBehavior>();
-            if (behavior?.systems?.ZenithGui != null)
+            var behavior = player.GetBehavior<ZenithBehaviorServer>();
+            if (behavior?.Clientsystems?.ZenithGui != null)
             {
-                behavior.systems.ZenithGui.Toggle();
+                behavior.Clientsystems.ZenithGui.Toggle();
                 return true;
             }
             return false;
@@ -125,16 +125,34 @@ public class ZenithCore : ModSystem
             var player = api.World.Player?.Entity as EntityPlayer;
             if (player == null) return false;
 
-            var behavior = player.GetBehavior<ZenithBehavior>();
-            if (behavior?.systems?.BearSenseRenderer != null)
+            var behavior = player.GetBehavior<ZenithBehaviorServer>();
+            if (behavior?.Clientsystems?.BearSenseRenderer != null)
             {
-                behavior.systems.BearSenseRenderer.ToggleBearSense();
+                behavior.Clientsystems.BearSenseRenderer.ToggleBearSense();
                 return true;
             }
             return false;
         });
 
     }
+
+    public static void PlayPlayerSound(ICoreClientAPI capi,string soundCode, Entity entity, float pitchMin, float pitchMax)
+    {
+
+        if (capi == null) return;
+
+        float pitch = pitchMin + (float)capi.World.Rand.NextDouble() * (pitchMax - pitchMin);
+
+        capi.World.PlaySoundAt(
+               new AssetLocation("zenith:" + soundCode),
+               entity,
+               null,
+               false,
+               16f,
+               pitch
+        );
+    }
+    
 
     public override void Dispose()
     {

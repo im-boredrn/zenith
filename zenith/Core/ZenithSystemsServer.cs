@@ -19,12 +19,12 @@ using zenith.Core.Progression;
 using zenith.Core.Renderers;
 using zenith.Core.Traits;
 using zenith.GUI;
-using static zenith.Core.ZenithBehavior;
+using static zenith.Core.ZenithBehaviorServer;
 
 namespace zenith.Core
 {
   
-    public class ZenithSystems
+    public class ZenithSystemsServer
     {
 
         public ZenithData ZenithData { get; }
@@ -41,9 +41,8 @@ namespace zenith.Core
         private readonly Entity entity;
 
         private readonly AssimilationInventory ServerAssimilationInventory;
-        private readonly AssimilationInventory ClientAssimilationInventory;
 
-        public ZenithSystems(Entity entity, ModConfig modConfig, ICoreClientAPI capi)
+        public ZenithSystemsServer(Entity entity, ModConfig modConfig )
             {
             this.entity = entity;
             ZenithData = new ZenithData(entity);
@@ -54,7 +53,7 @@ namespace zenith.Core
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
             Adaptations = new Adaptations(entity, ZenithData);
-                StatOutput = new StatOutput(entity, capi, ZenithData);
+                StatOutput = new StatOutput(entity, ZenithData); // needs capi
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
 
@@ -66,33 +65,13 @@ namespace zenith.Core
             DomainManager = new DomainManager(entity, modConfig, ZenithData);
             DomainManager.LoadDomains();
 
-            if (capi == null)
-            {
+           
+            
                 ServerAssimilationInventory = new AssimilationInventory(1, $"assiminvID-{Player.PlayerUID}", Player.Api);
                 ServerAssimilationInventory.LateInitialize($"assiminvID-{Player.PlayerUID}", Player.Api);
 
-            }
-            // GUI
-            if (capi != null )
-            {
-                 
-                BearSenseRenderer = new BearSenseRenderer(capi, Adaptations);
-
-                ClientAssimilationInventory = new AssimilationInventory(1,$"assiminvID-{Player.PlayerUID}", capi);
-                ClientAssimilationInventory.LateInitialize($"assiminvID-{Player.PlayerUID}", Player.Api);
-
-                ZenithGui = new ZenithGui(capi, DomainManager, AssimilationCore, StatOutput, Adaptations, ClientAssimilationInventory );
-                capi.World.Player.Entity.WatchedAttributes.RegisterModifiedListener("zenith", () =>
-                {
-                    ZenithGui?.BonusGUI?.UpdateBonusStats();
-
-                    Adaptations?.ReloadAdapt();
-
-
-
-                });
-
-            }
+            
+          
 
         WireEvents();
             
@@ -110,63 +89,38 @@ namespace zenith.Core
             eventsWired = true;
 
 
-            foreach (var domain in DomainManager.Domains.Values) 
+            foreach (var domain in DomainManager.Domains.Values)
             {
-                domain.DomainMaxed += ProgressionManager.HandleDomainMaxed;
-                domain.DomainMaxed += () =>
+                domain.DomainBehavior.DomainMaxed += () =>
                 {
-                    Logger.Log(Player,$"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
-                    ZenithGui?.UpdateStats();                
+                    ProgressionManager.HandleDomainMaxed();
+                    Logger.Log(Player, $"[EVENT] DomainMaxed ZenithGui UpdateStats Called...");
                 };
 
-                domain.OnTierUp += (d) => 
-                {
-                    ZenithGui?.UpdateStats();
-                    Logger.Log(Player, $"[EVENT] {domain} tier increased to {d.GetTier()}");
 
-                   
+
+
+
+
+                AssimilationCore.OnAssimChanged += () =>
+                {
+                    Traits.ApplyTraits();
                 };
 
+                AssimilationCore.AssimilationSuccess += (creatureT) =>
+                {
+                    Adaptations?.CheckAdaptation(creatureT);
+                    Adaptations?.AssimilateLink(creatureT);
+                };
+
+
+
+                StatOutput.OnOutputChange += () =>
+                {
+                    Traits.ApplyTraits();
+                    Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
+                };
             }
-
-
-            ProgressionManager.OnStageUp += () =>
-            {
-                Logger.Log(Player, $"[EVENT] StageUp ZenithGui UpdateStats Called...");
-                ZenithGui?.UpdateStats();
-                Logger.Log(Player,$"[EVENT] Stats Refreshed!");
-                foreach (var domain in DomainManager.Domains.Values)
-                {
-                    if (domain.GetDomain() == DomainEnum.None) continue;
-
-                }
-
-            };
-
-            ProgressionManager.OnProgressionChanged += () =>
-            {
-                ZenithGui?.UpdateStats();
-            };
-
-            AssimilationCore.OnAssimChanged += () =>
-            {
-                Traits.ApplyTraits();
-            };
-
-            AssimilationCore.AssimilationSuccess += (creatureT ) =>
-            {
-                Adaptations?.CheckAdaptation(creatureT);
-                Adaptations?.AssimilateLink(creatureT);
-            };
-
-
-
-            StatOutput.OnOutputChange += () =>
-            {
-                ZenithGui?.BonusGUI?.UpdateBonusStats();
-                Traits.ApplyTraits();
-                Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
-            };
         }
 
         public void OpenAssimInv(IServerPlayer player)
@@ -191,19 +145,12 @@ namespace zenith.Core
         {
             if (Player == null) return;
 
-            foreach (var serverTickable in TickManager.ServerTick)
+            var snapshot = TickManager.ServerTick.ToArray();
+
+            foreach (var serverTickable in snapshot)
             {
                 serverTickable.OnTick(Player,dt);
             }
-        }
-        public void OnClientTick(float dt)
-        {
-            if (Player == null) return;
-           
-            foreach (var tickable in TickManager.ClientTick)
-            {
-                tickable.OnTick(Player,dt);
-            }        
         }
     }
 }
