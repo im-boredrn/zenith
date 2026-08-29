@@ -12,31 +12,37 @@ namespace zenith.Core.AdaptationsCore.AdaptationData
         public  virtual int Counter { get; set; }
         public virtual int BlockLVL { get; set; }
         public virtual bool IsUnlocked { get; set; }
-        public virtual int EvolutionStage { get; set; } = 1;
-        public virtual int EvolutionRequirement { get; set; }
+ 
 
         public virtual void Save(TreeAttribute tree)
         {
+
+            var adaptations = tree.GetOrAddTreeAttribute("Adaptations");
+
+
             foreach (var property in GetType().GetProperties())
             {
+
+                var adaptationtree = adaptations.GetOrAddTreeAttribute(GetType().Name);
+
                 var value = property.GetValue(this);
                 string key = $"{GetType().Name} {property.Name}";
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    tree.SetBool(key, (bool)value);
+                    adaptationtree.SetBool(key, (bool)value);
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    tree.SetInt(key, (int)value);
+                    adaptationtree.SetInt(key, (int)value);
 
                 }
 
 
                 if (property.PropertyType == typeof(float))
                 {
-                    tree.SetFloat(key, (float)value);
+                    adaptationtree.SetFloat(key, (float)value);
 
                 }
 
@@ -45,28 +51,35 @@ namespace zenith.Core.AdaptationsCore.AdaptationData
 
         public virtual void Load(TreeAttribute tree)
         {
+            var adaptations = tree.GetTreeAttribute("Adaptations");
 
+            if (adaptations == null) return;
             foreach (var property in GetType().GetProperties())
             {
+
+                var adaptationtree = adaptations.GetTreeAttribute(GetType().Name);
+
+                if (adaptationtree == null) return;
+
                 var value = property.GetValue(this);
                 string key = $"{GetType().Name} {property.Name}";
 
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    property.SetValue(this, tree.GetBool(key, false));
+                    property.SetValue(this, adaptationtree.GetBool(key, false));
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    property.SetValue(this, tree.GetInt(key, (int)value));  
+                    property.SetValue(this, adaptationtree.GetInt(key, (int)value));  
                     
 
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
-                    property.SetValue(this, tree.GetFloat(key, (float)value));
+                    property.SetValue(this, adaptationtree.GetFloat(key, (float)value));
 
 
                 }

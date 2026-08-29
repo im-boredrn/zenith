@@ -4,15 +4,17 @@ using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
 using zenith.Core.Definitions;
+using zenith.Core.NetWork.Packets;
 using static zenith.Core.Definitions.CreatureDefinition;
 
 namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 {
     public class WolfBehavior(EntityPlayer entity) : AdaptationBehavior
     {
-
-        public  void OnAssimilate(CreatureType creatureType) // Call with keybind
+        //Add option to disable sounds
+        public  void OnAssimilate(CreatureType creatureType) 
         {
             
             float Sat;
@@ -21,10 +23,21 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 
             entity.ReceiveSaturation(Sat, EnumFoodCategory.Protein, 10f, 2f);
 
-            if (entity.World.Api is ICoreClientAPI capi) // Call from client/ Add client server sync
+
+            var sapi = entity.World.Api as ICoreServerAPI;
+            var zenithNetwork = sapi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
+            var packet = new Sounds.EatingSoundPacket
             {
-                ZenithCore.PlayPlayerSound(capi, "sounds/wolf/eating", entity, 0.8f, 1f);
-            }
+                EntityID = entity.EntityId,
+                SoundCode = "sounds/wolf/eating",
+                PitchMin = 0.8f,
+                PitchMax = 1f
+            };
+
+            var player = entity.Player as IServerPlayer;
+            zenithNetwork.ServerChannel.SendPacket<Sounds.EatingSoundPacket>(packet, player);
+
 
         }
     }

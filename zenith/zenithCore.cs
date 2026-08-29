@@ -84,13 +84,12 @@ public class ZenithCore : ModSystem
                             return;
                         }
 
-                        if (!player.Entity.HasBehavior<ZenithBehaviorServer>())
+                        if (!player.Entity.HasBehavior<ZenithBehaviorClient>())
                         {
                             // Pass capi here so GUI can be initialized
-                            player.Entity.AddBehavior(new ZenithBehaviorServer(player.Entity));
+                            player.Entity.AddBehavior(new ZenithBehaviorClient(player.Entity));
                             api.Logger.Notification($"Zenith Behavior attached to {player.PlayerName}");
                         }
-
                     }
                     catch (Exception e)
                     {
@@ -110,7 +109,7 @@ public class ZenithCore : ModSystem
             var player = api.World.Player?.Entity as EntityPlayer;
             if (player == null) return false;
 
-            var behavior = player.GetBehavior<ZenithBehaviorServer>();
+            var behavior = player.GetBehavior<ZenithBehaviorClient>();
             if (behavior?.Clientsystems?.ZenithGui != null)
             {
                 behavior.Clientsystems.ZenithGui.Toggle();
@@ -125,7 +124,7 @@ public class ZenithCore : ModSystem
             var player = api.World.Player?.Entity as EntityPlayer;
             if (player == null) return false;
 
-            var behavior = player.GetBehavior<ZenithBehaviorServer>();
+            var behavior = player.GetBehavior<ZenithBehaviorClient>();
             if (behavior?.Clientsystems?.BearSenseRenderer != null)
             {
                 behavior.Clientsystems.BearSenseRenderer.ToggleBearSense();
@@ -136,16 +135,16 @@ public class ZenithCore : ModSystem
 
     }
 
-    public static void PlayPlayerSound(ICoreClientAPI capi,string soundCode, Entity entity, float pitchMin, float pitchMax)
+    public static void PlayPlayerSound(ICoreClientAPI capi,string soundCode, long entityID, float pitchMin, float pitchMax)
     {
 
         if (capi == null) return;
 
         float pitch = pitchMin + (float)capi.World.Rand.NextDouble() * (pitchMax - pitchMin);
-
+        var target = capi.World.GetEntityById(entityID);
         capi.World.PlaySoundAt(
                new AssetLocation("zenith:" + soundCode),
-               entity,
+               target,
                null,
                false,
                16f,

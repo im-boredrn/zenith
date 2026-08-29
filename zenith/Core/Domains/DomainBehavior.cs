@@ -31,27 +31,27 @@ namespace zenith.Core.Domains
             if (domainState.Counter >= Threshold && domainState.Tier < MaxTier)
             {
                 domainState.Tier++;
-                domainState.Counter = 0; // Reset
+                domainState.Counter = 0; 
 
                 if (domainState.Tier > domainState.OldTier) 
                 {
                     OnTierUp?.Invoke(); 
                     Logger.Log(entity as EntityPlayer,$"[SERVER] Tier increased to {domainState.Tier}");
-                    OnDomainChanged?.Invoke();
                     NotifyChanged();
 
                 }
 
-                if (domainState.Tier == MaxTier && !domainState.ContributedToEvolution)
-                {
-                    domainState.ContributedToEvolution = true;
-                    domainState.IsMaxed = true;
-                    domainState.Counter = 0;
-                    DomainMaxed?.Invoke();
-                    OnDomainChanged?.Invoke();
-                    NotifyChanged();
+                
+            }
 
-                }
+            if (domainState.Tier == MaxTier && !domainState.ContributedToEvolution)
+            {
+                domainState.ContributedToEvolution = true;
+                domainState.IsMaxed = true;
+                domainState.Counter = 0;
+                DomainMaxed?.Invoke();
+                NotifyChanged();
+
             }
 
         }

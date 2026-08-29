@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;
 using zenith.Core.Assimilation;
+using zenith.Core.Helper;
 using zenith.Core.NetWork.Packets;
 
 namespace zenith.Core.NetWork
@@ -26,12 +28,18 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<OpenAssimInventoryPacket>()
                 .RegisterMessageType<CloseAssimInventoryPacket>()
                 .RegisterMessageType<SubmitAssimItemPacket>()
+                .RegisterMessageType<Sounds.AssimedSoundPacket>()
+                .RegisterMessageType<Sounds.AdaptationGainedSoundPacket>()
+                .RegisterMessageType<Sounds.EatingSoundPacket>()
+                .RegisterMessageType<Sounds.SizzleSoundPacket>()
+
 
                 .SetMessageHandler<ConsumePacket>((player, packet) =>
                 {
                     var behavior = player.Entity.GetBehavior<ZenithBehaviorServer>();
-                    behavior?.ServerSystems?.AssimilationCore?.TryAssimilate(player); // #TODO Go through these and
-                                                                                      // separate methods/create client and server classes
+                    behavior?.ServerSystems?.AssimilationCore?.TryAssimilate(player);
+
+                    Logger.Log(player.Entity, "[DEBUG] ConsumePacket Received!");
                 })
                 .SetMessageHandler<IncreasePacket>((player, packet) =>
                 {
@@ -81,7 +89,34 @@ namespace zenith.Core.NetWork
                 .RegisterMessageType<SelectedStatPacket>()
                 .RegisterMessageType<OpenAssimInventoryPacket>()
                 .RegisterMessageType<CloseAssimInventoryPacket>()
-                .RegisterMessageType<SubmitAssimItemPacket>();
+                .RegisterMessageType<SubmitAssimItemPacket>()
+                .RegisterMessageType<Sounds.AssimedSoundPacket>()
+                .RegisterMessageType<Sounds.AdaptationGainedSoundPacket>()
+                .RegisterMessageType<Sounds.EatingSoundPacket>()
+                .RegisterMessageType<Sounds.SizzleSoundPacket>()
+
+
+                .SetMessageHandler<Sounds.AssimedSoundPacket>((packet) =>
+                {
+                    ZenithCore.PlayPlayerSound(capi, packet.SoundCode, packet.EntityID, packet.PitchMin, packet.PitchMax);
+                })
+
+                .SetMessageHandler<Sounds.AdaptationGainedSoundPacket>((packet) =>
+                {
+                    ZenithCore.PlayPlayerSound(capi, packet.SoundCode, packet.EntityID, packet.PitchMin, packet.PitchMax);
+                })
+
+                .SetMessageHandler<Sounds.EatingSoundPacket>((packet) =>
+                {
+                    ZenithCore.PlayPlayerSound(capi, packet.SoundCode, packet.EntityID, packet.PitchMin, packet.PitchMax);
+                })
+
+                .SetMessageHandler<Sounds.SizzleSoundPacket>((packet) =>
+                {
+                    ZenithCore.PlayPlayerSound(capi, packet.SoundCode, packet.EntityID, packet.PitchMin, packet.PitchMax);
+                });
+
+
         }
 
         public void RequestStat(StatOutput.StatType stat)
@@ -91,7 +126,6 @@ namespace zenith.Core.NetWork
                 SelectedStat = (int)stat
             });
              
-
         }
 
         public void RequestOpenAssimInventory()

@@ -12,11 +12,12 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Config;
-using static System.Net.Mime.MediaTypeNames;
-using StatType = zenith.Core.Assimilation.StatOutput.StatType;
-using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
-using zenith.Core.Helper;
 using zenith.Core.Definitions;
+using zenith.Core.Helper;
+using zenith.Core.NetWork.Packets;
+using static System.Net.Mime.MediaTypeNames;
+using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
+using StatType = zenith.Core.Assimilation.StatOutput.StatType;
 namespace zenith.Core.Assimilation
 {
 
@@ -35,7 +36,7 @@ namespace zenith.Core.Assimilation
 
             LoadAssim();
             CalculateTotals();
-            
+            Logger.Log(Player, $"[DEBUG] AssimilationCore created {GetHashCode()}");
         }
       public  event Action  OnAssimChanged;
         public event Action<CreatureType> AssimilationSuccess;
@@ -63,14 +64,12 @@ namespace zenith.Core.Assimilation
                 Logger.Log(Player, $"[DATA] Does not have EntityBehaviorHarvestable");
                 return;
             }
-            if (es.WatchedAttributes.GetBool("consumed") ) // may not persist - due to it not being loaded
-                // its likely only saved on world but not retrieved on next load
-                // untested as of implementation of ZenithNetwork
+            if (es.WatchedAttributes.GetBool("consumed") ) 
             {
                 player.SendIngameError("AssimError", "Already Consumed!");
                 return;
             }
-
+            Logger.Log(Player, $"[DEBUG] TryAssimilate {GetHashCode()}");
             ScanAssimilate(player);
 
         }
@@ -143,10 +142,20 @@ namespace zenith.Core.Assimilation
            
             sapi.SendMessage(player, GlobalConstants.GeneralChatGroup,  $"Assimilated {entityName}" , EnumChatType.Notification );
 
-            if (Player.World.Api is ICoreClientAPI capi) // #TODO Client Server sync
+
+            var zenithNetwork = sapi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
+            var packet = new Sounds.AssimedSoundPacket
             {
-                ZenithCore.PlayPlayerSound(capi, "sounds/assimilation/assimed", Player, 0.8f, 1f);
-            }
+                EntityID = Player.EntityId,
+                SoundCode = "sounds/assimilation/assimed",
+                PitchMin = 0.8f,
+                PitchMax = 1f
+            };
+
+            zenithNetwork.ServerChannel.SendPacket<Sounds.AssimedSoundPacket>(packet, player);
+
+          
             sapi.SendMessage(player, GlobalConstants.GeneralChatGroup,
                     gainPrint.ToString(), EnumChatType.Notification);
             AssimilationSuccess?.Invoke(creatureType);

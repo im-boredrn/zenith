@@ -11,6 +11,7 @@ using zenith.Core;
 using zenith.Core.Domains;
 using zenith.Core.Helper;
 using static zenith.Core.ZenithBehaviorServer;
+using DomainEnum = zenith.Core.Helper.DomainMapAndEnum.DomainEnum;
 
 namespace zenith.GUI
 {

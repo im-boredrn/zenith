@@ -71,7 +71,7 @@ namespace zenith.Core.Assimilation
 
 
         public event Action OnOutputChange;
-        public void StatSwitch(StatType statType) // Call with Keybind
+        public void StatSwitch(StatType statType) // Called with Client -> Server Packet
         {
 
             Logger.Log(Player,$"[FLOW] StatSwitch Called");

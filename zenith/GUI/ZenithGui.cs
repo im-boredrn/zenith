@@ -12,32 +12,26 @@ using zenith.Core.Inventory;
 using zenith.Core.NetWork;
 using zenith.Core.Progression;
 using static zenith.Core.ZenithBehaviorServer;
+using DomainEnum = zenith.Core.Helper.DomainMapAndEnum.DomainEnum;
 
 namespace zenith.GUI
 {
     public  class ZenithGui : GuiDialog
     {
-        public static bool DebugMode => ZenithSettings.ZDebugMode;
 
         public override string ToggleKeyCombinationCode => null;
 
-        private readonly AssimilationCore AssimilationCore;
         private readonly ZenithData zenithData;
         DomainDetailsGUI DomainDetailsGUI;
         public BonusGUI BonusGUI;
         LevelGUI LevelGUI;
-        public AdaptationGUI AdaptationGUI;
-        private readonly StatOutput StatOutut;
-        private readonly Adaptations creatureAdaptations;
+        private AdaptationGUI AdaptationGUI;
         private readonly Dictionary<DomainEnum, string> domainButtonIds = [];
         private readonly AssimilationInventory inventory;
-        public ZenithGui(ICoreClientAPI capi,ZenithData data, AssimilationCore assimilationCore, StatOutput statOutput,
-            Adaptations adaptations, AssimilationInventory inv) : base(capi)
+        public ZenithGui(ICoreClientAPI capi,ZenithData data
+            , AssimilationInventory inv) : base(capi)
         {
             this.zenithData = data;
-            this.AssimilationCore = assimilationCore;
-            this.StatOutut = statOutput;
-            this.creatureAdaptations = adaptations;
             this.inventory = inv;
             SetupDialog();
 
@@ -70,9 +64,6 @@ namespace zenith.GUI
 
 
 
-            ElementBounds textBounds =
-       ElementBounds.Fixed(0, 30, 250, 30)
-       .WithAlignment(EnumDialogArea.CenterTop);
 
             ElementBounds numberBounds =
                 ElementBounds.Fixed(0, 0, 300, 80)
@@ -187,7 +178,7 @@ namespace zenith.GUI
             }
             var zenithNetwork = capi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
 
-            BonusGUI = new BonusGUI(capi,  StatOutut, zenithNetwork);
+            BonusGUI = new BonusGUI(capi, zenithNetwork);
             BonusGUI.TryOpen();
 
             return true;
@@ -201,7 +192,7 @@ namespace zenith.GUI
                 LevelGUI.Dispose();
             }
 
-            LevelGUI = new LevelGUI(capi, AssimilationCore);
+            LevelGUI = new LevelGUI(capi);
             LevelGUI.TryOpen();
 
             return true;
@@ -219,7 +210,7 @@ namespace zenith.GUI
                 AdaptationGUI.TryClose();
                 AdaptationGUI.Dispose();
             }
-            AdaptationGUI = new AdaptationGUI(capi, creatureAdaptations, inventory,zenithNetwork);
+            AdaptationGUI = new AdaptationGUI(capi, inventory,zenithNetwork, zenithData);
 
             zenithNetwork.RequestOpenAssimInventory();
             capi.World.Player.InventoryManager.OpenInventory(inventory);

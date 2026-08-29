@@ -16,16 +16,9 @@ using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class WolfDefinition( WolfState state) : AdaptationDefinitions() 
+    public class WolfDefinition() : AdaptationDefinitions() 
     {
-
-
-     
-        public override CreatureType SourceCreature { get; init; } = CreatureType.wolf;
-        public override AdaptCategory.AdaptationCategory AdaptationCategory { get; init; } = AdaptCategory.AdaptationCategory.Creature;
         public override string AdaptationName { get; init; } = "Corpse Consumption";
-        public override string AdaptationDescription { get; init; } = "You've gained the ability to digest assimilated creatures";
-        public override string LockedDescription  => $"Assimilate {state.Counter}/{CreatureDefinition.CreatureDefinitions[CreatureType.wolf].Threshold} Wolves to unlock ";
     }
 
 

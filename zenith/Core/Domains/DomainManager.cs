@@ -16,7 +16,8 @@ using zenith.Core.AdaptationsCore.AdaptationData;
 using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using zenith.Core.Helper;
 using zenith.GUI;
-using static zenith.Core.ZenithBehaviorServer;
+using DomainEnum = zenith.Core.Helper.DomainMapAndEnum.DomainEnum;
+
 
 namespace zenith.Core.Domains
 {
@@ -95,8 +96,6 @@ namespace zenith.Core.Domains
         }
       
 
-
-
         void RegisterDomain(DomainEnum key, Domain domain) 
         {
             if (!Domains.TryAdd(key, domain))
@@ -155,7 +154,7 @@ namespace zenith.Core.Domains
 
             foreach (DomainEnum domain in Enum.GetValues<DomainEnum>())
             {
-                
+                if (domain == DomainEnum.None) continue;
                 
                     var domainTree = domains.GetTreeAttribute(domain.ToString());
 

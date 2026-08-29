@@ -10,6 +10,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
 using Vintagestory.ServerMods;
 using zenith.Config;
 using zenith.Core.AdaptationsCore.Adaptation_Definitions;
@@ -19,12 +20,13 @@ using zenith.Core.AdaptationsCore.AdaptationsFactory;
 using zenith.Core.Assimilation;
 using zenith.Core.Definitions;
 using zenith.Core.Helper;
+using zenith.Core.NetWork.Packets;
 using static zenith.Core.Definitions.CreatureDefinition;
 using AdaptationCategory = zenith.Core.Definitions.BlockDefinitions.BlockCategory;
 using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore
 {
-    public class Adaptations 
+    public class AdaptationsServer 
     {
 
       
@@ -39,7 +41,7 @@ namespace zenith.Core.AdaptationsCore
         public event Action OnAdaptationChanged;
         public readonly Dictionary<Type, ActiveAdaptation> FullAdaptations;
 
-        public Adaptations(Entity entity, ZenithData data) 
+        public AdaptationsServer(Entity entity, ZenithData data) 
         {
             this.entity = entity;
             this.zenithData = data;
@@ -54,29 +56,23 @@ namespace zenith.Core.AdaptationsCore
 
             InitializeAdapt();
 
-            //if (entity.World.Side == EnumAppSide.Server)
-            //{
-            //    var sapi = entity?.World?.Api as ICoreServerAPI;
-
-            //    sapi?.Event?.HandInteract += Event_HandInteract;
-
-            //}
-
+            
         }
 
-        //private void Event_HandInteract(IServerPlayer player, EnumHandInteractNw enumHandInteract, float secondsPassed, ref EnumHandling handling)//  multi-call
-        //{
-        //    var itemSlot = player.Entity.RightHandItemSlot;
 
-        //    if (itemSlot.Empty)
-        //        return;
-
-        //}
 
         public ActiveAdaptation Get<T>() where T : AdaptationDefinitions
         {
             return FullAdaptations[typeof(T)];
         }
+
+        public AdaptationBehavior GetBehavior<TDefinition,TBehavior>() 
+            where TDefinition : AdaptationDefinitions
+            where TBehavior : AdaptationBehavior
+        {
+            return (TBehavior)FullAdaptations[typeof(TDefinition)].Behavior;
+        }
+
         public bool TryGet(Type type,out ActiveAdaptation adaptation)
         {
             return FullAdaptations.TryGetValue(type, out adaptation);
@@ -102,22 +98,21 @@ namespace zenith.Core.AdaptationsCore
             PoisonState poisonState = new();
 
             Register(wolfState , new
-                WolfDefinition(wolfState), new WolfBehavior(entityPlayer));
+                WolfDefinition(), new WolfBehavior(entityPlayer));
 
-            Register(bearState , new
-                BearSensesDefinition(bearState),
-                new BearBehavior( entityPlayer, bearState));
+            PlayerStates[typeof(BearSensesDefinition)] = bearState;
 
-            Register(clayState, new ClayDefinition(clayState),
+           
+            Register(clayState, new ClayDefinition(),
                 new ClayBehavior(clayState));
 
-            Register(poisonState, new PoisonDefinition(poisonState)
+            Register(poisonState, new PoisonDefinition()
                 , new PoisonBehavior(poisonState));
         }
         
        
 
-        public void CheckAdaptation(CreatureType creatureType)
+        public void CheckAdaptation(CreatureType creatureType) //server
         {
             var creatureDef = CreatureDefinitions[creatureType];
             if (creatureDef.AdaptationType == null)
@@ -127,7 +122,7 @@ namespace zenith.Core.AdaptationsCore
           
             var sapi = entity.World.Api as ICoreServerAPI;
 
-            state.Counter += 1;
+            state.Counter += 1; // multi fires
             if (state.Counter >= creatureDef.Threshold)
             {
                 state.Counter = creatureDef.Threshold;
@@ -153,18 +148,29 @@ namespace zenith.Core.AdaptationsCore
                 sapi.SendMessage(Player.Player, GlobalConstants.GeneralChatGroup,
                     text, EnumChatType.Notification);
 
-                if (entity.World.Api is ICoreClientAPI capi)
+
+                var zenithNetwork = sapi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
+                var packet = new Sounds.AdaptationGainedSoundPacket
                 {
-                    ZenithCore.PlayPlayerSound(capi, "sounds/assimilation/adaptationgained", Player, 0.8f, 1f);
-                }
+                    EntityID = Player.EntityId,
+                    SoundCode = "sounds/assimilation/adaptationgained",
+                    PitchMin = 0.8f,
+                    PitchMax = 1f
+                };
+
+                var player = Player.Player as IServerPlayer;
+                zenithNetwork.ServerChannel.SendPacket<Sounds.AdaptationGainedSoundPacket>(packet, player);
+               
                     state.IsUnlocked = true;
             }
+
 
             SavePlayerProgress();
             OnAdaptationChanged?.Invoke(); // if null do these even send?
         }
 
-        public void EatItem(ItemStack stack)
+        public void EatItem(ItemStack stack) //Server called by client
         {
             var sapi = entity.World.Api as ICoreServerAPI;
             var code = stack.Collectible.Code.ToString();
@@ -185,9 +191,9 @@ namespace zenith.Core.AdaptationsCore
                 state.BlockLVL += stack.StackSize;
 
 
-                var clay = Get<ClayDefinition>();
+                var clay = GetBehavior<ClayDefinition,ClayBehavior>();
 
-                if (clay.Behavior is ClayBehavior behavior)
+                if (clay is ClayBehavior behavior)
                 {
                     behavior.CanAbsorb(Player, stack);
                 }
@@ -222,7 +228,19 @@ namespace zenith.Core.AdaptationsCore
                         text, EnumChatType.Notification);
 
                         state.IsUnlocked = true;
-                    
+
+                    var packet = new Sounds.AdaptationGainedSoundPacket
+                    {
+                        EntityID = entity.EntityId,
+                        SoundCode = "sounds/assimilation/adaptationgained",
+                        PitchMin = 0.8f,
+                        PitchMax = 1f
+                    };
+
+                    var zenithNetwork = sapi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
+                    zenithNetwork.ServerChannel.SendPacket<Sounds.AdaptationGainedSoundPacket>(packet);
+
                     SavePlayerProgress();
                     OnAdaptationChanged?.Invoke();
                 }
@@ -235,7 +253,7 @@ namespace zenith.Core.AdaptationsCore
   
 
   
-        public void AssimilateLink(CreatureType creatureType) 
+        public void AssimilateLink(CreatureType creatureType) //server
         {
             var wolf = Get<WolfDefinition>();
             var clay = Get<ClayDefinition>();

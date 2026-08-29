@@ -10,19 +10,16 @@ using zenith.Core.Helper;
 
 namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 {
-    public sealed class BearBehavior : AdaptationBehavior, ITickable
+    public sealed class BearBehavior : AdaptationBehavior, ITickable // Client
     {
 
         private readonly IWorldAccessor world;
         private readonly EntityPlayer Player;
-        static public bool DebugMode => ZenithSettings.ZDebugMode;
 
-        private AdaptationState _state;
-        public BearBehavior( EntityPlayer entity, AdaptationState state) // Pack Mule
+        public BearBehavior( EntityPlayer entity) // Pack Mule
         {
             this.Player = entity;
             this.world = entity.World;
-            _state = state;
 
             //Log($"[BEAR] Created {this.GetHashCode()}");
             TickManager.RegisterClientTick(this);
@@ -35,7 +32,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
         public IReadOnlyList<SensedEntity> SensedList => SensedEntities;
 
 
-        public void OnTick(Entity Player, float dt)
+        public void OnTick(Entity Player, float dt) //Client
         {
             if (Player.World.Side != EnumAppSide.Client)
                 return;

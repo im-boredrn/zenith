@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using zenith.Core.AdaptationsCore.AdaptationData;
 using zenith.Core.Helper;
+using zenith.Core.NetWork.Packets;
 
 namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 {
@@ -16,7 +19,7 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
         private readonly EntityAgent EntityAgent;
         private readonly PoisonState PoisonState;
         public bool _disposed;
-
+        private ICoreServerAPI sapi => entity.World.Api as ICoreServerAPI;
         public int PoisonedStack { get; set; } = 0; //state
         private float PoisonDuration = 5;
         public PoisonedEntity(Entity entity, PoisonState poisonState) : base(entity)
@@ -36,10 +39,30 @@ namespace zenith.Core.AdaptationsCore.AdaptationBehaviors
 
             if (targetHealth != null)
             {
-                if (entity.World.Api is ICoreClientAPI capi)
+
+                var zenithNetwork = sapi.ModLoader.GetModSystem<ZenithCore>().ZenithNetwork;
+
+                var packet = new Sounds.SizzleSoundPacket
                 {
-                    ZenithCore.PlayPlayerSound(capi, "sounds/poison/sizzle", entity, 0.8f, 1f);
+                    EntityID = entity.EntityId,
+                    SoundCode = "sounds/poison/sizzle",
+                    PitchMin = 0.8f,
+                    PitchMax = 1f
+                };
+
+
+
+                foreach (IServerPlayer serverPlayer in sapi.World.AllOnlinePlayers)
+                {
+
+                    double distanceSq = serverPlayer.Entity.Pos.SquareDistanceTo(entity.Pos);
+
+                    if (distanceSq < 30 * 30)
+                        zenithNetwork.ServerChannel.SendPacket<Sounds.SizzleSoundPacket>(packet, serverPlayer);
+
                 }
+
+
                 targetHealth.Health -= PoisonState.PoisonDamage;
                 
             }

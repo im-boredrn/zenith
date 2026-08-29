@@ -32,5 +32,27 @@ namespace zenith.Core
                 return (TreeAttribute)tree;
             }
         }
+
+        public bool BearUnlocked
+        {
+            get
+            {
+                var adaptations = Tree.GetTreeAttribute("Adaptations");
+                var bear = adaptations?.GetTreeAttribute("Bear");
+
+                return bear?.GetBool("IsUnlocked", false) ?? false;
+            }
+
+
+            set
+            {
+                var adaptations = Tree.GetTreeAttribute("Adaptations");
+                var bear = adaptations?.GetTreeAttribute("Bear");
+
+                bear.SetBool("IsUnlocked", value);
+                entity.WatchedAttributes.MarkPathDirty("zenith");
+
+            }
+        }
     }
 }

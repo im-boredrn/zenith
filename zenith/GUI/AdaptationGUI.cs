@@ -14,32 +14,24 @@ using zenith.Core.NetWork;
 
 namespace zenith.GUI
 {
-    public class AdaptationGUI : GuiDialog
+    public sealed class AdaptationGUI : GuiDialog
     {
         public override string ToggleKeyCombinationCode => null;
 
-        private readonly Adaptations Adaptations;
-        public int packetIDOffset;
         private readonly AssimilationInventory inventory;
         private readonly ZenithNetwork zenithNetwork;
-        public AdaptationGUI(ICoreClientAPI capi, Adaptations adaptations, AssimilationInventory assimInventory, ZenithNetwork zenithNetwork) : base (capi)
+        private readonly ZenithData zenithData;
+        public AdaptationGUI(ICoreClientAPI capi , AssimilationInventory assimInventory, ZenithNetwork zenithNetwork, ZenithData data) : base (capi)
         {
-            this.Adaptations = adaptations;
             this.inventory = assimInventory;
             this.zenithNetwork = zenithNetwork;
-            // Refresh on Adaptation Change
+            this.zenithData = data;
 
-            Adaptations.OnAdaptationChanged += () =>
-            {
-                RefreshAdaptation();
-            };
+        
             SetupDialog();
 
-            ItemSent  += (stack) => // Should move to server side | maybe through packet
-            {
-                Adaptations.EatItem(stack);
-            }; // Events need to Be initialized in pocket GUI or they will be null. 
-            //TODO: Fix Other GUI events
+           // Events need to Be initialized in pocket GUI or they won't stick. 
+            //#TODO Fix Other GUI events | Maybe idk atp. If the game compiles later delete this
 
         }
 
@@ -62,34 +54,41 @@ namespace zenith.GUI
             SingleComposer = capi.Gui.CreateCompo("Adaptations", dialogBounds)
                 .AddShadedDialogBG(ElementBounds.Fill, true)
                 .AddDialogTitleBar($"Adaptations", OnGuiClosed);
-            var zenith = capi.World.Player.Entity.WatchedAttributes.GetTreeAttribute("zenith");
-            
+            var adaptations = zenithData.Tree.GetTreeAttribute("Adaptations");
+             
             int i = 0;
             int spacing = 40;
-            foreach (var adaptationFactory in Adaptations.FullAdaptations.Values)
+
+            foreach (AdaptationsEnum.AdaptationEnum adaptation in Enum.GetValues<AdaptationsEnum.AdaptationEnum>())
             {
-                var def = adaptationFactory.Definitions;
-                var state = adaptationFactory.State;
-                bool unlocked =  state.IsUnlocked;
+
+                var adaptationTree = adaptations?.GetTreeAttribute($"{adaptation.ToString()}State");
+
+                if (adaptationTree == null) continue;
+
+                bool unlocked =
+                    adaptationTree?.GetBool($"{adaptation.ToString()}State IsUnlocked", false) ?? false;
+
 
                 string text = unlocked
-                    ? def.AdaptationName
-                    : "[LOCKED]";
+                   ? AdaptationDefinitions.GetName(adaptation)
+                   : "[LOCKED]";
 
-                string suffix = unlocked 
-                    ? "K" 
+                string suffix = unlocked
+                    ? "K"
                     : "L";
 
 
 
                 SingleComposer.AddDynamicText($"{text}", CairoFont.WhiteSmallishText(),
-                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{def.AdaptationName}{suffix}")
-                .AddHoverText(unlocked ? def.AdaptationDescription : def.LockedDescription,
+                        ElementBounds.Fixed(20, 50 + (i * spacing), 200, 50), $"{AdaptationDefinitions.GetName(adaptation)}{suffix}")
+                .AddHoverText(unlocked ? AdaptationDefinitions.GetDescription(adaptation) : AdaptationDefinitions.GetLockedDescription(adaptation),
                 CairoFont.WhiteSmallishText(), 300, ElementBounds.Fixed(20, 50 + (i * spacing), 100, 30));
-            
-               // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
+
+                // Possibly Add Icons -- Like a pixel art image of food or teeth for Wolf Adaptation and A colored eye for bear Sense.
                 i++;
             }
+          
             SingleComposer.AddItemSlotGrid(inventory, SendEntityPacket, 1, slotBounds);
             SingleComposer.AddButton("Eat", () => OnSubmitAssim(), buttonBounds, EnumButtonStyle.Small);
             SingleComposer.Compose();
@@ -100,53 +99,39 @@ namespace zenith.GUI
         {
             if (!IsOpened()) return;
 
-            foreach (var adaptationFactory in Adaptations.FullAdaptations.Values)
+            var adaptations = zenithData.Tree.GetTreeAttribute("Adaptations");
+
+
+            foreach (AdaptationsEnum.AdaptationEnum adaptation in Enum.GetValues<AdaptationsEnum.AdaptationEnum>())
             {
-                var def = adaptationFactory.Definitions;
-                var state = adaptationFactory.State;
-             
-                bool unlocked = state.IsUnlocked;
+                var adaptationTree = adaptations?.GetTreeAttribute(adaptation.ToString());
+
+                bool unlocked =
+                     adaptationTree?.GetBool($"{adaptation.ToString()}State IsUnlocked", false) ?? false;
+
                 string suffix = unlocked ? "K" : "L";
 
 
                 string text = unlocked
-                    ? def.AdaptationName
+                    ? AdaptationDefinitions.GetName(adaptation)
                     : "[LOCKED]";
 
-                if (SingleComposer.GetDynamicText($"{def.AdaptationName}{suffix}") is GuiElementDynamicText elementDynamicText)
+                if (SingleComposer.GetDynamicText($"{AdaptationDefinitions.GetName(adaptation)}{suffix}") is GuiElementDynamicText elementDynamicText)
                 {
                     elementDynamicText.SetNewText(text, false, true, false);
                 }
              
-            
-              
             }
-
 
         }
 
-
-        //public string BuildAdaptationText(Adaptation adaptation)
-        //{
-        
-        //        var unlocked = adaptation.IsUnlocked;
-
-        //        string text = unlocked ? $"{adaptation.AdaptationName}" : $"[Locked]";
-
-        //        return text;
-        //}
-
         private void SendEntityPacket(object p)
         {
-            long entityid = capi.World.Player.Entity.EntityId;
           //  ObjectReader.DumpObject(capi.World.Player.Entity, p, 2);
             capi.Network.SendPacketClient( p);
         }
         
-        private void SendEvolvableAdaptation(AdaptationDefinitions adaptation)
-        {
-            EvolveSelected?.Invoke(adaptation);
-        }
+       
 
         public bool OnSubmitAssim()
         {
@@ -169,15 +154,9 @@ namespace zenith.GUI
         
 
             base.OnGuiClosed();
-            Adaptations.OnAdaptationChanged -= () =>
-            {
-                RefreshAdaptation();
-            };
+           
 
-            ItemSent -= (stack) =>
-            {
-                Adaptations.EatItem(stack);
-            };
+          
             capi.World.Player.InventoryManager.CloseInventoryAndSync(inventory);
 
             this.TryClose();
@@ -186,7 +165,5 @@ namespace zenith.GUI
 
         
 
-        public Action<AdaptationDefinitions> EvolveSelected;
-        public Action<ItemStack> ItemSent;
     }
 }

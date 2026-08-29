@@ -30,11 +30,9 @@ namespace zenith.Core
         public ZenithData ZenithData { get; }
         public DomainManager DomainManager { get; }
             public ProgressionManager ProgressionManager { get; }
-        public ZenithGui ZenithGui { get; }
-        public BearSenseRenderer BearSenseRenderer { get; }
 
         public AssimilationCore AssimilationCore { get; }
-        public Adaptations Adaptations { get; }
+        public AdaptationsServer Adaptations { get; }
         public Traits.Traits Traits { get; }
         public StatOutput StatOutput { get; }
         private EntityPlayer Player => entity as EntityPlayer;
@@ -52,8 +50,8 @@ namespace zenith.Core
             ProgressionManager.LoadProgression();
 
             AssimilationCore = new AssimilationCore(entity, ZenithData);
-            Adaptations = new Adaptations(entity, ZenithData);
-                StatOutput = new StatOutput(entity, ZenithData); // needs capi
+            Adaptations = new AdaptationsServer(entity, ZenithData);
+                StatOutput = new StatOutput(entity, ZenithData);
 
             Traits = new Traits.Traits(entity, AssimilationCore, StatOutput, ZenithData);
 
@@ -98,29 +96,31 @@ namespace zenith.Core
                 };
 
 
-
-
-
-
-                AssimilationCore.OnAssimChanged += () =>
-                {
-                    Traits.ApplyTraits();
-                };
-
-                AssimilationCore.AssimilationSuccess += (creatureT) =>
-                {
-                    Adaptations?.CheckAdaptation(creatureT);
-                    Adaptations?.AssimilateLink(creatureT);
-                };
-
-
-
-                StatOutput.OnOutputChange += () =>
-                {
-                    Traits.ApplyTraits();
-                    Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
-                };
+              
             }
+
+            AssimilationCore.OnAssimChanged += () =>
+            {
+                Traits.ApplyTraits();
+            };
+            int i = 0;
+
+            AssimilationCore.AssimilationSuccess += (creatureT) =>
+            {
+                Adaptations?.CheckAdaptation(creatureT);
+                Adaptations?.AssimilateLink(creatureT);
+
+                i += 1;
+                Logger.Log(Player, $"Assim Success Call Count:{i}");
+            };
+
+
+
+            StatOutput.OnOutputChange += () =>
+            {
+                Traits.ApplyTraits();
+                Logger.Log(Player, "[EVENT]OUTPUT CHANGE EVENT FIRED");
+            };
         }
 
         public void OpenAssimInv(IServerPlayer player)

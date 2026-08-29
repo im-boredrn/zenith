@@ -11,21 +11,12 @@ using AdaptationCategory = zenith.Core.Definitions.BlockDefinitions.BlockCategor
 
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class ClayDefinition(ClayState state) : AdaptationDefinitions()
+    public class ClayDefinition() : AdaptationDefinitions()
     {
 
 
 
-        public override BlockDefinitions.BlockCategory BlockCategory { get; init; } =
-            BlockDefinitions.BlockCategory.Clay;
-        public override AdaptCategory.AdaptationCategory AdaptationCategory { get; init; } = AdaptCategory.AdaptationCategory.Block;
-        public override string BlockCode { get; init; } = "clay";
         public override string AdaptationName { get; init; } = "Clay Physiology";
-        public override string AdaptationDescription { get; init; } =
-            "Your body no longer needs food or bandages to heal, absorbing clay in their place." +
-            " Other means of healing are ineffective and will instead damage you";
-        public override string LockedDescription 
-        =>
-            $"Eat {state.BlockLVL }/{BlockDefinitions.BlockDefinition["clay"].Threshold} Clay to unlock ";  
+      
     }
 }

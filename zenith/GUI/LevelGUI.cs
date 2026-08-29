@@ -14,16 +14,9 @@ namespace zenith.GUI
 
         public override string ToggleKeyCombinationCode => null;
 
-        private readonly AssimilationCore assimilationCore;
-        public LevelGUI(ICoreClientAPI capi, AssimilationCore assimilationCore) : base(capi)
+        public LevelGUI(ICoreClientAPI capi) : base(capi)
         {
-            this.assimilationCore = assimilationCore;
-
-            assimilationCore.OnAssimChanged += () =>
-            {
-                RefreshLevels();
-            };
-
+          
             SetupDialog();
         }
 
@@ -101,10 +94,7 @@ namespace zenith.GUI
         public override void OnGuiClosed()
         {
 
-            assimilationCore.OnAssimChanged -= () =>
-            {
-                RefreshLevels();
-            };
+         
 
 
             base.OnGuiClosed();

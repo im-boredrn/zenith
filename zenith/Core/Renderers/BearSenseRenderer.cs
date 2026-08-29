@@ -13,22 +13,23 @@ namespace zenith.Core.Renderers
 {
     public class BearSenseRenderer : IRenderer
     {
-
+         // Continue Separation of This + BearAdaptation
         private readonly ICoreClientAPI capi;
-        private readonly Adaptations adaptations;
+        private readonly BearBehavior bearBehavior;
         private readonly int predatorSenseTextureID;
         private readonly int preySenseTextureID;
         private readonly int testTex;
 
         private MeshData mesh;
         private MeshRef meshRef;
-
+        private readonly ZenithData data;
         public bool BearSenseEnabled { get; private set; } = true;
 
-        public BearSenseRenderer(ICoreClientAPI capi, Adaptations adaptations)
+        public BearSenseRenderer(ICoreClientAPI capi, BearBehavior bearBehavior, ZenithData zenithData)
         { 
             this.capi = capi;
-            this.adaptations = adaptations;
+            this.data = zenithData;
+            this.bearBehavior = bearBehavior;
           //    capi.Logger.Warning($"[RENDERER] Created! | GOT {adaptations?.BearSenses?.GetHashCode()}");
             //  capi.Logger.Warning($"BearSense count: {bearSense?.sensedEntities.Count}");
 
@@ -45,13 +46,10 @@ namespace zenith.Core.Renderers
         public void OnRenderFrame(float dt, EnumRenderStage enumRenderStage)
         {
 
+            
+            if (!data.BearUnlocked) return;
 
-            var bear = adaptations.Get<BearSensesDefinition>();
-            if (!bear.IsUnlocked) return;
 
-
-            if (bear.Behavior is not BearBehavior behavior)
-                return;
 
             if (!BearSenseEnabled) return;
          
@@ -62,7 +60,7 @@ namespace zenith.Core.Renderers
             {
 
 
-                foreach (var sensed in behavior.SensedList)
+                foreach (var sensed in bearBehavior.SensedList)
                 {
                     Vec3d markerPos = sensed.WorldPosition.OffsetCopy(0, 1, 0);
 
@@ -71,14 +69,6 @@ namespace zenith.Core.Renderers
                     capi.Render.FrameHeight);
 
 
-                    //if (screenPos.X < 0 || screenPos.X > capi.Render.FrameWidth)
-                    //    continue;
-
-                    //if (screenPos.Y < 0 || screenPos.Y > capi.Render.FrameHeight)
-                    //    continue;
-
-                   // bool behind = screenPos.Z <= 0;
-                        
 
                   
                     float margin = 32;
@@ -128,7 +118,6 @@ namespace zenith.Core.Renderers
 
                    y = Math.Clamp(y, margin, capi.Render.FrameHeight - margin);
 
-                //    capi.Render.GlTranslate(x, y, 0);
 
                    float pulse = 1f + 0.25f * GameMath.Sin((float)capi.ElapsedMilliseconds / 150f);
 
@@ -187,6 +176,7 @@ namespace zenith.Core.Renderers
         public void Dispose()
         {
             meshRef?.Dispose();
+            GC.SuppressFinalize(this);
         }
 
     }

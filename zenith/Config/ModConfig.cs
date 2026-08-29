@@ -13,7 +13,7 @@ public class ModConfig
 {
     public float DamageReductionPerTier { get; set; } = 0.25f;
     public int GlobalDomainMaxTier { get; set; } = 4;
-    public int GlobalDomainThreshold { get; set; } = 50;
+    public int GlobalDomainThreshold { get; set; } = 30;
     public int StageUpRequirement { get; set; } = 3;
     public bool GlobalDebugMode { get; set; } = false;
 

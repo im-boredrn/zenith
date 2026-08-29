@@ -24,45 +24,14 @@ using zenith.Core.Domains;
 using zenith.Core.Helper;
 using zenith.Core.Inventory;
 using zenith.Core.Progression;
+using DomainEnum = zenith.Core.Helper.DomainMapAndEnum.DomainEnum;
 
 namespace zenith.Core
 {
     public class ZenithBehaviorServer : EntityBehavior
     {
-        public enum DomainEnum
-        {
-            Kinetic,
-            Thermal,
-            Cold,
-            Toxic,
-            Bleed,
-            Drown,
-            None
-
-        }
-
-        static readonly Dictionary<EnumDamageType, DomainEnum> DamageDomainMap =
-    new()
-{
-    { EnumDamageType.BluntAttack, DomainEnum.Kinetic },
-    { EnumDamageType.Gravity, DomainEnum.Kinetic },
-
-    { EnumDamageType.Fire, DomainEnum.Thermal },
-    { EnumDamageType.Heat, DomainEnum.Thermal },
-
-    { EnumDamageType.Acid, DomainEnum.Toxic },
-    { EnumDamageType.Poison, DomainEnum.Toxic },
-
-    { EnumDamageType.SlashingAttack, DomainEnum.Bleed },
-    { EnumDamageType.PiercingAttack, DomainEnum.Bleed },
-
-    {EnumDamageType.Frost, DomainEnum.Cold },
-
-        {EnumDamageType.Suffocation, DomainEnum.Drown }
-};
-
+        
         private EntityPlayer Player => entity as EntityPlayer; // assignment operator is saying assign the value on the left to the value on the right.
-        public ZenithSystemsClient Clientsystems;
         public ZenithSystemsServer ServerSystems;
         public ZenithBehaviorServer(Entity entity) : base(entity) 
         {
@@ -88,16 +57,6 @@ namespace zenith.Core
                 sapi.Event.RegisterGameTickListener(dt => ServerSystems.OnServerTick(dt), 1000);
                
             }
-            else if (entity.World.Side == EnumAppSide.Client)
-            {
-                var capi = entity.World.Api as ICoreClientAPI;
-                capi?.Logger.Notification("Zenith behavior attached to CLIENT");
-                capi.Event.RegisterGameTickListener(dt => Clientsystems.OnClientTick(dt), 1000);
-                // Client-only systems (GUI)
-                Clientsystems = new ZenithSystemsClient(entity, new ModConfig(), capi);
-            }
-
-
         }
 
         public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
@@ -161,7 +120,7 @@ namespace zenith.Core
         public static DomainEnum IdentifyDomain(EnumDamageType type) // #Translator
         {
             
-            if(DamageDomainMap.TryGetValue(type, out DomainEnum domain))
+            if(DomainMapAndEnum.DamageDomainMap.TryGetValue(type, out DomainEnum domain))
             {
                 return domain;
             }
@@ -180,7 +139,7 @@ namespace zenith.Core
             var domainBody = ServerSystems.DomainManager.Domains[domain];
 
             float domainResistance = domainBody.DomainBehavior.Resistance();
-            float stageMultiplier = Clientsystems.ProgressionManager.GetResistanceMultiplier();
+            float stageMultiplier = ServerSystems.ProgressionManager.GetResistanceMultiplier();
             float finalResistance = domainResistance * stageMultiplier;
 
             damage /= (1f + finalResistance);
@@ -189,8 +148,6 @@ namespace zenith.Core
             return damage;
 
         }
-
-      
 
         public override string PropertyName()
         {

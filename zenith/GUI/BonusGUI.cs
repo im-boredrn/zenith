@@ -22,12 +22,10 @@ namespace zenith.GUI
     {
         public static bool DebugMode => ZenithSettings.ZDebugMode;
         public override string ToggleKeyCombinationCode => null;
-        private readonly StatOutput statOutput;
         private readonly ZenithNetwork zenithNetwork;
-        public BonusGUI(ICoreClientAPI capi, StatOutput statOutput, ZenithNetwork zenithNetwork) : base(capi)
+        public BonusGUI(ICoreClientAPI capi, ZenithNetwork zenithNetwork) : base(capi)
         {
 
-            this.statOutput = statOutput;
             this.zenithNetwork = zenithNetwork; 
             SetupDialog();
 

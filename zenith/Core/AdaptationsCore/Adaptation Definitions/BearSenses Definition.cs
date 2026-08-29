@@ -17,15 +17,11 @@ using static zenith.Core.Assimilation.AssimilationCore;
 using CreatureType = zenith.Core.Definitions.CreatureDefinition.CreatureType;
 namespace zenith.Core.AdaptationsCore.AdaptationsFactory
 {
-    public class BearSensesDefinition(BearState state)  : AdaptationDefinitions()
+    public class BearSensesDefinition()  : AdaptationDefinitions()
     {
 
       
-        public override CreatureType SourceCreature { get; init; } = CreatureType.bear;
-        public override AdaptCategory.AdaptationCategory AdaptationCategory { get; init; } = AdaptCategory.AdaptationCategory.Creature;
         public override string AdaptationName { get; init; } = "Instinct";
-        public override string AdaptationDescription { get; init; } = "Enhance your senses to detect Predator and Prey. Toggle With I";
-        public override string LockedDescription =>  $"Assimilate {state.Counter}/{CreatureDefinition.CreatureDefinitions[CreatureType.bear].Threshold} Bears to unlock ";
        
     }
 
